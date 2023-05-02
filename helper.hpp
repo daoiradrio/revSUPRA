@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <cmath>
 #include <sstream>
+#include <string.h>
 
 
 
@@ -74,11 +75,39 @@ std::string get_element(std::string label)
 }
 
 
+int hash_bond_matrix(int row_index, int column_index, int n_atoms){
+    return (2*row_index*n_atoms - row_index - pow(row_index, 2))/2 + column_index - row_index - 1;
+}
+
+
+bool is_terminal_atom(std::string element){
+    bool terminal = false;
+    if (element == "H"){
+        terminal = true;
+    }
+    else if (element == "F"){
+        terminal = true;
+    }
+    else if (element == "Cl"){
+        terminal = true;
+    }
+    else if (element == "Br"){
+        terminal = true;
+    }
+    else if (element == "I"){
+        terminal = true;
+    }
+    return terminal;
+}
+
+
 typedef struct atom{
     std::string element;
+    int index;
     std::string label;
     double coords[3];
     std::vector<atom> bond_partners;
+    bool core_of_terminal_group = false;
 }atom;
 
 

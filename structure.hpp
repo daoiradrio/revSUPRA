@@ -17,7 +17,7 @@ class Structure{
     
     private:
         void read_xyz(std::string filepath);
+        void get_bonds();
         void get_bond_matrix();
-        int hash_bond_matrix(int row_index, int column_index);
-        int get_bond_order(atom* atom1, atom* atom2);
+        int get_bond_order(atom atom1, atom atom2);
 };

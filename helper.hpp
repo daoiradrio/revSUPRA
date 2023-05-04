@@ -5,6 +5,7 @@
 #include <cmath>
 #include <sstream>
 #include <string.h>
+#include <memory>
 
 
 
@@ -104,15 +105,14 @@ bool is_terminal_atom(std::string element){
 typedef struct atom{
     std::string element;
     int index;
-    std::string label;
     double coords[3];
-    std::vector<atom> bond_partners;
+    std::vector<int> bond_partners;
     bool core_of_terminal_group = false;
 }atom;
 
 
 typedef struct bond{
-    atom atom1;
-    atom atom2;
+    int atom_index1;
+    int atom_index2;
     int bond_order;
 }bond;

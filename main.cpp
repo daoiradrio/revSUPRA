@@ -4,22 +4,34 @@
 
 
 int main(){
-    std::string filepath = "inputfiles/Alanin.xyz";
+    std::string filepath = "inputfiles/Propylcyclohexan.xyz";
 
     Structure mol;
-    std::unique_ptr<Structure> ptr(&mol);
-    ConformerGenerator gen(&ptr);
-
     mol.get_structure(filepath);
-    //gen.generate_conformers();
+    ConformerGenerator gen(mol);
 
-    /*for (bond* torsion: gen.central_torsions){
-        std::cout << torsion->atom1->label << " " << torsion->atom2->label << std::endl;
+    gen.generate_conformers();
+    
+    /*
+    // CHECK ATOMS AND RESPECTIVE BOND PARTNERS
+    std::cout << "______________" << std::endl;
+    int atom;
+    for (int i = 0; i < gen.mol->atoms.size(); i++){
+        std::cout << gen.mol->atoms[i]->element << gen.mol->atoms[i]->index << std::endl;
+        for (int j = 0; j < gen.mol->atoms[i]->bond_partners.size(); j++){
+            atom = gen.mol->atoms[i]->bond_partners[j];
+            std::cout << gen.mol->atoms[atom]->element << gen.mol->atoms[atom]->index << " ";
+        }
+        std::cout << std::endl;
     }
+    */
 
-    for (bond* rb: gen.ring_bonds){
-        std::cout << rb->atom1->label << " " << rb->atom2->label << std::endl;
-    }*/
+    /*
+    // CHECK NUMBER OF DIFFERENT TYPES OF TORSIONS
+    std::cout << gen.central_torsions.size() << std::endl;
+    std::cout << gen.terminal_torsions.size() << std::endl;
+    std::cout << gen.methylalike_torsions.size() << std::endl;
+    */
 
     return 0;
 }

@@ -11,11 +11,12 @@ Structure::~Structure(){}
 void Structure::get_structure(std::string filepath){
     this->read_xyz(filepath);
     this->get_bonds();
+    return;
 }
 
 
 void Structure::read_xyz(std::string filepath){
-    std::unique_ptr<atom> new_atom;
+    std::shared_ptr<atom> new_atom;
     //auto new_atom = std::make_unique<atom>();
     //atom* new_atom;
     std::string element;
@@ -37,7 +38,7 @@ void Structure::read_xyz(std::string filepath){
             else if (line_index >= 2){
                 std::stringstream linestream(line);
                 linestream >> element >> xcoord >> ycoord >> zcoord;  
-                new_atom = std::make_unique<atom>();
+                new_atom = std::make_shared<atom>();
                 //new_atom = new atom;
                 new_atom->element = element;
                 new_atom->index = atom_index;

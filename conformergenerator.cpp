@@ -2,8 +2,8 @@
 
 
 
-ConformerGenerator::ConformerGenerator(std::unique_ptr<Structure>* mol){
-    this->mol = std::move(*mol);
+ConformerGenerator::ConformerGenerator(Structure input_mol){
+    this->mol = std::make_shared<Structure>(input_mol);
 };
 
 
@@ -12,7 +12,30 @@ ConformerGenerator::~ConformerGenerator(){};
 
 void ConformerGenerator::generate_conformers(){
     this->get_torsions();
-    //this->find_cycles(molecule->atoms);
+
+    /*
+    // CHECK NUMBER OF CENTRAL TORSIONS BEFORE CYCLE DETECTION
+    int atom1, atom2;
+    for (bond torsion: this->central_torsions){
+        atom1 = torsion.atom_index1;
+        atom2 = torsion.atom_index2;
+        std::cout << this->mol->atoms[atom1]->element << this->mol->atoms[atom1]->index << " " 
+                  << this->mol->atoms[atom2]->element << this->mol->atoms[atom2]->index << std::endl;
+    }
+    */
+
+    this->find_cycles();
+
+    /*
+    // CHECK NUMBER OF CENTRAL TORSIONS AFTER CYCLE DETECTION
+    std::cout << "__________\n" << std::endl;
+    for (bond torsion: this->central_torsions){
+        atom1 = torsion.atom_index1;
+        atom2 = torsion.atom_index2;
+        std::cout << this->mol->atoms[atom1]->element << this->mol->atoms[atom1]->index << " " 
+                  << this->mol->atoms[atom2]->element << this->mol->atoms[atom2]->index << std::endl;
+    }
+    */
 
     return;
 }
@@ -58,15 +81,12 @@ void ConformerGenerator::get_torsions(){
 }
 
 
-/*
-void ConformerGenerator::find_cycles(std::vector<atom*> atoms){
-    atom* start = atoms[0];
-    int ancestors[atoms.size()];
+void ConformerGenerator::find_cycles(){
+    int ancestors[this->mol->atoms.size()];
     memset(ancestors, -1, sizeof(ancestors));
-    char status[atoms.size()];
+    char status[this->mol->atoms.size()];
     memset(status, 'U', sizeof(status));
-    this->cycle_detection(atoms, start, start, status, ancestors);
-
+    this->cycle_detection(0, 0, status, ancestors);
     return;
 }
 
@@ -74,57 +94,47 @@ void ConformerGenerator::find_cycles(std::vector<atom*> atoms){
 // U = UNKNOWN
 // V = VISITED
 // K = KNOWN
-void ConformerGenerator::cycle_detection(
-    std::vector<atom*> atoms, atom* current, atom* last, char status[], int ancestors[]
-){
-    if (status[current->index] == 'K' || is_terminal_atom(current->element)){
+void ConformerGenerator::cycle_detection(int current, int last, char status[], int ancestors[]){
+    if (status[current] == 'K' || is_terminal_atom(this->mol->atoms[current]->element)){
         return;
     }
-    else if (status[current->index] == 'V'){
-        bond* new_bond;
-        for (int i = 0; i < this->central_torsions.size(); i++){
-            bond* torsion = this->central_torsions[i];
-            if (current->label == torsion->atom1->label || current->label == torsion->atom2->label){
-                if (last->label == torsion->atom1->label || last->label == torsion->atom2->label){
-                    new_bond->atom1 = current;
-                    new_bond->atom2 = last;
-                    this->ring_bonds.push_back(new_bond);
-                    this->central_torsions.erase(this->central_torsions.begin()+i);
-                    break;
-                }
+    else if (status[current] == 'V'){
+        int i;
+        int temp, before;
+        int atom1, atom2;
+        for (i = 0; i < this->central_torsions.size(); i++){
+            atom1 = this->central_torsions[i].atom_index1;
+            atom2 = this->central_torsions[i].atom_index2;
+            if ((current == atom1 && last == atom2) || (last == atom1 && current == atom2)){
+                this->central_torsions.erase(this->central_torsions.begin() + i);
+                break;
             }
         }
-        atom* temp = last;
-        atom* before;
-        while (temp->label != current->label){
+        temp = last;
+        while (temp != current){
             before = temp;
-            temp = atoms[ancestors[temp->index]];
-            for (int i = 0; i < this->central_torsions.size(); i++){
-                bond* torsion = this->central_torsions[i];
-                if (temp->label == torsion->atom1->label || temp->label == torsion->atom2->label){
-                    if (before->label == torsion->atom1->label || before->label == torsion->atom2->label){
-                        new_bond->atom1 = temp;
-                        new_bond->atom2 = before;
-                        this->ring_bonds.push_back(new_bond);
-                        this->central_torsions.erase(this->central_torsions.begin()+i);
-                        break;
-                    }
-                }
+            temp = ancestors[temp];
+            for (i = 0; i < this->central_torsions.size(); i++){
+                atom1 = this->central_torsions[i].atom_index1;
+                atom2 = this->central_torsions[i].atom_index2;
+                if ((temp == atom1 && before == atom2) || (before == atom1 && temp == atom2)){
+                    this->central_torsions.erase(this->central_torsions.begin() + i);
+                    break;
             }
+        }
         }
     }
-    else if (status[current->index] == 'U'){
-        ancestors[current->index] = last->index;
-        status[current->index] = 'V';
-        for (atom* bond_partner: current->bond_partners){
-            if (!is_terminal_atom(bond_partner->element)){
-                if (bond_partner->label != current->label){
-                    this->cycle_detection(atoms, bond_partner, current, status, ancestors);
+    else if (status[current] == 'U'){
+        ancestors[current] = last;
+        status[current] = 'V';
+        for (int bond_partner: this->mol->atoms[current]->bond_partners){
+            if (!is_terminal_atom(this->mol->atoms[bond_partner]->element)){
+                if (bond_partner != ancestors[current]){
+                    this->cycle_detection(bond_partner, current, status, ancestors);
                 }
             }
         }
-        status[current->index] = 'K';
+        status[current] = 'K';
         return;
     }
 }
-*/

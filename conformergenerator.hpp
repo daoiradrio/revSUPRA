@@ -5,7 +5,9 @@
 class ConformerGenerator{
 
     public:
-        ConformerGenerator(std::unique_ptr<Structure>* mol);
+        //ConformerGenerator(std::shared_ptr<Structure> input_mol);
+        //ConformerGenerator(Structure* input_mol);
+        ConformerGenerator(Structure input_mol);
         ~ConformerGenerator();
 
         void generate_conformers();
@@ -15,12 +17,15 @@ class ConformerGenerator{
         std::vector<bond> central_torsions;
         std::vector<bond> methylalike_torsions;
         std::vector<bond> terminal_torsions;
+
+        std::shared_ptr<Structure> mol;
+        //Structure* mol;
     
     private:
-        std::unique_ptr<Structure> mol;
+        //std::shared_ptr<Structure> mol;
         std::vector<bond> torsions;
 
         void get_torsions();
-        //void find_cycles(std::vector<atom*> atoms);
-        //void cycle_detection(std::vector<atom*> atoms, atom* current, atom* last, char status[], int ancestors[]);
+        void find_cycles();
+        void cycle_detection(int current, int last, char status[], int ancestors[]);
 };

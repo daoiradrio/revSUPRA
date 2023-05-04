@@ -1,12 +1,9 @@
-#include <iostream>
+#ifndef HELPER_HPP
+#define HELPER_HPP
+
 #include <vector>
-#include <fstream>
 #include <unordered_map>
 #include <cmath>
-#include <sstream>
-#include <string.h>
-#include <memory>
-
 
 
 std::unordered_map<std::string, float> valence_radii_single({
@@ -105,7 +102,7 @@ bool is_terminal_atom(std::string element){
 typedef struct atom{
     std::string element;
     int index;
-    double coords[3];
+    float coords[3];
     std::vector<int> bond_partners;
     bool core_of_terminal_group = false;
 }atom;
@@ -116,3 +113,6 @@ typedef struct bond{
     int atom_index2;
     int bond_order;
 }bond;
+
+
+#endif

@@ -1,6 +1,6 @@
-//#include "structure.cpp"
+#include "structure.cpp"
 #include "conformergenerator.cpp"
-
+#include "analyzer.cpp"
 
 
 int main(){
@@ -8,10 +8,13 @@ int main(){
 
     Structure mol;
     mol.get_structure(filepath);
-    ConformerGenerator gen(mol);
 
+    ConformerGenerator gen(mol);
     gen.generate_conformers();
-    
+
+    Analyzer analyzer;
+    analyzer.read_xyz(filepath);
+
     /*
     // CHECK ATOMS AND RESPECTIVE BOND PARTNERS
     std::cout << "______________" << std::endl;

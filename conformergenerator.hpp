@@ -1,4 +1,12 @@
-#include "structure.cpp"
+#ifndef CONFORMERGENERATOR_HPP
+#define CONFORMERGENERATOR_HPP
+
+#include "helper.hpp"
+#include "structure.hpp"
+
+#include <vector>
+#include <memory>
+#include <string.h>
 
 
 
@@ -28,4 +36,8 @@ class ConformerGenerator{
         void get_torsions();
         void find_cycles();
         void cycle_detection(int current, int last, char status[], int ancestors[]);
+        void find_peptidebonds();
 };
+
+
+#endif

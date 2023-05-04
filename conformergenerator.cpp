@@ -138,3 +138,22 @@ void ConformerGenerator::cycle_detection(int current, int last, char status[], i
         return;
     }
 }
+
+
+void ConformerGenerator::find_peptidebonds(){
+    int i;
+    int atom1, atom2;
+    std::string element1, element2;
+
+    for (i = 0; i < this->central_torsions.size(); i++){
+        atom1 = this->central_torsions[i].atom_index1;
+        atom2 = this->central_torsions[i].atom_index2;
+        element1 = this->mol->atoms[atom1]->element;
+        element2 = this->mol->atoms[atom2]->element;
+        if ((element1 == "C" && element2 == "N") || (element1 == "N" && element2 == "C")){
+            
+        }
+    }
+
+    return;
+}

@@ -10,13 +10,14 @@ Structure::~Structure(){}
 
 void Structure::get_structure(std::string filepath){
     this->read_xyz(filepath);
-    //this->get_bonds();
+    this->get_bonds();
 }
 
 
 void Structure::read_xyz(std::string filepath){
     std::unique_ptr<atom> new_atom;
     //auto new_atom = std::make_unique<atom>();
+    //atom* new_atom;
     std::string element;
     std::string new_label;
     std::string line;
@@ -35,10 +36,9 @@ void Structure::read_xyz(std::string filepath){
             }
             else if (line_index >= 2){
                 std::stringstream linestream(line);
-                linestream >> element >> xcoord >> ycoord >> zcoord;
-                
-                //atom* new_atom = new atom;
-
+                linestream >> element >> xcoord >> ycoord >> zcoord;  
+                new_atom = std::make_unique<atom>();
+                //new_atom = new atom;
                 new_atom->element = element;
                 new_atom->index = atom_index;
                 new_atom->coords[0] = xcoord;
@@ -56,8 +56,6 @@ void Structure::read_xyz(std::string filepath){
         std::cout << "FAILED OPENING .xyz FILE!" << std::endl;
     }
     file.close();
-
-    std::cout << this->atoms.size() << std::endl;
 
     return;
 }
@@ -92,7 +90,7 @@ void Structure::get_bond_matrix(){
 }
 */
 
-/*
+
 void Structure::get_bonds(){
     int i, j;
     int valence, max_valence;
@@ -178,4 +176,3 @@ int Structure::get_bond_order(int i, int j)
 
     return bond_order;
 }
-*/

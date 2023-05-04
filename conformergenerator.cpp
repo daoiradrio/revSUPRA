@@ -2,69 +2,47 @@
 
 
 
-ConformerGenerator::ConformerGenerator(){};
+ConformerGenerator::ConformerGenerator(std::unique_ptr<Structure>* mol){
+    this->mol = std::move(*mol);
+};
 
 
 ConformerGenerator::~ConformerGenerator(){};
 
 
-void ConformerGenerator::generate_conformers(Structure* molecule){
-    this->get_torsions(molecule->bonds);
+void ConformerGenerator::generate_conformers(){
+    this->get_torsions();
     //this->find_cycles(molecule->atoms);
 
     return;
 }
 
 
-void ConformerGenerator::get_torsions(std::vector<bond> bonds){
-    int i, j, k;
-    int bond_order;
-    atom atom1;
-    atom atom2;
-    atom* new1;
-    atom* new2;
+void ConformerGenerator::get_torsions(){
+    int i, j;
+    std::string element_i, element_j;
 
-    /*for (i = 0; i < bonds.size(); i++){
-        std::cout << bonds[i].atom1.label << " " << bonds[i].atom2.label << std::endl;
-        std::cout << bonds[i].atom1.bond_partners.size() << " " << bonds[i].atom2.bond_partners.size() << std::endl;
-    }*/
-
-    /*
-    int i, j, k;
-    int bond_order;
-    atom atom1;
-    atom atom2;
-
-    for (bond bond: bonds){
+    for (bond bond: this->mol->bonds){
         if (bond.bond_order != 1){
             continue;
         }
-        atom1 = bond.atom1;
-        atom2 = bond.atom2;
-        std::cout << bond.atom1.label << std::endl;
-        std::cout << bond.atom1.bond_partners.size() << std::endl;
-        std::cout << bond.atom2.label << std::endl;
-        std::cout << bond.atom2.bond_partners.size() << std::endl;
-        std::cout << "_____________________" << std::endl;
-        std::cout << "______________" << std::endl;
-        std::cout << atom1->label << std::endl;
-        std::cout << atom1->core_of_terminal_group << std::endl;
-        std::cout << atom2->label << std::endl;
-        std::cout << atom2->core_of_terminal_group << std::endl;
-        std::cout << "______________" << std::endl;
-        if (is_terminal_atom(atom1->element) || is_terminal_atom(atom2->element)){
+        i = bond.atom_index1;
+        j = bond.atom_index2;
+        element_i = this->mol->atoms[i]->element;
+        element_j = this->mol->atoms[j]->element;
+        if (is_terminal_atom(element_i) || is_terminal_atom(element_j)){
             continue;
         }
-        if (atom1->core_of_terminal_group){
-            if (atom1->element == "C"){
+        if (this->mol->atoms[i]->core_of_terminal_group){
+            if (element_i == "C"){
                 this->methylalike_torsions.push_back(bond);
             }
             else{
                 this->terminal_torsions.push_back(bond);
             }
         }
-        else if (atom2->core_of_terminal_group){
-            if (atom2->element == "C"){
+        else if (this->mol->atoms[j]->core_of_terminal_group){
+            if (element_j == "C"){
                 this->methylalike_torsions.push_back(bond);
             }
             else{
@@ -75,9 +53,10 @@ void ConformerGenerator::get_torsions(std::vector<bond> bonds){
             this->central_torsions.push_back(bond);
         }
     }
-    */
+    
     return;
 }
+
 
 /*
 void ConformerGenerator::find_cycles(std::vector<atom*> atoms){

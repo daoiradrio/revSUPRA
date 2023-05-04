@@ -17,8 +17,8 @@ class Structure{
     
     private:
         void read_xyz(std::string filepath);
-        //void get_bonds();
-        //int get_bond_order(int i, int j);
+        void get_bonds();
+        int get_bond_order(int i, int j);
 
         //int* bond_matrix;
         //void get_bond_matrix();

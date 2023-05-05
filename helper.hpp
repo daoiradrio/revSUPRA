@@ -102,7 +102,7 @@ bool is_terminal_atom(std::string element){
 typedef struct atom{
     std::string element;
     int index;
-    float coords[3];
+    std::vector<float> coords;
     std::vector<int> bond_partners;
     bool core_of_terminal_group = false;
 }atom;

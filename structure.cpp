@@ -31,9 +31,7 @@ void Structure::get_structure(std::string filepath){
                 new_atom = std::make_shared<atom>();
                 new_atom->element = element;
                 new_atom->index = atom_index;
-                new_atom->coords[0] = xcoord;
-                new_atom->coords[1] = ycoord;
-                new_atom->coords[2] = zcoord;
+                new_atom->coords = {xcoord, ycoord, zcoord};
                 this->atoms.push_back(std::move(new_atom));
                 
                 atom_index++;

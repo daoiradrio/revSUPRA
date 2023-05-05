@@ -26,13 +26,19 @@ class ConformerGenerator{
         std::vector<bond> central_torsions;
         std::vector<bond> methylalike_torsions;
         std::vector<bond> terminal_torsions;
+        std::vector<std::vector<int>> torsion_atoms;
 
         std::vector<int> angle_increments; // IN RAD STATT DEGREE??
+        std::vector<int> angles;
 
         void get_torsions();
         void find_cycles();
         void cycle_detection(int current, int last, char status[], int ancestors[]);
         void find_peptidebonds();
+        //void selection_menu();
+        void generation_setup();
+        std::vector<int> torsion_atom_counter(int start, int last, int* status, std::vector<int> container);
+        int combinations(std::vector<std::vector<float>> new_coords, int index, int counter);
 };
 
 

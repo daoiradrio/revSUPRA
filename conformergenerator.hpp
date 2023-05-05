@@ -7,31 +7,27 @@
 #include <vector>
 #include <memory>
 #include <string.h>
+#include <cmath>
 
 
 
 class ConformerGenerator{
 
     public:
-        //ConformerGenerator(std::shared_ptr<Structure> input_mol);
-        //ConformerGenerator(Structure* input_mol);
         ConformerGenerator(Structure input_mol);
         ~ConformerGenerator();
 
         void generate_conformers();
+    
+    private:
+        std::shared_ptr<Structure> mol;
 
-        std::vector<bond> ring_bonds;
-
+        std::vector<bond> torsions;
         std::vector<bond> central_torsions;
         std::vector<bond> methylalike_torsions;
         std::vector<bond> terminal_torsions;
 
-        std::shared_ptr<Structure> mol;
-        //Structure* mol;
-    
-    private:
-        //std::shared_ptr<Structure> mol;
-        std::vector<bond> torsions;
+        std::vector<int> angle_increments; // IN RAD STATT DEGREE??
 
         void get_torsions();
         void find_cycles();

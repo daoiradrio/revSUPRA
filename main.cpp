@@ -4,7 +4,7 @@
 
 
 int main(){
-    std::string filepath = "inputfiles/Propylcyclohexan.xyz";
+    std::string filepath = "inputfiles/Tyr-Trp.xyz";
 
     Structure mol;
     mol.get_structure(filepath);

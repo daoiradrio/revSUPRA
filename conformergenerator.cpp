@@ -98,32 +98,32 @@ void ConformerGenerator::generate_conformers(){
             std::cin >> increment;
             switch (increment){
                 case 30:
-                    this->angle_increments.push_back(30);
-                    this->angle_increments.push_back(45);
+                    this->angle_increments.push_back(30.0);
+                    this->angle_increments.push_back(45.0);
                     valid_increment = true;
                     break;
                 case 45:
-                    this->angle_increments.push_back(45);
-                    this->angle_increments.push_back(60);
+                    this->angle_increments.push_back(45.0);
+                    this->angle_increments.push_back(60.0);
                     valid_increment = true;
                     break;
                 case 60:
-                    this->angle_increments.push_back(60);
-                    this->angle_increments.push_back(90);
+                    this->angle_increments.push_back(60.0);
+                    this->angle_increments.push_back(90.0);
                     valid_increment = true;
                     break;
                 case 90:
-                    this->angle_increments.push_back(90);
-                    this->angle_increments.push_back(120);
+                    this->angle_increments.push_back(90.0);
+                    this->angle_increments.push_back(120.0);
                     valid_increment = true;
                     break;
                 case 120:
-                    this->angle_increments.push_back(120);
-                    this->angle_increments.push_back(180);
+                    this->angle_increments.push_back(120.0);
+                    this->angle_increments.push_back(180.0);
                     valid_increment = true;
                     break;
                 case 180:
-                    this->angle_increments.push_back(180);
+                    this->angle_increments.push_back(180.0);
                     valid_increment = true;
                     break;
                 default:
@@ -134,8 +134,8 @@ void ConformerGenerator::generate_conformers(){
             }
         }
         n_possible_conformers = 0;
-        for (int increment: this->angle_increments){
-            n_possible_conformers = n_possible_conformers + pow(360/increment, this->torsions.size());
+        for (double increment: this->angle_increments){
+            n_possible_conformers = n_possible_conformers + pow(360/(int)increment, this->torsions.size());
 
         }
         valid_confirmation = false;
@@ -165,15 +165,15 @@ void ConformerGenerator::generate_conformers(){
 
     int i;
     int n_generated_conformers = 0;
-    for (int increment: this->angle_increments){
+    for (double increment: this->angle_increments){
         this->angles.clear();
-        for (i = 0; i < 360/increment; i++){
-            this->angles.push_back(i*increment);
+        for (i = 0; i < 360/(int)increment; i++){
+            this->angles.push_back((double)i*increment);
         }
-        std::cout << "in combinations" << std::endl;
-        n_generated_conformers = this->combinations(this->input_coords);
-        std::cout << "out combinations" << std::endl;
+        n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
     }
+
+    std::cout << n_generated_conformers << " have been generated." << std::endl;
 
     return;
 }
@@ -434,7 +434,13 @@ std::vector<int> ConformerGenerator::torsion_atom_counter(int start, int last, i
 
 int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, int index, int counter){
     if (index == this->torsions.size()){
-        return counter+1;
+        if (!this->clashes(new_coords)){
+            //this->write_xyz(new_coords, counter);
+            return counter+1;
+        }
+        else{
+            return counter;
+        }
     }
     else{
         int atom1 = this->torsions[index].atom_index1;
@@ -444,20 +450,94 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
         Eigen::Vector3d axis = axis_vec2 - axis_vec1;
         axis.normalize();
         Eigen::Vector3d new_coord;
-        for (int deg: this->angles){
-            double rad = 2*M_PI*(double)(deg/360);
+        for (double deg: this->angles){
+            double rad = 2*M_PI*deg/360.0;
             std::vector<Eigen::Vector3d> new_coords_copy = new_coords;
             for (int torsion_atom: this->torsion_atoms[index]){
-                new_coord = new_coords[torsion_atom];
+                new_coord = new_coords_copy[torsion_atom];
                 new_coord = new_coord - axis_vec1;
                 new_coord = axis.dot(new_coord) * axis
                             + cos(rad) * axis.cross(new_coord).cross(axis) // FUNKTIONIERT cross().cross()??
                             + sin(rad) * axis.cross(new_coord);
                 new_coord = new_coord + axis_vec1;
-                new_coords[torsion_atom] = new_coord;
+                new_coords_copy[torsion_atom] = new_coord;
             }
             counter = this->combinations(new_coords_copy, index+1, counter);
         }
         return counter;
     }
+}
+
+
+void ConformerGenerator::write_xyz(std::vector<Eigen::Vector3d> coords, int structure_number){
+    int i = 0;
+    std::string dir = "Output/";
+    std::string filename = "conformer" + std::to_string(structure_number) + ".xyz";
+    filename = dir + filename;
+    std::ofstream new_xyz_file(filename);
+    new_xyz_file << this->mol->n_atoms;
+    new_xyz_file << "\n\n";
+    for (Eigen::Vector3d coord: coords){
+        new_xyz_file << this->mol->atoms[i]->element << "   " 
+                     << coord[0] << "   " 
+                     << coord[1] << "   " 
+                     << coord[2] << "\n";
+        i++;
+    }
+    new_xyz_file.close();
+}
+
+
+bool ConformerGenerator::clashes(std::vector<Eigen::Vector3d> coords){
+    int i, j;
+    std::string element_i, element_j;
+    double dist, min_dist;
+    double tolerance = 0.08;
+    
+    for (i = 0; i < coords.size()-1; i++){
+        for (j = i + 1; j < coords.size(); j++){
+            element_i = this->mol->atoms[i]->element;
+            element_j = this->mol->atoms[j]->element;
+            dist = (coords[i] - coords[j]).norm();
+            min_dist = valence_radii_single[element_i] + valence_radii_single[element_j] + tolerance;
+            if (dist < min_dist){
+                if (this->distant_atoms(i, j)){
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+
+bool ConformerGenerator::distant_atoms(int atom1, int atom2){
+    int dist = 1;
+    int n_neighbors;
+    int curr;
+    std::queue<int> neighbors;
+
+    for (int bond_partner: this->mol->atoms[atom1]->bond_partners){
+        neighbors.push(bond_partner);
+    }
+    while (dist < 4 && !neighbors.empty()){
+        n_neighbors = neighbors.size();
+        while (n_neighbors){
+            curr = neighbors.front();
+            neighbors.pop();
+            if (curr == atom2){
+                return false;
+            }
+            else{
+                for (int bond_partner: this->mol->atoms[curr]->bond_partners){
+                    neighbors.push(bond_partner);
+                }
+            }
+            n_neighbors--;
+        }
+        dist++;
+    }
+    
+    return false;
 }

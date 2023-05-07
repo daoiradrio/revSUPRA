@@ -2,9 +2,19 @@
 #include "conformergenerator.cpp"
 #include "analyzer.cpp"
 
+#include <iostream>
 
-int main(){
-    std::string filepath = "inputfiles/Tyrosin.xyz";
+
+int main(int argc, char **argv){
+    std::string filename;
+    if (argc == 2){
+        filename = argv[1];
+    }
+    else{
+        std::cout << "Type in .xyz file name: ";
+        std::cin >> filename;
+    }
+    std::string filepath = "inputfiles/" + filename;
 
     Structure mol;
     mol.get_structure(filepath);

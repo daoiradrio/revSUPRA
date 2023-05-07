@@ -170,7 +170,9 @@ void ConformerGenerator::generate_conformers(){
         for (i = 0; i < 360/increment; i++){
             this->angles.push_back(i*increment);
         }
-
+        std::cout << "in combinations" << std::endl;
+        n_generated_conformers = this->combinations(this->input_coords);
+        std::cout << "out combinations" << std::endl;
     }
 
     return;
@@ -281,9 +283,9 @@ void ConformerGenerator::find_peptidebonds(){
     int peptide1, peptide2;
     int atom1, atom2, atom3;
     int input;
-    std::vector<float> coords1;
-    std::vector<float> coords2;
-    std::vector<float> coords3;
+    std::vector<double> coords1;
+    std::vector<double> coords2;
+    std::vector<double> coords3;
     float distance;
     float distance_double_bond = valence_radii_double["C"] + valence_radii_double["O"] + 0.08;
     bool valid_input;
@@ -399,6 +401,11 @@ void ConformerGenerator::generation_setup(){
         }
     }
 
+    for (std::shared_ptr<atom> atom_ptr: this->mol->atoms){
+        Eigen::Vector3d coords(atom_ptr->coords.data());
+        this->input_coords.push_back(coords);
+    }
+
     return;
 }
 
@@ -425,19 +432,31 @@ std::vector<int> ConformerGenerator::torsion_atom_counter(int start, int last, i
 }
 
 
-int ConformerGenerator::combinations(std::vector<std::vector<float>> new_coords, int index, int counter){
-    if (index == new_coords.size()){
+int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, int index, int counter){
+    if (index == this->torsions.size()){
         return counter+1;
     }
     else{
         int atom1 = this->torsions[index].atom_index1;
         int atom2 = this->torsions[index].atom_index2;
-        std::vector<float> axis_vec1 = this->mol->atoms[atom1]->coords;
-        std::vector<float> axis_vec2 = this->mol->atoms[atom2]->coords;
-        float rad;
+        Eigen::Vector3d axis_vec1(new_coords[atom1].data());
+        Eigen::Vector3d axis_vec2(new_coords[atom2].data());
+        Eigen::Vector3d axis = axis_vec2 - axis_vec1;
+        axis.normalize();
+        Eigen::Vector3d new_coord;
         for (int deg: this->angles){
-            deg = deg/360;
-            rad = 2*M_PI*(float)deg;
+            double rad = 2*M_PI*(double)(deg/360);
+            std::vector<Eigen::Vector3d> new_coords_copy = new_coords;
+            for (int torsion_atom: this->torsion_atoms[index]){
+                new_coord = new_coords[torsion_atom];
+                new_coord = new_coord - axis_vec1;
+                new_coord = axis.dot(new_coord) * axis
+                            + cos(rad) * axis.cross(new_coord).cross(axis) // FUNKTIONIERT cross().cross()??
+                            + sin(rad) * axis.cross(new_coord);
+                new_coord = new_coord + axis_vec1;
+                new_coords[torsion_atom] = new_coord;
+            }
+            counter = this->combinations(new_coords_copy, index+1, counter);
         }
         return counter;
     }

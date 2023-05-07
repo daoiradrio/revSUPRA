@@ -6,7 +6,7 @@
 #include <cmath>
 
 
-std::unordered_map<std::string, float> valence_radii_single({
+std::unordered_map<std::string, double> valence_radii_single({
     {"C", 0.75},
     {"N", 0.71},
     {"O", 0.66},
@@ -19,7 +19,7 @@ std::unordered_map<std::string, float> valence_radii_single({
 });
 
 
-std::unordered_map<std::string, float> valence_radii_double({
+std::unordered_map<std::string, double> valence_radii_double({
     {"C", 0.67},
     {"N", 0.60},
     {"O", 0.57},
@@ -32,7 +32,7 @@ std::unordered_map<std::string, float> valence_radii_double({
 });
 
 
-std::unordered_map<std::string, float> valence_radii_triple({
+std::unordered_map<std::string, double> valence_radii_triple({
     {"C", 0.60},
     {"N", 0.54},
     {"O", 0.53},
@@ -102,7 +102,7 @@ bool is_terminal_atom(std::string element){
 typedef struct atom{
     std::string element;
     int index;
-    std::vector<float> coords;
+    std::vector<double> coords;
     std::vector<int> bond_partners;
     bool core_of_terminal_group = false;
 }atom;

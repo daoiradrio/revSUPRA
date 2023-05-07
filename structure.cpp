@@ -13,7 +13,7 @@ void Structure::get_structure(std::string filepath){
     std::string new_label;
     std::string line;
     std::ifstream file(filepath);
-    float xcoord, ycoord, zcoord;
+    double xcoord, ycoord, zcoord;
     int atom_index;
     int line_index;
 
@@ -209,17 +209,17 @@ void Structure::get_bonds(){
 int Structure::get_bond_order(int i, int j)
 {
     int bond_order = 0;
-    float tolerance = 0.08;
+    double tolerance = 0.08;
     double single_bond = -1000.0;
     double double_bond = -1000.0;
     double triple_bond = -1000.0;
 
-    float valence_radius_single1 = valence_radii_single[this->atoms[i]->element];
-    float valence_radius_single2 = valence_radii_single[this->atoms[j]->element];
-    float valence_radius_double1 = valence_radii_double[this->atoms[i]->element];
-    float valence_radius_double2 = valence_radii_double[this->atoms[j]->element];
-    float valence_radius_triple1 = valence_radii_triple[this->atoms[i]->element];
-    float valence_radius_triple2 = valence_radii_triple[this->atoms[j]->element];
+    double valence_radius_single1 = valence_radii_single[this->atoms[i]->element];
+    double valence_radius_single2 = valence_radii_single[this->atoms[j]->element];
+    double valence_radius_double1 = valence_radii_double[this->atoms[i]->element];
+    double valence_radius_double2 = valence_radii_double[this->atoms[j]->element];
+    double valence_radius_triple1 = valence_radii_triple[this->atoms[i]->element];
+    double valence_radius_triple2 = valence_radii_triple[this->atoms[j]->element];
 
     double distance = sqrt(
         pow((this->atoms[i]->coords[0] - this->atoms[j]->coords[0]), 2) +

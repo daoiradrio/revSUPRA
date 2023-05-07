@@ -8,6 +8,7 @@
 #include <memory>
 #include <string.h>
 #include <cmath>
+#include <Eigen/Dense>
 
 
 
@@ -31,6 +32,8 @@ class ConformerGenerator{
         std::vector<int> angle_increments; // IN RAD STATT DEGREE??
         std::vector<int> angles;
 
+        std::vector<Eigen::Vector3d> input_coords;
+
         void get_torsions();
         void find_cycles();
         void cycle_detection(int current, int last, char status[], int ancestors[]);
@@ -38,7 +41,9 @@ class ConformerGenerator{
         //void selection_menu();
         void generation_setup();
         std::vector<int> torsion_atom_counter(int start, int last, int* status, std::vector<int> container);
-        int combinations(std::vector<std::vector<float>> new_coords, int index, int counter);
+        int combinations(
+            std::vector<Eigen::Vector3d> new_coords, 
+            int index = 0, int counter = 0);
 };
 
 

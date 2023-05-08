@@ -50,6 +50,15 @@
         "complex": "cpp",
         "cstring": "cpp",
         "list": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "chrono": "cpp",
+        "ctime": "cpp",
+        "set": "cpp",
+        "ratio": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "codecvt": "cpp",
+        "iomanip": "cpp",
+        "filesystem": "cpp"
     }
 }

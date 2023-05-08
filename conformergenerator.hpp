@@ -21,6 +21,8 @@ class ConformerGenerator{
         ~ConformerGenerator();
 
         void generate_conformers();
+
+        void write_xyz(std::vector<Eigen::Vector3d> coords, std::string path, int structure_number = 0);
     
     private:
         std::shared_ptr<Structure> mol;
@@ -35,6 +37,12 @@ class ConformerGenerator{
         std::vector<double> angles;
 
         std::vector<Eigen::Vector3d> input_coords;
+
+        std::string workdir_name;
+        std::string struc_filename;
+        std::string opt_struc_filename;
+        //std::string coord_file;
+        //std::string control_file;
 
         void get_torsions();
 
@@ -52,7 +60,7 @@ class ConformerGenerator{
         bool clashes(std::vector<Eigen::Vector3d> coords);
         bool distant_atoms(int atom1, int atom2);
 
-        void write_xyz(std::vector<Eigen::Vector3d> coords, int n = 0);
+        //void write_xyz(std::vector<Eigen::Vector3d> coords, int n = 0, std::string path);
 };
 
 

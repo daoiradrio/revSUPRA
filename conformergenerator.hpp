@@ -21,8 +21,6 @@ class ConformerGenerator{
         ~ConformerGenerator();
 
         void generate_conformers();
-
-        void write_xyz(std::vector<Eigen::Vector3d> coords, std::string path, int structure_number = 0);
     
     private:
         std::shared_ptr<Structure> mol;
@@ -60,7 +58,9 @@ class ConformerGenerator{
         bool clashes(std::vector<Eigen::Vector3d> coords);
         bool distant_atoms(int atom1, int atom2);
 
-        //void write_xyz(std::vector<Eigen::Vector3d> coords, int n = 0, std::string path);
+        void write_xyz(std::vector<Eigen::Vector3d> coords, std::string destination);
+
+        void uff_optimization(std::string workdir);
 };
 
 

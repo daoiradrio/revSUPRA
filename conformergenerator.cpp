@@ -438,6 +438,7 @@ std::vector<int> ConformerGenerator::torsion_atom_counter(int start, int last, i
 int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, int index, int counter){
     if (index == this->torsions.size()){
         if (!this->clashes(new_coords)){
+            // get necessary file paths for working directory of new conformer structure
             std::string current_workdir = this->workdir_name + std::to_string(counter) + "/";
             std::string coord_file = current_workdir + "coord";
             std::string control_file = current_workdir + "control";
@@ -445,21 +446,11 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
             // create new working directory
             system(("mkdir " + current_workdir).c_str());
             // write new conformer structure to be optimized
-            std::ofstream file;
-            file.open(new_struc);
-            file << this->mol->n_atoms;
-            file << "\n\n";
-            for (int i = 0; i < this->mol->n_atoms; i++){
-                file << this->mol->atoms[i]->element << "   " 
-                     << new_coords[i][0]             << "   " 
-                     << new_coords[i][1]             << "   " 
-                     << new_coords[i][2]             << "\n";
-            }
-            file.close();
+            this->write_xyz(new_coords, new_struc);
             // convert .xyz file of structure to be optimized to coord file
             system(("x2t " + new_struc + " > " + coord_file).c_str());
             // write control file for UFF optimization
-            file.open(control_file);
+            /*file.open(control_file);
             file << "$symmetry c1\n";
             file << "$uff\n";
             file << "      2500         1          0 ! maxcycle,modus,nqeq\n";
@@ -471,7 +462,7 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
             file << "      1.00      0.00       0.00 ! alpha,beta,gamma\n";
             file << "         F         F          F ! transform,lnumhess,lmd\n";
             file << "$end\n";
-            file.close();
+            file.close();*/
             // perform UFF optimization
             system(("cd " + current_workdir + " ; uff > uff.out 2>&1 &").c_str());
             // cout new conformer
@@ -508,22 +499,21 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
 }
 
 
-void ConformerGenerator::write_xyz(std::vector<Eigen::Vector3d> coords, std::string folder, int structure_number){
-    int i = 0;
-    std::string file = "conformer" + std::to_string(structure_number) + ".xyz";
-    file = folder + file;
-    std::ofstream new_xyz_file(file);
-    new_xyz_file << this->mol->n_atoms;
-    new_xyz_file << "\n\n";
-    for (Eigen::Vector3d coord: coords){
-        new_xyz_file << this->mol->atoms[i]->element << "   " 
-                     << coord[0] << "   " 
-                     << coord[1] << "   " 
-                     << coord[2] << "\n";
-        i++;
+void ConformerGenerator::write_xyz(std::vector<Eigen::Vector3d> coords, std::string destination){
+    std::ofstream file(destination);
+    file << this->mol->n_atoms;
+    file << "\n\n";
+    for (int i = 0; i < this->mol->n_atoms; i++){
+        file << this->mol->atoms[i]->element << "   " 
+             << coords[i][0]             << "   " 
+             << coords[i][1]             << "   " 
+             << coords[i][2]             << "\n";
     }
-    new_xyz_file.close();
+    file.close();
 }
+
+
+void ConformerGenerator::uff_optimization(std::string workdir){}
 
 
 bool ConformerGenerator::clashes(std::vector<Eigen::Vector3d> coords){

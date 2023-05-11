@@ -55,8 +55,26 @@ void ConformerGenerator::generate_conformers(){
         }
         n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
     }
-
-    std::cout << n_generated_conformers << " have been generated." << std::endl;
+    std::string command;
+    std::string current_workdir;
+    std::string coord;
+    std::string opt_struc;
+    if (n_generated_conformers){
+	command = "mkdir SUPRA_Output";
+	system(command.c_str());
+   	for (i = 0; i < n_generated_conformers; i++){
+	    current_workdir = this->workdir_name + std::to_string(i) + "/";
+	    coord = current_workdir + "coord";
+	    opt_struc = current_workdir + this->opt_struc_filename;
+	    command = "t2x " + coord + " > " + opt_struc + " 2>&1";
+            system(command.c_str());
+	    command = "mv " + opt_struc + " SUPRA_Output/conformer" + std::to_string(i) + ".xyz";
+	    system(command.c_str());
+	    command = "rm -r " + current_workdir;
+	    system(command.c_str());
+    	}
+    	std::cout << n_generated_conformers << " have been generated." << std::endl;
+    }
 
     return;
 }
@@ -267,7 +285,8 @@ void ConformerGenerator::selection_menu(){
 
     start_calculation = false;
     while (!start_calculation){
-        valid_increment = false;
+        valid_mode_input = false;
+	this->torsions.clear();
         while (!valid_mode_input){
             std::cout << "Consider rotatable all bonds to terminal groups like -CH3, -NH2, -OH (1) "
                          "or ignore them (2) "
@@ -309,6 +328,7 @@ void ConformerGenerator::selection_menu(){
         }
         confirm_increment = false;
         this->angle_increments.clear();
+	valid_increment = false;
         while (!confirm_increment){
             std::cout << "Type in an angle increment (30, 45, 60, 90, 120 or 180 in degrees): ";
             std::cin >> increment_input;
@@ -354,8 +374,8 @@ void ConformerGenerator::selection_menu(){
                 }
                 flag_n_conformers = false;
                 while (!flag_n_conformers){
-                    std::cout << "Up to " << n_possible_conformers << " will be generated."
-                                 "Start calculation (1) or restart selection (2)?" << std::endl;
+                    std::cout << "Up to " << n_possible_conformers << " will be generated. "
+                                 "Start calculation (1) or restart selection (2)? ";
                     std::cin >> confirm_input;
                     switch (confirm_input){
                         case 1:
@@ -446,18 +466,24 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
     if (index == this->torsions.size()){
         if (!this->clashes(new_coords)){
             // get necessary file paths for working directory of new conformer structure
+	    int fin;
             std::string current_workdir = this->workdir_name + std::to_string(counter) + "/";
             std::string coord_file = current_workdir + "coord";
             std::string control_file = current_workdir + "control";
             std::string new_struc = current_workdir + this->struc_filename;
+	    std::string opt_struc = current_workdir + this->opt_struc_filename;
+	    std::string command;
             // create new working directory
-            system(("mkdir " + current_workdir).c_str());
+	    command = "mkdir " + current_workdir;
+	    system(command.c_str());
             // write new conformer structure to be optimized
             this->write_xyz(new_coords, new_struc);
             // convert .xyz file of structure to be optimized to coord file
-            system(("x2t " + new_struc + " > " + coord_file).c_str());
+	    command = "x2t " + new_struc + " > " + coord_file;
+            system(command.c_str());
             // write control file for UFF optimization
-            /*file.open(control_file);
+	    std::ofstream file;
+            file.open(control_file);
             file << "$symmetry c1\n";
             file << "$uff\n";
             file << "      2500         1          0 ! maxcycle,modus,nqeq\n";
@@ -469,9 +495,10 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
             file << "      1.00      0.00       0.00 ! alpha,beta,gamma\n";
             file << "         F         F          F ! transform,lnumhess,lmd\n";
             file << "$end\n";
-            file.close();*/
+            file.close();
             // perform UFF optimization
-            system(("cd " + current_workdir + " ; uff > uff.out 2>&1 &").c_str());
+	    command = "cd " + current_workdir + " ; uff > uff.out 2>&1 &";
+            fin = system(command.c_str());
             // cout new conformer
             return counter+1;
         }

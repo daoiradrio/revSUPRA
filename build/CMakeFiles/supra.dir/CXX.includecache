@@ -6,6 +6,20 @@
 
 #IncludeRegexTransform: 
 
+../include/analyzer.hpp
+Eigen/Dense
+-
+string
+-
+fstream
+-
+sstream
+-
+vector
+-
+iostream
+-
+
 ../include/conformergenerator.hpp
 helper.hpp
 -
@@ -48,7 +62,17 @@ memory
 sstream
 -
 
-/home/baum/revSUPRA/src/conformergenerator.cpp
+/home/baum/revSUPRA/main_files/main.cpp
+structure.hpp
+-
 conformergenerator.hpp
+-
+analyzer.hpp
+-
+iostream
+-
+
+/home/baum/revSUPRA/src/analyzer.cpp
+analyzer.hpp
 -
 

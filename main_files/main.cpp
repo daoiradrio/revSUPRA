@@ -7,16 +7,14 @@
 
 int main(int argc, char **argv){
     std::string filename;
-    /*if (argc == 2){
+    if (argc == 2){
         filename = argv[1];
     }
     else{
         std::cout << "Type in .xyz file name: ";
         std::cin >> filename;
     }
-    std::string filepath = "inputfiles/" + filename;*/
-
-    std::string filepath = "/home/baum/SUPRA/inputfiles/Tyrosin.xyz";
+    std::string filepath = "inputfiles/" + filename;
 
     Structure mol;
     mol.get_structure(filepath);

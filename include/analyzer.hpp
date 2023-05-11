@@ -19,7 +19,7 @@ class Analyzer{
         std::vector<std::vector<float>> coords;
 
         float rmsd();
-        //void kabsch();
+        void kabsch();
         void read_xyz(std::string filepath);
 
     private:

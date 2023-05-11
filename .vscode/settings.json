@@ -59,6 +59,12 @@
         "thread": "cpp",
         "codecvt": "cpp",
         "iomanip": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "any": "cpp",
+        "condition_variable": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "mutex": "cpp",
+        "variant": "cpp"
     }
 }

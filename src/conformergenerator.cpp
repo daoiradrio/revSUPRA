@@ -42,127 +42,7 @@ void ConformerGenerator::generate_conformers(){
 
     this->find_peptidebonds();
 
-    // - ADJUST THE WHOLE THING FROM HERE SO THAT SELECTION RESTART REALLY STARTS AT THE VERY BEGINNING
-    //   (IF PEPTITEBONDS SHOULD BE CONSIDERED)
-    // - PACK INTO SEPARATE FUNCTION CALLED SELECTION MENU OR SO
-    // *** START OF FUNCTION SELECTION MENU ***
-    bool valid_mode_input = false;
-    int mode_input;
-    while (!valid_mode_input){
-        std::cout << "Consider rotatable all bonds to terminal groups like -CH3, -NH2, -OH (1) "
-                     "or ignore them (2) "
-                     "or ignore just ignore bonds to methyl-like groups (3)?: ";
-        std::cin >> mode_input;
-        switch (mode_input){
-            case 1:
-                for (bond torsion: this->central_torsions){
-                    this->torsions.push_back(torsion);
-                }
-                for (bond torsion: this->terminal_torsions){
-                    this->torsions.push_back(torsion);
-                }
-                for (bond torsion: this->methylalike_torsions){
-                    this->torsions.push_back(torsion);
-                }
-                valid_mode_input = true;
-                break;
-            case 2:
-                for (bond torsion: this->central_torsions){
-                    this->torsions.push_back(torsion);
-                }
-                valid_mode_input = true;
-                break;
-            case 3:
-                for (bond torsion: this->central_torsions){
-                    this->torsions.push_back(torsion);
-                }
-                for (bond torsion: this->terminal_torsions){
-                    this->torsions.push_back(torsion);
-                }
-                valid_mode_input = true;
-                break;
-            default:
-                std::cin.clear();
-                std::cin.ignore();
-                std::cout << "Invalid input." << std::endl;
-                break;
-        }
-    }
-    bool valid_increment = false;
-    int increment;
-    bool valid_start_input = false;
-    int input_start;
-    bool valid_confirmation = false;
-    int confirmation;
-    int n_possible_conformers;
-    while (!valid_start_input){
-        while (!valid_increment){
-            std::cout << "Type in an angle increment (30, 45, 60, 90, 120 or 180 in degrees): ";
-            std::cin >> increment;
-            switch (increment){
-                case 30:
-                    this->angle_increments.push_back(30.0);
-                    this->angle_increments.push_back(45.0);
-                    valid_increment = true;
-                    break;
-                case 45:
-                    this->angle_increments.push_back(45.0);
-                    this->angle_increments.push_back(60.0);
-                    valid_increment = true;
-                    break;
-                case 60:
-                    this->angle_increments.push_back(60.0);
-                    this->angle_increments.push_back(90.0);
-                    valid_increment = true;
-                    break;
-                case 90:
-                    this->angle_increments.push_back(90.0);
-                    this->angle_increments.push_back(120.0);
-                    valid_increment = true;
-                    break;
-                case 120:
-                    this->angle_increments.push_back(120.0);
-                    this->angle_increments.push_back(180.0);
-                    valid_increment = true;
-                    break;
-                case 180:
-                    this->angle_increments.push_back(180.0);
-                    valid_increment = true;
-                    break;
-                default:
-                    std::cin.clear();
-                    std::cin.ignore();
-                    std::cout << "Invalid input." << std::endl;
-                    break;
-            }
-        }
-        n_possible_conformers = 0;
-        for (double increment: this->angle_increments){
-            n_possible_conformers = n_possible_conformers + pow(360/(int)increment, this->torsions.size());
-
-        }
-        valid_confirmation = false;
-        while (!valid_confirmation){
-            std::cout << "Up to " << n_possible_conformers << " will be generated. Start calculation (1) or new increment selection (2)?: ";
-            std::cin >> confirmation;
-            switch (confirmation){
-                case 1:
-                    valid_confirmation = true;
-                    valid_start_input = true;
-                    break;
-                case 2:
-                    valid_confirmation = true;
-                    valid_increment = false;
-                    break;
-                default:
-                    std::cin.clear();
-                    std::cin.ignore();
-                    std::cout << "Invalid input." << std::endl;
-                    break;
-            }
-        }
-    }
-    // *** END OF FUNCTION SELECTION MENU ***
+    this->selection_menu();
 
     this->generation_setup();
 
@@ -369,6 +249,133 @@ void ConformerGenerator::find_peptidebonds(){
     }
 
     return;
+}
+
+
+void ConformerGenerator::selection_menu(){
+    bool start_calculation;
+    bool confirm_increment;
+    bool valid_mode_input;
+    bool valid_increment;
+    bool flag_n_conformers;
+
+    int mode_input;
+    int increment_input;
+    int confirm_input;
+
+    int n_possible_conformers;
+
+    start_calculation = false;
+    while (!start_calculation){
+        valid_increment = false;
+        while (!valid_mode_input){
+            std::cout << "Consider rotatable all bonds to terminal groups like -CH3, -NH2, -OH (1) "
+                         "or ignore them (2) "
+                         "or ignore just ignore bonds to methyl-like groups (3)?: ";
+            std::cin >> mode_input;
+            switch (mode_input){
+                case 1:
+                    for (bond torsion: this->central_torsions){
+                        this->torsions.push_back(torsion);
+                    }
+                    for (bond torsion: this->terminal_torsions){
+                        this->torsions.push_back(torsion);
+                    }
+                    for (bond torsion: this->methylalike_torsions){
+                        this->torsions.push_back(torsion);
+                    }
+                    valid_mode_input = true;
+                    break;
+                case 2:
+                    for (bond torsion: this->central_torsions){
+                        this->torsions.push_back(torsion);
+                    }
+                    valid_mode_input = true;
+                    break;
+                case 3:
+                    for (bond torsion: this->central_torsions){
+                        this->torsions.push_back(torsion);
+                    }
+                    for (bond torsion: this->terminal_torsions){
+                        this->torsions.push_back(torsion);
+                    }
+                    valid_mode_input = true;
+                    break;
+                default:
+                    std::cin.clear();
+                    std::cin.ignore();
+                    std::cout << "Invalid input." << std::endl;
+            }
+        }
+        confirm_increment = false;
+        this->angle_increments.clear();
+        while (!confirm_increment){
+            std::cout << "Type in an angle increment (30, 45, 60, 90, 120 or 180 in degrees): ";
+            std::cin >> increment_input;
+            switch (increment_input){
+                case 30:
+                    this->angle_increments.push_back(30.0);
+                    this->angle_increments.push_back(45.0);
+                    valid_increment = true;
+                    break;
+                case 45:
+                    this->angle_increments.push_back(45.0);
+                    this->angle_increments.push_back(60.0);
+                    valid_increment = true;
+                    break;
+                case 60:
+                    this->angle_increments.push_back(60.0);
+                    this->angle_increments.push_back(90.0);
+                    valid_increment = true;
+                    break;
+                case 90:
+                    this->angle_increments.push_back(90.0);
+                    this->angle_increments.push_back(120.0);
+                    valid_increment = true;
+                    break;
+                case 120:
+                    this->angle_increments.push_back(120.0);
+                    this->angle_increments.push_back(180.0);
+                    valid_increment = true;
+                    break;
+                case 180:
+                    this->angle_increments.push_back(180.0);
+                    valid_increment = true;
+                    break;
+                default:
+                    std::cin.clear();
+                    std::cin.ignore();
+                    std::cout << "Invalid input." << std::endl;
+            }
+            if (valid_increment){
+                n_possible_conformers = 0;
+                for (double increment: this->angle_increments){
+                    n_possible_conformers = n_possible_conformers + pow(360/(int)increment, this->torsions.size());
+                }
+                flag_n_conformers = false;
+                while (!flag_n_conformers){
+                    std::cout << "Up to " << n_possible_conformers << " will be generated."
+                                 "Start calculation (1) or restart selection (2)?" << std::endl;
+                    std::cin >> confirm_input;
+                    switch (confirm_input){
+                        case 1:
+                            flag_n_conformers = true;
+                            confirm_increment = true;
+                            start_calculation = true;
+                            break;
+                        case 2:
+                            flag_n_conformers = true;
+                            confirm_increment = true;
+                        default:
+                            std::cin.clear();
+                            std::cin.ignore();
+                            std::cout << "Invalid input." << std::endl;
+                            break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 

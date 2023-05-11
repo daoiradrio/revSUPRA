@@ -49,7 +49,7 @@ class ConformerGenerator{
 
         void find_peptidebonds();
 
-        //void selection_menu();
+        void selection_menu();
         void generation_setup();
         std::vector<int> torsion_atom_counter(int start, int last, int* status, std::vector<int> container);
 

@@ -1,6 +1,8 @@
 #ifndef ANALYZER_HPP
 #define ANALYZER_HPP
 
+#include <structure.hpp>
+
 #include <Eigen/Dense>
 #include <string>
 #include <fstream>
@@ -16,10 +18,11 @@ class Analyzer{
         ~Analyzer();
 
         std::vector<std::string> elements;
-        std::vector<std::vector<float>> coords;
+        Eigen::MatrixX3d coords;
 
         float rmsd();
-        void kabsch();
+        void remove_doubles();
+        void kabsch(Eigen::Matrix3d coords1, Eigen::Matrix3d coords2);
         void read_xyz(std::string filepath);
 
     private:

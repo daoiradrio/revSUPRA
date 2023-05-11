@@ -62,7 +62,7 @@ memory
 sstream
 -
 
-/home/baum/revSUPRA/main_files/main.cpp
+/home/dario/revSUPRA/main_files/main.cpp
 structure.hpp
 -
 conformergenerator.hpp
@@ -70,9 +70,5 @@ conformergenerator.hpp
 analyzer.hpp
 -
 iostream
--
-
-/home/baum/revSUPRA/src/analyzer.cpp
-analyzer.hpp
 -
 

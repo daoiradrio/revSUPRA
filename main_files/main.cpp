@@ -19,8 +19,11 @@ int main(int argc, char **argv){
     Structure mol;
     mol.get_structure(filepath);
 
-    ConformerGenerator gen(mol);
-    gen.generate_conformers();
+    //ConformerGenerator gen(mol);
+    //gen.generate_conformers();
+
+    Analyzer analyzer;
+    analyzer.read_xyz(filepath);
 
     /*
     std::string clash_filepath = "debug_files/clash_structure1.xyz";
@@ -38,9 +41,6 @@ int main(int argc, char **argv){
         std::cout << "NO CLASHES." << std::endl;
     }
     */
-
-    //Analyzer analyzer;
-    //analyzer.read_xyz(filepath);
 
     /*
     // CHECK ATOMS AND RESPECTIVE BOND PARTNERS

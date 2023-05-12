@@ -7,7 +7,11 @@
 #IncludeRegexTransform: 
 
 ../include/analyzer.hpp
+structure.hpp
+-
 Eigen/Dense
+-
+Eigen/SVD
 -
 string
 -
@@ -48,6 +52,26 @@ unordered_map
 cmath
 -
 
+../include/hungarian.hpp
+algorithm
+-
+cmath
+-
+iostream
+-
+iterator
+-
+limits
+-
+list
+-
+string
+-
+type_traits
+-
+vector
+-
+
 ../include/structure.hpp
 helper.hpp
 -
@@ -61,6 +85,8 @@ memory
 -
 sstream
 -
+Eigen/Dense
+-
 
 /home/dario/revSUPRA/main_files/main.cpp
 structure.hpp
@@ -69,6 +95,12 @@ conformergenerator.hpp
 -
 analyzer.hpp
 -
+hungarian.hpp
+-
 iostream
+-
+
+/home/dario/revSUPRA/src/analyzer.cpp
+analyzer.hpp
 -
 

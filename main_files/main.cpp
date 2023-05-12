@@ -1,12 +1,13 @@
 #include <structure.hpp>
 #include <conformergenerator.hpp>
 #include <analyzer.hpp>
+#include <hungarian.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char **argv){
-    std::string filename;
+    /*std::string filename;
     if (argc == 2){
         filename = argv[1];
     }
@@ -14,16 +15,41 @@ int main(int argc, char **argv){
         std::cout << "Type in .xyz file name: ";
         std::cin >> filename;
     }
-    std::string filepath = "inputfiles/" + filename;
+    std::string filepath = "inputfiles/" + filename;*/
 
-    Structure mol;
-    mol.get_structure(filepath);
+    std::string filepath1 = "inputfiles/Alanin.xyz";
+    std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
+
+    Structure mol1;
+    mol1.get_structure(filepath1);
+
+    Structure mol2;
+    mol2.get_structure(filepath2);
 
     //ConformerGenerator gen(mol);
     //gen.generate_conformers();
 
     Analyzer analyzer;
-    analyzer.read_xyz(filepath);
+    //analyzer.remove_doubles();
+    //analyzer.read_xyz(filepath);
+    //analyzer.rmsd(mol1.coords, mol1.coords);
+    
+    /*
+    vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},
+                                           { 1, 50, 51, 52},
+                                           { 50, 51, 1, 52},
+                                           { 50, 51, 52, 1}};
+
+    HungarianAlgorithm HungAlgo;
+    vector<int> assignment;
+
+    double cost = HungAlgo.Solve(costMatrix, assignment);
+
+    for (unsigned int x = 0; x < costMatrix.size(); x++)
+        std::cout << x << "," << assignment[x] << "\t";
+
+    std::cout << "\ncost: " << cost << std::endl;
+    */
 
     /*
     std::string clash_filepath = "debug_files/clash_structure1.xyz";

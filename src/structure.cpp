@@ -8,6 +8,13 @@ Structure::~Structure(){}
 
 
 void Structure::get_structure(std::string filepath){
+    this->read_xyz(filepath);
+    this->get_connectivity();
+    return;
+}
+
+
+void Structure::read_xyz(std::string filepath){
     std::shared_ptr<atom> new_atom;
     std::string element;
     std::string new_label;
@@ -17,6 +24,10 @@ void Structure::get_structure(std::string filepath){
     int atom_index;
     int line_index;
 
+    this->n_atoms = 0;
+    this->atoms.clear();
+    this->coords.setZero();
+
     if (file.is_open()){
         line_index = 0;
         atom_index = 0;
@@ -24,6 +35,7 @@ void Structure::get_structure(std::string filepath){
             std::stringstream linestream(line);
             if (line_index == 0){
                 linestream >> this->n_atoms;
+                this->coords.resize(n_atoms, 3);
             }
             else if (line_index >= 2){
                 std::stringstream linestream(line);
@@ -33,6 +45,10 @@ void Structure::get_structure(std::string filepath){
                 new_atom->index = atom_index;
                 new_atom->coords = {xcoord, ycoord, zcoord};
                 this->atoms.push_back(std::move(new_atom));
+
+                this->coords(atom_index, 0) = xcoord;
+                this->coords(atom_index, 1) = ycoord;
+                this->coords(atom_index, 2) = zcoord;
                 
                 atom_index++;
             }
@@ -44,6 +60,11 @@ void Structure::get_structure(std::string filepath){
     }
     file.close();
 
+    return;
+}
+
+
+void Structure::get_connectivity(){
     int i, j;
     int valence, max_valence;
     int bond_order;
@@ -52,6 +73,8 @@ void Structure::get_structure(std::string filepath){
     bond new_bond;
     std::string element1, element2;
     int terminal_counter;
+
+    this->bonds.clear();
     
     for (i = 0; i < this->n_atoms-1; i++){
         valence = 0;

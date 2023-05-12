@@ -4,10 +4,13 @@
 CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/analyzer.hpp
 CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/conformergenerator.hpp
 CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/helper.hpp
+CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/hungarian.hpp
 CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/structure.hpp
 CMakeFiles/supra.dir/main_files/main.cpp.o: ../main_files/main.cpp
 
 CMakeFiles/supra.dir/src/analyzer.cpp.o: ../include/analyzer.hpp
+CMakeFiles/supra.dir/src/analyzer.cpp.o: ../include/helper.hpp
+CMakeFiles/supra.dir/src/analyzer.cpp.o: ../include/structure.hpp
 CMakeFiles/supra.dir/src/analyzer.cpp.o: ../src/analyzer.cpp
 
 CMakeFiles/supra.dir/src/conformergenerator.cpp.o: ../include/conformergenerator.hpp

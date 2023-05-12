@@ -2,8 +2,10 @@
 #define ANALYZER_HPP
 
 #include <structure.hpp>
+#include <hungarian.hpp>
 
 #include <Eigen/Dense>
+#include <Eigen/SVD>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -20,10 +22,8 @@ class Analyzer{
         std::vector<std::string> elements;
         Eigen::MatrixX3d coords;
 
-        float rmsd();
-        void remove_doubles();
-        void kabsch(Eigen::Matrix3d coords1, Eigen::Matrix3d coords2);
-        void read_xyz(std::string filepath);
+        double rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2);
+        void remove_doubles(std::string filepath, std::string filename, int n_files);
 
     private:
 

@@ -11,19 +11,42 @@
  * 
  * It is a port heavily based on http://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html
  * 
- * This version is written by Fernando B. Giannasi */
+ * This version is written by Fernando B. Giannasi 
+ * 
+ * Cloned from repository https://github.com/phoemur/hungarian_algorithm/blob/master/hungarian.cpp */
 
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <iterator>
-#include <limits>
-#include <list>
-#include <string>
-#include <type_traits>
-#include <vector>
+#ifndef HUNGARIAN_HPP
+#define HUNGARIAN_HPP
 
+#include <hungarian.hpp>
+
+
+
+/* Handle negative elements if present. If allowed = true, add abs(minval) to 
+ * every element to create one zero. Else throw an exception */
+template<typename T>
+void handle_negatives(std::vector<std::vector<T>>& matrix, 
+                      bool allowed = true)
+{
+    T minval = std::numeric_limits<T>::max();
     
+    for (auto& elem: matrix)
+        for (auto& num: elem)
+            minval = std::min(minval, num);
+        
+    if (minval < 0) {
+        if (!allowed) { //throw
+            throw std::runtime_error("Only non-negative values allowed");
+        }
+        else { // add abs(minval) to every element to create one zero
+            minval = abs(minval);
+            
+            for (auto& elem: matrix)
+                for (auto& num: elem)
+                    num += minval;
+        }
+    }
+}
 
 /* Ensure that the matrix is square by the addition of dummy rows/columns if necessary */
 template<typename T>
@@ -380,43 +403,36 @@ void step6(std::vector<std::vector<T>>& matrix,
     step = 4;
 }
 
-/* Calculates the optimal cost from mask matrix */
-template<template <typename, typename...> class Container,
-         typename T,
-         typename... Args>
-T output_solution(const Container<Container<T,Args...>>& original,
-                  const std::vector<std::vector<int>>& M)
-{
-    T res = 0;
-    
-    for (unsigned j=0; j<original.begin()->size(); ++j)
-        for (unsigned i=0; i<original.size(); ++i)
-            if (M[i][j]) {
-                auto it1 = original.begin();
-                std::advance(it1, i);
-                auto it2 = it1->begin();
-                std::advance(it2, j);
-                res += *it2;
-                continue;                
-            }
-            
-    return res;
-}
-
 
 /* Main function of the algorithm */
-std::vector<int> hungarian(std::vector<std::vector<double>>& original){  
+template<
+    template <typename, typename...> class Container,
+    typename T,
+    typename... Args
+>
+/*typename std::enable_if<std::is_integral<T>::value, T>::type // Work only on integral types*/
+std::vector<int> hungarian(const Container<Container<T,Args...>>& original,
+          bool allow_negatives = true)
+{  
     /* Initialize data structures */
     
     // Work on a vector copy to preserve original matrix
     // Didn't passed by value cause needed to access both
-    std::vector<std::vector<double>> matrix(original.size(), original_size());
+    std::vector<std::vector<T>> matrix (original.size(), 
+                                        std::vector<T>(original.begin()->size()));
     
-    std::vector<double>::iterator it = original.begin();
-    for (auto& vec: matrix){
+    auto it = original.begin();
+    for (auto& vec: matrix) {         
         std::copy(it->begin(), it->end(), vec.begin());
         it = std::next(it);
     }
+    
+    // handle negative values -> pass true if allowed or false otherwise
+    // if it is an unsigned type just skip this step
+    if (!std::is_unsigned<T>::value) {
+        handle_negatives(matrix, allow_negatives);
+    }
+    
     
     // make square matrix
     pad_matrix(matrix);
@@ -469,7 +485,7 @@ std::vector<int> hungarian(std::vector<std::vector<double>>& original){
                 break;
         }
     }
-    
+
     std::vector<int> assignment;
     for (int i = 0; i < M.size(); i++){
         for (int j = 0; j < M[i].size(); j++){
@@ -479,69 +495,8 @@ std::vector<int> hungarian(std::vector<std::vector<double>>& original){
             }
         }
     }
-
+    
     return assignment;
 }
 
-
-
-int main() //example of usage
-{
-    using namespace Munkres;
-    using namespace std;
-    
-    // work on multiple containers of the STL
-    list<list<int>> matrix {{85,  12,  36,  83,  50,  96,  12,  1 },
-                            {84,  35,  16,  17,  40,  94,  16,  52},
-                            {14,  16,  8 ,  53,  14,  12,  70,  50},
-                            {73,  83,  19,  44,  83,  66,  71,  18},
-                            {36,  45,  29,  4 ,  61,  15,  70,  47},
-                            {7 ,  14,  11,  69,  57,  32,  37,  81},
-                            {9 ,  65,  38,  74,  87,  51,  86,  52},
-                            {52,  40,  56,  10,  42,  2 ,  26,  36},
-                            {85,  86,  36,  90,  49,  89,  41,  74},
-                            {40,  67,  2 ,  70,  18,  5 ,  94,  43},
-                            {85,  12,  36,  83,  50,  96,  12,  1 },
-                            {84,  35,  16,  17,  40,  94,  16,  52},
-                            {14,  16,  8 ,  53,  14,  12,  70,  50},
-                            {73,  83,  19,  44,  83,  66,  71,  18},
-                            {36,  45,  29,  4 ,  61,  15,  70,  47},
-                            {7 ,  14,  11,  69,  57,  32,  37,  81},
-                            {9 ,  65,  38,  74,  87,  51,  86,  52},
-                            {52,  40,  56,  10,  42,  2 ,  26,  36},
-                            {85,  86,  36,  90,  49,  89,  41,  74},
-                            {40,  67,  2 ,  70,  18,  5 ,  94,  43}};
-                                     
-    auto res = hungarian(matrix);
-    std::cout << "Optimal cost: " << res << std::endl;
-    std::cout << "----------------- \n\n";
-    
-    vector<vector<vector<int>>> tests;
-    
-    tests.push_back({{25,40,35},
-                     {40,60,35},
-                     {20,40,25}});
-    
-    tests.push_back({{64,18,75},
-                     {97,60,24},
-                     {87,63,15}});
-    
-    tests.push_back({{80,40,50,46}, 
-                     {40,70,20,25},
-                     {30,10,20,30},
-                     {35,20,25,30}});
-    
-    tests.push_back({{10,19,8,15},
-                     {10,18,7,17},
-                     {13,16,9,14},
-                     {12,19,8,18},
-                     {14,17,10,19}});
-    
-    for (auto& m: tests) {
-        auto r = hungarian(m);
-        std::cout << "Optimal cost: " << r << std::endl;
-        std::cout << "----------------- \n\n";
-    }
-    
-    return 0;
-}
+#endif

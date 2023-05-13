@@ -21,10 +21,10 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_
         for (j = i + 1; j < n_files; j++){
             file2 = filename + std::to_string(j) + ".xyz";
             struc2.read_xyz(file2);
-            if (this->rmsd(struc1.coords, struc2.coords) <= 0.1){
-                command = "rm " + filepath + "/" + file2;
-                system(command.c_str());
-            }
+            //if (this->rmsd(struc1.coords, struc2.coords) <= 0.1){
+            //    command = "rm " + filepath + "/" + file2;
+            //    system(command.c_str());
+            //}
         }
     }
 

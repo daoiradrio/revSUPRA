@@ -1,10 +1,10 @@
-#include <structure.hpp>
-#include <conformergenerator.hpp>
-#include <analyzer.hpp>
-#include <hungarian.hpp>
+//#include <structure.hpp>
+//#include <conformergenerator.hpp>
+//#include <analyzer.hpp>
 
 #include <iostream>
 
+#include <hungarian.hpp>
 
 int main(int argc, char **argv){
     /*std::string filename;
@@ -17,7 +17,7 @@ int main(int argc, char **argv){
     }
     std::string filepath = "inputfiles/" + filename;*/
 
-    std::string filepath1 = "inputfiles/Alanin.xyz";
+    /*std::string filepath1 = "inputfiles/Alanin.xyz";
     std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
 
     Structure mol1;
@@ -29,7 +29,7 @@ int main(int argc, char **argv){
     //ConformerGenerator gen(mol);
     //gen.generate_conformers();
 
-    Analyzer analyzer;
+    Analyzer analyzer;*/
     //analyzer.remove_doubles();
     //analyzer.read_xyz(filepath);
     //analyzer.rmsd(mol1.coords, mol1.coords);

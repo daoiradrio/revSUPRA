@@ -11,68 +11,18 @@
  * 
  * It is a port heavily based on http://csclab.murraystate.edu/~bob.pilgrim/445/munkres.html
  * 
- * This version is written by Fernando B. Giannasi 
- * 
- * Cloned from repository https://github.com/phoemur/hungarian_algorithm/blob/master/hungarian.cpp */
+ * This version is written by Fernando B. Giannasi
+ *
+ * Cloned repository from https://github.com/phoemur/hungarian_algorithm */
 
-#ifndef HUNGARIAN_HPP
-#define HUNGARIAN_HPP
-
-#include <hungarian.hpp>
-
-
-
-/* Handle negative elements if present. If allowed = true, add abs(minval) to 
- * every element to create one zero. Else throw an exception */
-template<typename T>
-void handle_negatives(std::vector<std::vector<T>>& matrix, 
-                      bool allowed = true)
-{
-    T minval = std::numeric_limits<T>::max();
+#include "hungarian.hpp"
     
-    for (auto& elem: matrix)
-        for (auto& num: elem)
-            minval = std::min(minval, num);
-        
-    if (minval < 0) {
-        if (!allowed) { //throw
-            throw std::runtime_error("Only non-negative values allowed");
-        }
-        else { // add abs(minval) to every element to create one zero
-            minval = abs(minval);
-            
-            for (auto& elem: matrix)
-                for (auto& num: elem)
-                    num += minval;
-        }
-    }
-}
-
-/* Ensure that the matrix is square by the addition of dummy rows/columns if necessary */
-template<typename T>
-void pad_matrix(std::vector<std::vector<T>>& matrix)
-{
-    std::size_t i_size = matrix.size();
-    std::size_t j_size = matrix[0].size();
-    
-    if (i_size > j_size) {
-        for (auto& vec: matrix)
-            vec.resize(i_size, std::numeric_limits<T>::max());
-    }
-    else if (i_size < j_size) {
-        while (matrix.size() < j_size)
-            matrix.push_back(std::vector<T>(j_size, std::numeric_limits<T>::max()));
-    }
-}
 
 /* For each row of the matrix, find the smallest element and subtract it from every 
  * element in its row.  
  * For each col of the matrix, find the smallest element and subtract it from every 
  * element in its col. Go to Step 2. */
-template<typename T>
-void step1(std::vector<std::vector<T>>& matrix, 
-           int& step)
-{
+void step1(std::vector<std::vector<double>>& matrix, int& step){
     // process rows
     for (auto& row: matrix) {
         auto smallest = *std::min_element(begin(row), end(row));
@@ -84,7 +34,7 @@ void step1(std::vector<std::vector<T>>& matrix,
     // process cols
     int sz = matrix.size(); // square matrix is granted
     for (int j=0; j<sz; ++j) {
-        T minval = std::numeric_limits<T>::max();
+        double minval = std::numeric_limits<double>::max();
         for (int i=0; i<sz; ++i) {
             minval = std::min(minval, matrix[i][j]);
         }
@@ -97,12 +47,15 @@ void step1(std::vector<std::vector<T>>& matrix,
     }
    
     step = 2;
+
+    return;
 }
 
 /* helper to clear the temporary vectors */
-inline void clear_covers(std::vector<int>& cover) 
+void clear_covers(std::vector<int>& cover) 
 {
     for (auto& n: cover) n = 0;
+    return;
 }
 
 /* Find a zero (Z) in the resulting matrix.  If there is no starred zero in its row or 
@@ -116,8 +69,7 @@ inline void clear_covers(std::vector<int>& cover)
  * (i.e. set M(i,j)=1) and cover its row and column (i.e. set R_cov(i)=1 and C_cov(j)=1).
  * Before we go on to Step 3, we uncover all rows and columns so that we can use the 
  * cover vectors to help us count the number of starred zeros. */
-template<typename T>
-void step2(const std::vector<std::vector<T>>& matrix, 
+void step2(const std::vector<std::vector<double>>& matrix, 
            std::vector<std::vector<int>>& M, 
            std::vector<int>& RowCover,
            std::vector<int>& ColCover, 
@@ -138,6 +90,8 @@ void step2(const std::vector<std::vector<T>>& matrix,
     clear_covers(ColCover);
     
     step = 3;
+
+    return;
 }
 
 
@@ -146,10 +100,7 @@ void step2(const std::vector<std::vector<T>>& matrix,
  * otherwise, Go to Step 4. Once we have searched the entire cost matrix, we count the 
  * number of independent zeros found.  If we have found (and starred) K independent zeros 
  * then we are done.  If not we procede to Step 4.*/
-void step3(const std::vector<std::vector<int>>& M, 
-           std::vector<int>& ColCover,
-           int& step)
-{
+void step3(const std::vector<std::vector<int>>& M, std::vector<int>& ColCover, int& step){
     int sz = M.size();
     int colcount = 0;
     
@@ -168,13 +119,14 @@ void step3(const std::vector<std::vector<int>>& M,
     else {
         step = 4;
     }
+
+    return;
 }
 
 // Following functions to support step 4
-template<typename T>
 void find_a_zero(int& row, 
                  int& col,
-                 const std::vector<std::vector<T>>& matrix,
+                 const std::vector<std::vector<double>>& matrix,
                  const std::vector<int>& RowCover,
                  const std::vector<int>& ColCover)
 {
@@ -201,11 +153,11 @@ void find_a_zero(int& row,
         if (r >= sz)
             done = true;
     }
+
+    return;
 }
 
-bool star_in_row(int row, 
-                 const std::vector<std::vector<int>>& M)
-{
+bool star_in_row(int row, const std::vector<std::vector<int>>& M){
     bool tmp = false;
     for (unsigned c = 0; c < M.size(); c++)
         if (M[row][c] == 1)
@@ -215,14 +167,12 @@ bool star_in_row(int row,
 }
 
 
-void find_star_in_row(int row,
-                      int& col, 
-                      const std::vector<std::vector<int>>& M)
-{
+void find_star_in_row(int row, int& col, const std::vector<std::vector<int>>& M){
     col = -1;
     for (unsigned c = 0; c < M.size(); c++)
         if (M[row][c] == 1)
             col = c;
+    return;
 }
 
 
@@ -230,8 +180,7 @@ void find_star_in_row(int row,
  * this primed zero, Go to Step 5.  Otherwise, cover this row and uncover the column 
  * containing the starred zero. Continue in this manner until there are no uncovered zeros
  * left. Save the smallest uncovered value and Go to Step 6. */
-template<typename T>
-void step4(const std::vector<std::vector<T>>& matrix, 
+void step4(const std::vector<std::vector<double>>& matrix, 
            std::vector<std::vector<int>>& M, 
            std::vector<int>& RowCover,
            std::vector<int>& ColCover,
@@ -265,45 +214,41 @@ void step4(const std::vector<std::vector<T>>& matrix,
             }
         }
     }
+
+    return;
 }
 
 // Following functions to support step 5
-void find_star_in_col(int c, 
-                      int& r,
-                      const std::vector<std::vector<int>>& M)
-{
+void find_star_in_col(int c, int& r, const std::vector<std::vector<int>>& M){
     r = -1;
     for (unsigned i = 0; i < M.size(); i++)
         if (M[i][c] == 1)
             r = i;
+    return;
 }
 
-void find_prime_in_row(int r, 
-                       int& c, 
-                       const std::vector<std::vector<int>>& M)
-{
+void find_prime_in_row(int r, int& c, const std::vector<std::vector<int>>& M){
     for (unsigned j = 0; j < M.size(); j++)
         if (M[r][j] == 2)
             c = j;
+    return;
 }
 
-void augment_path(std::vector<std::vector<int>>& path, 
-                  int path_count, 
-                  std::vector<std::vector<int>>& M)
-{
+void augment_path(std::vector<std::vector<int>>& path, int path_count, std::vector<std::vector<int>>& M){
     for (int p = 0; p < path_count; p++)
         if (M[path[p][0]][path[p][1]] == 1)
             M[path[p][0]][path[p][1]] = 0;
         else
             M[path[p][0]][path[p][1]] = 1;
+    return;
 }
 
-void erase_primes(std::vector<std::vector<int>>& M)
-{
+void erase_primes(std::vector<std::vector<int>>& M){
     for (auto& row: M)
         for (auto& val: row)
             if (val == 2)
                 val = 0;
+    return;
 }
 
 
@@ -355,12 +300,13 @@ void step5(std::vector<std::vector<int>>& path,
     erase_primes(M);
     
     step = 3;
+
+    return;
 }
 
 // methods to support step 6
-template<typename T>
-void find_smallest(T& minval, 
-                   const std::vector<std::vector<T>>& matrix, 
+void find_smallest(double& minval, 
+                   const std::vector<std::vector<double>>& matrix, 
                    const std::vector<int>& RowCover,
                    const std::vector<int>& ColCover)
 {
@@ -369,6 +315,7 @@ void find_smallest(T& minval,
             if (RowCover[r] == 0 && ColCover[c] == 0)
                 if (minval > matrix[r][c])
                     minval = matrix[r][c];
+    return;
 }
 
 /* Add the value found in Step 4 to every element of each covered row, and subtract it 
@@ -382,13 +329,12 @@ void find_smallest(T& minval,
  * found not to be elements of the minimal assignment.  Also we are only changing the 
  * values by an amount equal to the smallest value in the cost matrix, so we will not
  * jump over the optimal (i.e. minimal assignment) with this change. */
-template<typename T>
-void step6(std::vector<std::vector<T>>& matrix, 
+void step6(std::vector<std::vector<double>>& matrix, 
            const std::vector<int>& RowCover,
            const std::vector<int>& ColCover,
            int& step)
 {
-    T minval = std::numeric_limits<T>::max();
+    double minval = std::numeric_limits<double>::max();
     find_smallest(minval, matrix, RowCover, ColCover);
     
     int sz = matrix.size();
@@ -401,41 +347,25 @@ void step6(std::vector<std::vector<T>>& matrix,
     }
     
     step = 4;
+
+    return;
 }
 
 
 /* Main function of the algorithm */
-template<
-    template <typename, typename...> class Container,
-    typename T,
-    typename... Args
->
-/*typename std::enable_if<std::is_integral<T>::value, T>::type // Work only on integral types*/
-std::vector<int> hungarian(const Container<Container<T,Args...>>& original,
-          bool allow_negatives = true)
-{  
+std::vector<int> hungarian(std::vector<std::vector<double>>& original){  
     /* Initialize data structures */
     
     // Work on a vector copy to preserve original matrix
     // Didn't passed by value cause needed to access both
-    std::vector<std::vector<T>> matrix (original.size(), 
-                                        std::vector<T>(original.begin()->size()));
+    std::vector<std::vector<double>> matrix(original.size(), std::vector<double>(original.begin()->size()));
     
-    auto it = original.begin();
-    for (auto& vec: matrix) {         
+    std::vector<std::vector<double>>::iterator it = original.begin();
+    for (auto& vec: matrix){
         std::copy(it->begin(), it->end(), vec.begin());
         it = std::next(it);
     }
     
-    // handle negative values -> pass true if allowed or false otherwise
-    // if it is an unsigned type just skip this step
-    if (!std::is_unsigned<T>::value) {
-        handle_negatives(matrix, allow_negatives);
-    }
-    
-    
-    // make square matrix
-    pad_matrix(matrix);
     std::size_t sz = matrix.size();
     
     /* The masked matrix M.  If M(i,j)=1 then C(i,j) is a starred zero,  
@@ -485,7 +415,7 @@ std::vector<int> hungarian(const Container<Container<T,Args...>>& original,
                 break;
         }
     }
-
+    
     std::vector<int> assignment;
     for (int i = 0; i < M.size(); i++){
         for (int j = 0; j < M[i].size(); j++){
@@ -495,8 +425,6 @@ std::vector<int> hungarian(const Container<Container<T,Args...>>& original,
             }
         }
     }
-    
+
     return assignment;
 }
-
-#endif

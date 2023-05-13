@@ -1,10 +1,10 @@
 //#include <structure.hpp>
 //#include <conformergenerator.hpp>
-//#include <analyzer.hpp>
+#include <analyzer.hpp>
 
 #include <iostream>
 
-#include <hungarian.hpp>
+
 
 int main(int argc, char **argv){
     /*std::string filename;
@@ -24,15 +24,13 @@ int main(int argc, char **argv){
     mol1.get_structure(filepath1);
 
     Structure mol2;
-    mol2.get_structure(filepath2);
+    mol2.get_structure(filepath2);*/
 
     //ConformerGenerator gen(mol);
     //gen.generate_conformers();
 
-    Analyzer analyzer;*/
-    //analyzer.remove_doubles();
-    //analyzer.read_xyz(filepath);
-    //analyzer.rmsd(mol1.coords, mol1.coords);
+    Analyzer analyzer;
+    analyzer.remove_doubles("/home/dario/SUPRA_Output/", "conformer", 97);
     
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

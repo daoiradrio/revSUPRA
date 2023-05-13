@@ -8,23 +8,40 @@ Analyzer::~Analyzer(){};
 
 
 void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_files){
-    int i, j;
+    int i, j, k, l;
     Structure struc1;
     Structure struc2;
     std::string file1;
     std::string file2;
     std::string command;
+    std::vector<std::vector<double>> cost_mat;
+    double element_term;
+    double cost;
+    Eigen::Vector3d diff_vec;
+
+    struc1.read_xyz(filepath + "/" + filename + "0.xyz");
+    cost_mat.resize(struc1.n_atoms, std::vector<double>(struc1.n_atoms, 0.0));
 
     for (i = 0; i < n_files-1; i++){
-        file1 = filename + std::to_string(i) + ".xyz";
+        file1 = filepath + "/" + filename + std::to_string(i) + ".xyz";
         struc1.read_xyz(file1);
         for (j = i + 1; j < n_files; j++){
-            file2 = filename + std::to_string(j) + ".xyz";
+            file2 = filepath + "/" + filename + std::to_string(j) + ".xyz";
             struc2.read_xyz(file2);
-            //if (this->rmsd(struc1.coords, struc2.coords) <= 0.1){
-            //    command = "rm " + filepath + "/" + file2;
-            //    system(command.c_str());
-            //}
+            for (k = 0; k < struc1.n_atoms; k++){
+                for (l = 0; l < k+1; l++){
+                    if (struc1.atoms[k]->element == struc2.atoms[l]->element){
+                        element_term = 0.0;
+                    }
+                    else{
+                        element_term = 100.0;
+                    }
+                    diff_vec = struc1.coords.row(k) - struc1.coords.row(l);
+                    cost = diff_vec.dot(diff_vec) + element_term;
+                    cost_mat[k][l] = cost;
+                    cost_mat[l][k] = cost;
+                }
+            }
         }
     }
 

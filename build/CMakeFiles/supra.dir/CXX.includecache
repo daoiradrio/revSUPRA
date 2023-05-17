@@ -26,6 +26,26 @@ vector
 iostream
 -
 
+../include/conformergenerator.hpp
+helper.hpp
+-
+structure.hpp
+-
+vector
+-
+memory
+-
+string.h
+-
+cmath
+-
+fstream
+-
+queue
+-
+Eigen/Dense
+-
+
 ../include/helper.hpp
 vector
 -
@@ -68,7 +88,29 @@ sstream
 Eigen/Dense
 -
 
+/home/dario/revSUPRA/main_files/main.cpp
+analyzer.hpp
+-
+iostream
+-
+
 /home/dario/revSUPRA/src/analyzer.cpp
 analyzer.hpp
+-
+
+/home/dario/revSUPRA/src/conformergenerator.cpp
+conformergenerator.hpp
+-
+
+/home/dario/revSUPRA/src/helper.cpp
+helper.hpp
+-
+
+/home/dario/revSUPRA/src/hungarian.cpp
+hungarian.hpp
+-
+
+/home/dario/revSUPRA/src/structure.cpp
+structure.hpp
 -
 

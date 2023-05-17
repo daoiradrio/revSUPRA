@@ -1,0 +1,358 @@
+
+ uff (k27) : TURBOMOLE rev. V7-7-1 compiled 3 Feb 2023 at 10:04:44
+ Copyright (C) 2023 TURBOMOLE GmbH, Karlsruhe
+
+
+    2023-05-16 16:04:01.320 
+
+
+ uff (k27) : TURBOMOLE rev. V7-7-1 compiled 3 Feb 2023 at 10:04:44
+ Copyright (C) 2023 TURBOMOLE GmbH, Karlsruhe
+
+
+    2023-05-16 16:04:01.320 
+
+                                         
+                                     u f f
+                                           
+                             by K. May, R. Ahlrichs
+                                         
+                             quantum chemistry group 
+                              university  karlsruhe
+                                    germany
+                                         
+
+<UFF<-rdparm>   127 atomtypes are read from file 
+                    /home/baum/bin/TURBOMOLE/parameter/uffparms.in                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+
+
+ symmetry group of the molecule :   c1 
+<UFF> The following terms are included in the Force Field !
+<UFF> Bond      terms       are included !
+<UFF> Angle     terms       are included !
+<UFF> Torsion   terms       are included !
+<UFF> Inversion terms       are included !
+<UFF> Nonbonded terms (vdW) are included !
+<UFF> Nonbonded terms (el)  are included !
+
+<UFF> Required memory :    1.37 MB
+
+
+ symmetry group of the molecule :   c1 
+
+ the group has the following generators :
+   c1(z)
+
+    1 symmetry operations found
+<getnxt12> There is no topology check!
+
+Bond analyse
+------------
+Group#   MTYPE    UFFTYPE   # of Atoms    # of next Neighbours
+   1       c        c_2           9            3
+   2       n        n_3           2            3
+   3       h        h_           12            1
+   4       c        c_3           2            4
+   5       o        o_r           1            1
+   6       o        o_r           1            2
+ 
+ Molecule: natoms=   27
+c        c_2         -2.69010072744977     4.92364362318995    -0.12617701334126
+c        c_2         -2.47040116820078     2.29312596044963    -0.20263533234362
+c        c_2         -0.03380720036956     1.26838417484882    -0.32068652334899
+c        c_2         -0.55569286420745     6.46114369544672    -0.16843128948789
+c        c_2          1.86557542475305     5.40278368208882    -0.29487286448661
+c        c_2          2.14310060341559     2.75183807994129    -0.37233273833502
+n        n_3          0.73310035278732    -1.20853654848192    -0.40455256875988
+c        c_2          4.28336661764425     1.08232174061816    -0.50253486832173
+c        c_2          3.31760318439300    -1.34616530213841    -0.51152996467495
+h        h_          -0.45360985895517    -2.70485948848310    -0.38688362949463
+c        c_3          6.99767473675047     1.93194260624991    -0.62740797063700
+c        c_3          8.96971733136494    -0.00470541805032     0.26042315723468
+h        h_           7.17689636240998     3.64533838618685     0.52982251356133
+h        h_           7.41413258009550     2.52259540376294    -2.57346683103787
+c        c_2          8.06588022321768    -1.19232458805875     2.75873558029618
+n        n_3         11.53891338136116     1.12566260928646     0.73139959927516
+h        h_           9.18010054081953    -1.54665012615221    -1.10733604532983
+h        h_          12.80293228886208     0.13512127606173    -0.35241880443371
+h        h_          11.55034622441514     2.90122093009296    -0.04780213410331
+h        h_          -4.55586512481528     5.78042655083403    -0.02981987824659
+h        h_          -4.13776321974183     1.10027413880211    -0.16820452235294
+h        h_          -0.76584930652709     8.50386204712220    -0.10117593671246
+h        h_           3.51309535198554     6.62666480670270    -0.32410692763457
+h        h_           4.21924821023570    -3.17723432785580    -0.57882311197287
+o        o_r          6.04770941390110    -2.25716447229801     3.08509128201905
+o        o_r          9.82674592340522    -0.91301739766069     4.61072387421317
+h        h_          10.30152071495620    -2.66120681500424     5.09496619364852
+
+<UFF> Number of fixed atoms is nafix=   0
+ 
+ .................................................
+  Optimization
+ .................................................
+ 
+ 
+                     1  -cycle       .................................
+UFF energy    = 0.312869D+00 |dE/dxyz| = 0.347635D+00
+UFF Delta E=0.312869D+00
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Set fmat(i,i) to one !
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.70
+<UFF<-uffrelax> Norm of displacement |dx|= 0.96183D+00
+ 
+                     2  -cycle       .................................
+UFF energy    = 0.265701D+00 |dE/dxyz| = 0.245694D+00
+UFF Delta E=-.471678D-01
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.20
+<UFF<-uffrelax> Norm of displacement |dx|= 0.75088D+00
+ 
+                     3  -cycle       .................................
+UFF energy    = 0.256855D+00 |dE/dxyz| = 0.228625D+00
+UFF Delta E=-.884599D-02
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.60
+<UFF<-uffrelax> Norm of displacement |dx|= 0.63886D+00
+ 
+                     4  -cycle       .................................
+UFF energy    = 0.240132D+00 |dE/dxyz| = 0.179292D+00
+UFF Delta E=-.167229D-01
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.60
+<UFF<-uffrelax> Norm of displacement |dx|= 0.67114D+00
+ 
+                     5  -cycle       .................................
+UFF energy    = 0.225022D+00 |dE/dxyz| = 0.121083D+00
+UFF Delta E=-.151099D-01
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 1.00
+<UFF<-uffrelax> Norm of displacement |dx|= 0.91476D+00
+ 
+                     6  -cycle       .................................
+UFF energy    = 0.213050D+00 |dE/dxyz| = 0.415125D-01
+UFF Delta E=-.119724D-01
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.10
+<UFF<-uffrelax> Norm of displacement |dx|= 0.65882D+00
+ 
+                     7  -cycle       .................................
+UFF energy    = 0.213386D+00 |dE/dxyz| = 0.412885D-01
+UFF Delta E=0.336192D-03
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.20
+<UFF<-uffrelax> Norm of displacement |dx|= 0.86393D+00
+ 
+                     8  -cycle       .................................
+UFF energy    = 0.212842D+00 |dE/dxyz| = 0.383128D-01
+UFF Delta E=-.544458D-03
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.10
+<UFF<-uffrelax> Norm of displacement |dx|= 0.10877D+01
+ 
+                     9  -cycle       .................................
+UFF energy    = 0.212710D+00 |dE/dxyz| = 0.360019D-01
+UFF Delta E=-.131996D-03
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.20
+<UFF<-uffrelax> Norm of displacement |dx|= 0.11254D+01
+ 
+                    10  -cycle       .................................
+UFF energy    = 0.212386D+00 |dE/dxyz| = 0.315201D-01
+UFF Delta E=-.324030D-03
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.20
+<UFF<-uffrelax> Norm of displacement |dx|= 0.97567D+00
+ 
+                    11  -cycle       .................................
+UFF energy    = 0.211658D+00 |dE/dxyz| = 0.349679D-01
+UFF Delta E=-.727468D-03
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF> Set ahls to -1.d0 !
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.80
+<UFF<-uffrelax> Norm of displacement |dx|= 0.87465D+00
+ 
+                    12  -cycle       .................................
+UFF energy    = 0.210382D+00 |dE/dxyz| = 0.289383D-01
+UFF Delta E=-.127558D-02
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.60
+<UFF<-uffrelax> Norm of displacement |dx|= 0.11499D+01
+ 
+                    13  -cycle       .................................
+UFF energy    = 0.208984D+00 |dE/dxyz| = 0.263929D-01
+UFF Delta E=-.139878D-02
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.60
+<UFF<-uffrelax> Norm of displacement |dx|= 0.98333D+00
+ 
+                    14  -cycle       .................................
+UFF energy    = 0.207765D+00 |dE/dxyz| = 0.230947D-01
+UFF Delta E=-.121878D-02
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.60
+<UFF<-uffrelax> Norm of displacement |dx|= 0.94589D+00
+ 
+                    15  -cycle       .................................
+UFF energy    = 0.206676D+00 |dE/dxyz| = 0.204034D-01
+UFF Delta E=-.108909D-02
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.70
+<UFF<-uffrelax> Norm of displacement |dx|= 0.97727D+00
+ 
+                    16  -cycle       .................................
+UFF energy    = 0.205605D+00 |dE/dxyz| = 0.182033D-01
+UFF Delta E=-.107109D-02
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.80
+<UFF<-uffrelax> Norm of displacement |dx|= 0.10579D+01
+ 
+                    17  -cycle       .................................
+UFF energy    = 0.204500D+00 |dE/dxyz| = 0.162288D-01
+UFF Delta E=-.110508D-02
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 0.90
+<UFF<-uffrelax> Norm of displacement |dx|= 0.11533D+01
+ 
+                    18  -cycle       .................................
+UFF energy    = 0.203422D+00 |dE/dxyz| = 0.140569D-01
+UFF Delta E=-.107770D-02
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 1.10
+<UFF<-uffrelax> Norm of displacement |dx|= 0.12237D+01
+ 
+                    19  -cycle       .................................
+UFF energy    = 0.202500D+00 |dE/dxyz| = 0.114257D-01
+UFF Delta E=-.921450D-03
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 1.30
+<UFF<-uffrelax> Norm of displacement |dx|= 0.12650D+01
+ 
+                    20  -cycle       .................................
+UFF energy    = 0.201856D+00 |dE/dxyz| = 0.804474D-02
+UFF Delta E=-.644297D-03
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 1.50
+<UFF<-uffrelax> Norm of displacement |dx|= 0.11776D+01
+ 
+                    21  -cycle       .................................
+UFF energy    = 0.201582D+00 |dE/dxyz| = 0.277607D-02
+UFF Delta E=-.274175D-03
+
+<UFF> Project trans. and rot. out of hessian 
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 1.10
+<UFF<-uffrelax> Norm of displacement |dx|= 0.16553D+00
+ 
+                    22  -cycle       .................................
+UFF energy    = 0.201570D+00 |dE/dxyz| = 0.146977D-03
+UFF Delta E=-.120629D-04
+
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Line search ended with alphaopt= 1.00
+<UFF<-uffrelax> Norm of displacement |dx|= 0.18901D-01
+ 
+                    23  -cycle       .................................
+UFF energy    = 0.201570D+00 |dE/dxyz| = 0.622216D-05
+UFF Delta E=-.971758D-07
+
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Norm of displacement |dx|= 0.27130D-03
+ 
+                    24  -cycle       .................................
+UFF energy    = 0.201570D+00 |dE/dxyz| = 0.188608D-08
+UFF Delta E=-.583776D-10
+
+<UFF<-uffrelax> Newton Step !
+<UFF<-uffrelax> Norm of displacement |dx|= 0.27738D-06
+
+<UFF> Optimization sucessfully ................
+
+<UFF> Project trans. and rot. out of hessian 
+
+Eigenvalues of Hesse matric without Trans. and Rot. : 
+ -1.13063D-01 -1.44251D-02 -3.49741D-03 -6.88893D-14 -1.84852D-14
+ -1.72085D-15  1.27676D-15  1.14908D-14  6.57252D-14  1.82731D-04
+  9.16567D-04  2.12010D-03  4.73761D-03  6.98894D-03  1.12038D-02
+  1.18460D-02  2.07055D-02  2.37142D-02  2.77809D-02  2.96143D-02
+  3.69488D-02  3.91279D-02  4.26033D-02  4.84699D-02  6.08468D-02
+  6.59376D-02  7.24873D-02  7.51630D-02  8.66682D-02  8.83456D-02
+  9.11297D-02  9.23269D-02  9.63017D-02  9.83037D-02  1.01622D-01
+  1.12708D-01  1.23232D-01  1.23990D-01  1.37403D-01  1.37859D-01
+  1.45446D-01  1.67935D-01  1.70296D-01  1.72737D-01  1.96167D-01
+  2.33911D-01  2.38299D-01  2.83917D-01  2.94639D-01  3.11726D-01
+  3.58721D-01  3.63250D-01  3.67152D-01  4.01833D-01  4.78925D-01
+  4.84341D-01  5.22659D-01  5.53680D-01  5.98682D-01  6.71804D-01
+  7.46824D-01  7.95008D-01  8.32879D-01  8.84729D-01  9.24921D-01
+  9.73251D-01  9.81064D-01  1.03373D+00  1.17000D+00  1.22958D+00
+  1.28850D+00  1.32173D+00  1.37647D+00  1.41792D+00  1.50747D+00
+  1.51639D+00  1.55330D+00  1.64928D+00  1.76868D+00  2.00002D+00
+  2.04278D+00
+
+    UFF profiling
+  --------------------------------------------------------------------
+             module   cpu total (s)       %  wall total (s)       %
+
+         UFF (total)             0.1   98.18             0.1    0.00
+           Pre.Proc.             0.0    1.56             0.0    0.00
+            Topology             0.0    2.32             0.0    0.00
+         FF val/prms             0.0    0.03             0.0    0.00
+               cpegh             0.0    5.53             0.0    0.00
+              dsyprj             0.0    1.93             0.0    0.00
+            uffrelax             0.1   66.66             0.1    0.00
+             numhess             0.0    0.00             0.0    0.00
+             eighess             0.0    0.54             0.0    0.00
+           Postproc.             0.0    1.49             0.0    0.00
+ 
+
+
+    ------------------------------------------------------------------------
+         total  cpu-time :   0.09 seconds
+         total wall-time :   0.09 seconds
+    ------------------------------------------------------------------------
+
+   ****  uff : all done  ****
+
+
+    2023-05-16 16:04:01.409 
+
+UFF ended normally

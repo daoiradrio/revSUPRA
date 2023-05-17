@@ -38,7 +38,6 @@ void Structure::read_xyz(std::string filepath){
                 this->coords.resize(n_atoms, 3);
             }
             else if (line_index >= 2){
-                std::stringstream linestream(line);
                 linestream >> element >> xcoord >> ycoord >> zcoord;  
                 new_atom = std::make_shared<atom>();
                 new_atom->element = element;

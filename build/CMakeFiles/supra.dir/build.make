@@ -83,9 +83,22 @@ CMakeFiles/supra.dir/src/analyzer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/supra.dir/src/analyzer.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dario/revSUPRA/src/analyzer.cpp -o CMakeFiles/supra.dir/src/analyzer.cpp.s
 
+CMakeFiles/supra.dir/src/conformergenerator.cpp.o: CMakeFiles/supra.dir/flags.make
+CMakeFiles/supra.dir/src/conformergenerator.cpp.o: ../src/conformergenerator.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dario/revSUPRA/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/supra.dir/src/conformergenerator.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/supra.dir/src/conformergenerator.cpp.o -c /home/dario/revSUPRA/src/conformergenerator.cpp
+
+CMakeFiles/supra.dir/src/conformergenerator.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/supra.dir/src/conformergenerator.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/dario/revSUPRA/src/conformergenerator.cpp > CMakeFiles/supra.dir/src/conformergenerator.cpp.i
+
+CMakeFiles/supra.dir/src/conformergenerator.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/supra.dir/src/conformergenerator.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/dario/revSUPRA/src/conformergenerator.cpp -o CMakeFiles/supra.dir/src/conformergenerator.cpp.s
+
 CMakeFiles/supra.dir/src/helper.cpp.o: CMakeFiles/supra.dir/flags.make
 CMakeFiles/supra.dir/src/helper.cpp.o: ../src/helper.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dario/revSUPRA/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/supra.dir/src/helper.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dario/revSUPRA/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/supra.dir/src/helper.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/supra.dir/src/helper.cpp.o -c /home/dario/revSUPRA/src/helper.cpp
 
 CMakeFiles/supra.dir/src/helper.cpp.i: cmake_force
@@ -98,7 +111,7 @@ CMakeFiles/supra.dir/src/helper.cpp.s: cmake_force
 
 CMakeFiles/supra.dir/src/hungarian.cpp.o: CMakeFiles/supra.dir/flags.make
 CMakeFiles/supra.dir/src/hungarian.cpp.o: ../src/hungarian.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dario/revSUPRA/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/supra.dir/src/hungarian.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dario/revSUPRA/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/supra.dir/src/hungarian.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/supra.dir/src/hungarian.cpp.o -c /home/dario/revSUPRA/src/hungarian.cpp
 
 CMakeFiles/supra.dir/src/hungarian.cpp.i: cmake_force
@@ -111,7 +124,7 @@ CMakeFiles/supra.dir/src/hungarian.cpp.s: cmake_force
 
 CMakeFiles/supra.dir/src/structure.cpp.o: CMakeFiles/supra.dir/flags.make
 CMakeFiles/supra.dir/src/structure.cpp.o: ../src/structure.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dario/revSUPRA/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/supra.dir/src/structure.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/dario/revSUPRA/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/supra.dir/src/structure.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/supra.dir/src/structure.cpp.o -c /home/dario/revSUPRA/src/structure.cpp
 
 CMakeFiles/supra.dir/src/structure.cpp.i: cmake_force
@@ -126,6 +139,7 @@ CMakeFiles/supra.dir/src/structure.cpp.s: cmake_force
 supra_OBJECTS = \
 "CMakeFiles/supra.dir/main_files/main.cpp.o" \
 "CMakeFiles/supra.dir/src/analyzer.cpp.o" \
+"CMakeFiles/supra.dir/src/conformergenerator.cpp.o" \
 "CMakeFiles/supra.dir/src/helper.cpp.o" \
 "CMakeFiles/supra.dir/src/hungarian.cpp.o" \
 "CMakeFiles/supra.dir/src/structure.cpp.o"
@@ -135,12 +149,13 @@ supra_EXTERNAL_OBJECTS =
 
 supra: CMakeFiles/supra.dir/main_files/main.cpp.o
 supra: CMakeFiles/supra.dir/src/analyzer.cpp.o
+supra: CMakeFiles/supra.dir/src/conformergenerator.cpp.o
 supra: CMakeFiles/supra.dir/src/helper.cpp.o
 supra: CMakeFiles/supra.dir/src/hungarian.cpp.o
 supra: CMakeFiles/supra.dir/src/structure.cpp.o
 supra: CMakeFiles/supra.dir/build.make
 supra: CMakeFiles/supra.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/dario/revSUPRA/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable supra"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/dario/revSUPRA/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable supra"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/supra.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

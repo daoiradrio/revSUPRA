@@ -286,6 +286,33 @@ src/analyzer.cpp.s:
 	$(MAKE) -f CMakeFiles/supra.dir/build.make CMakeFiles/supra.dir/src/analyzer.cpp.s
 .PHONY : src/analyzer.cpp.s
 
+src/conformergenerator.o: src/conformergenerator.cpp.o
+
+.PHONY : src/conformergenerator.o
+
+# target to build an object file
+src/conformergenerator.cpp.o:
+	$(MAKE) -f CMakeFiles/supra.dir/build.make CMakeFiles/supra.dir/src/conformergenerator.cpp.o
+.PHONY : src/conformergenerator.cpp.o
+
+src/conformergenerator.i: src/conformergenerator.cpp.i
+
+.PHONY : src/conformergenerator.i
+
+# target to preprocess a source file
+src/conformergenerator.cpp.i:
+	$(MAKE) -f CMakeFiles/supra.dir/build.make CMakeFiles/supra.dir/src/conformergenerator.cpp.i
+.PHONY : src/conformergenerator.cpp.i
+
+src/conformergenerator.s: src/conformergenerator.cpp.s
+
+.PHONY : src/conformergenerator.s
+
+# target to generate assembly for a file
+src/conformergenerator.cpp.s:
+	$(MAKE) -f CMakeFiles/supra.dir/build.make CMakeFiles/supra.dir/src/conformergenerator.cpp.s
+.PHONY : src/conformergenerator.cpp.s
+
 src/helper.o: src/helper.cpp.o
 
 .PHONY : src/helper.o
@@ -391,6 +418,9 @@ help:
 	@echo "... src/analyzer.o"
 	@echo "... src/analyzer.i"
 	@echo "... src/analyzer.s"
+	@echo "... src/conformergenerator.o"
+	@echo "... src/conformergenerator.i"
+	@echo "... src/conformergenerator.s"
 	@echo "... src/helper.o"
 	@echo "... src/helper.i"
 	@echo "... src/helper.s"

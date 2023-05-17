@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/dario/revSUPRA/main_files/main.cpp" "/home/dario/revSUPRA/build/CMakeFiles/supra.dir/main_files/main.cpp.o"
   "/home/dario/revSUPRA/src/analyzer.cpp" "/home/dario/revSUPRA/build/CMakeFiles/supra.dir/src/analyzer.cpp.o"
+  "/home/dario/revSUPRA/src/conformergenerator.cpp" "/home/dario/revSUPRA/build/CMakeFiles/supra.dir/src/conformergenerator.cpp.o"
   "/home/dario/revSUPRA/src/helper.cpp" "/home/dario/revSUPRA/build/CMakeFiles/supra.dir/src/helper.cpp.o"
   "/home/dario/revSUPRA/src/hungarian.cpp" "/home/dario/revSUPRA/build/CMakeFiles/supra.dir/src/hungarian.cpp.o"
   "/home/dario/revSUPRA/src/structure.cpp" "/home/dario/revSUPRA/build/CMakeFiles/supra.dir/src/structure.cpp.o"

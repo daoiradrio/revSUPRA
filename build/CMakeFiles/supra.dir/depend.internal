@@ -3,7 +3,9 @@
 
 CMakeFiles/supra.dir/main_files/main.cpp.o
  ../include/analyzer.hpp
+ ../include/helper.hpp
  ../include/hungarian.hpp
+ ../include/structure.hpp
  /home/dario/revSUPRA/main_files/main.cpp
 CMakeFiles/supra.dir/src/analyzer.cpp.o
  ../include/analyzer.hpp
@@ -11,6 +13,11 @@ CMakeFiles/supra.dir/src/analyzer.cpp.o
  ../include/hungarian.hpp
  ../include/structure.hpp
  /home/dario/revSUPRA/src/analyzer.cpp
+CMakeFiles/supra.dir/src/conformergenerator.cpp.o
+ ../include/conformergenerator.hpp
+ ../include/helper.hpp
+ ../include/structure.hpp
+ /home/dario/revSUPRA/src/conformergenerator.cpp
 CMakeFiles/supra.dir/src/helper.cpp.o
  ../include/helper.hpp
  /home/dario/revSUPRA/src/helper.cpp
@@ -18,5 +25,6 @@ CMakeFiles/supra.dir/src/hungarian.cpp.o
  ../include/hungarian.hpp
  /home/dario/revSUPRA/src/hungarian.cpp
 CMakeFiles/supra.dir/src/structure.cpp.o
+ ../include/helper.hpp
  ../include/structure.hpp
  /home/dario/revSUPRA/src/structure.cpp

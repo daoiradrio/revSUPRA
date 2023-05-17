@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -r SUPRA_Output
+./../build/supra ../inputfiles/Alanin.xyz

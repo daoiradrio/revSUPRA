@@ -66,7 +66,7 @@ void ConformerGenerator::generate_conformers(){
 	    current_workdir = this->workdir_name + std::to_string(i) + "/";
 	    coord = current_workdir + "coord";
 	    opt_struc = current_workdir + this->opt_struc_filename;
-	    command = "t2x " + coord + " > " + opt_struc + " 2>&1";
+	    command = "t2x " + coord + " > " + opt_struc + " 2>/dev/null";
             system(command.c_str());
 	    command = "mv " + opt_struc + " SUPRA_Output/conformer" + std::to_string(i) + ".xyz";
 	    system(command.c_str());
@@ -75,6 +75,9 @@ void ConformerGenerator::generate_conformers(){
     	}
     	std::cout << n_generated_conformers << " have been generated." << std::endl;
     }
+
+    Analyzer analyzer;
+    analyzer.remove_doubles("SUPRA_Output", "conformer", n_generated_conformers);
 
     return;
 }

@@ -9,7 +9,6 @@ Analyzer::~Analyzer(){};
 
 void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_files){
     int i, j, k, l;
-    int counter;
     Structure struc1;
     Structure struc2;
     std::string file1;
@@ -23,12 +22,11 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_
     Eigen::MatrixX3d matched_coords1;
     Eigen::MatrixX3d matched_coords2;
 
-    struc1.read_xyz(filepath + "/" + filename + "0.xyz");
+    struc1.read_xyz("../apply/" + filepath + "/" + filename + "0.xyz");
     cost_mat.resize(struc1.n_atoms, std::vector<double>(struc1.n_atoms, 0.0));
     matched_coords1.resize(struc1.n_atoms, 3);
     matched_coords2.resize(struc2.n_atoms, 3);
-    counter = struc1.n_atoms;
-
+    
     for (i = 0; i < n_files-1; i++){
         file1 = filepath + "/" + filename + std::to_string(i) + ".xyz";
         struc1.read_xyz(file1);
@@ -49,23 +47,25 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_
                     cost_mat[l][k] = cost;
                 }
             }
-            assignment = hungarian(cost_mat);
+  	    assignment = hungarian(cost_mat);
             for (k = 0; k < assignment.size(); k++){
+		    std::cout << assignment[k] << " ";
                 matched_coords1(k, 0) = struc1.coords(k, 0);
                 matched_coords1(k, 1) = struc1.coords(k, 1);
                 matched_coords1(k, 2) = struc1.coords(k, 2);
                 matched_coords2(k, 0) = struc2.coords(assignment[k], 0);
-                matched_coords2(k, 1) = struc2.coords(assignment[k], 1);
-                matched_coords2(k, 2) = struc2.coords(assignment[k], 2);
+                //matched_coords2(k, 1) = struc2.coords(assignment[k], 1);
+                //matched_coords2(k, 2) = struc2.coords(assignment[k], 2);
             }
-            if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
-                counter -= 1;
+	    std::cout << std::endl;
+            /*if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
+                n_files -= 1;
                 break;
-            }
+            }*/
         }
     }
 
-    std::cout << "Individual conformers: " << counter << std::endl;
+    std::cout << "Individual conformers: " << n_files << std::endl;
 
     return;
 }

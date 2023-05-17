@@ -3,6 +3,7 @@
 
 #include <helper.hpp>
 #include <structure.hpp>
+#include <analyzer.hpp>
 
 #include <vector>
 #include <memory>

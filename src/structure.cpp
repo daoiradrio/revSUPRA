@@ -35,7 +35,7 @@ void Structure::read_xyz(std::string filepath){
             std::stringstream linestream(line);
             if (line_index == 0){
                 linestream >> this->n_atoms;
-                this->coords.resize(n_atoms, 3);
+                this->coords.resize(this->n_atoms, 3);
             }
             else if (line_index >= 2){
                 linestream >> element >> xcoord >> ycoord >> zcoord;  

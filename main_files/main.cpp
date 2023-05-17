@@ -1,13 +1,13 @@
-//#include <structure.hpp>
-//#include <conformergenerator.hpp>
-#include <analyzer.hpp>
+#include <structure.hpp>
+#include <conformergenerator.hpp>
+//#include <analyzer.hpp>
 
 #include <iostream>
 
 
 
 int main(int argc, char **argv){
-    /*std::string filename;
+    std::string filename;
     if (argc == 2){
         filename = argv[1];
     }
@@ -15,7 +15,7 @@ int main(int argc, char **argv){
         std::cout << "Type in .xyz file name: ";
         std::cin >> filename;
     }
-    std::string filepath = "inputfiles/" + filename;*/
+    //std::string filepath = "inputfiles/" + filename;
 
     /*std::string filepath1 = "inputfiles/Alanin.xyz";
     std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
@@ -26,12 +26,11 @@ int main(int argc, char **argv){
     Structure mol2;
     mol2.get_structure(filepath2);*/
 
-    //ConformerGenerator gen(mol);
-    //gen.generate_conformers();
+    Structure mol;
+    mol.get_structure(filename);
+    ConformerGenerator gen(mol);
+    gen.generate_conformers();
 
-    Analyzer analyzer;
-    analyzer.remove_doubles("/home/dario/SUPRA_Output/", "conformer", 97);
-    
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},
                                            { 1, 50, 51, 52},

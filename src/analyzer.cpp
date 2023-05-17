@@ -8,6 +8,8 @@ Analyzer::~Analyzer(){};
 
 
 void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_files){
+    std::cout << "Removing duplicate structures..." << std::endl;
+
     int i, j, k, l;
     Structure struc1;
     Structure struc2;
@@ -25,8 +27,10 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_
     struc1.read_xyz("../apply/" + filepath + "/" + filename + "0.xyz");
     cost_mat.resize(struc1.n_atoms, std::vector<double>(struc1.n_atoms, 0.0));
     matched_coords1.resize(struc1.n_atoms, 3);
-    matched_coords2.resize(struc2.n_atoms, 3);
-    
+    matched_coords1.setZero();
+    matched_coords2.resize(struc1.n_atoms, 3);
+    matched_coords2.setZero();
+
     for (i = 0; i < n_files-1; i++){
         file1 = filepath + "/" + filename + std::to_string(i) + ".xyz";
         struc1.read_xyz(file1);
@@ -49,19 +53,17 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_
             }
   	    assignment = hungarian(cost_mat);
             for (k = 0; k < assignment.size(); k++){
-		    std::cout << assignment[k] << " ";
                 matched_coords1(k, 0) = struc1.coords(k, 0);
                 matched_coords1(k, 1) = struc1.coords(k, 1);
                 matched_coords1(k, 2) = struc1.coords(k, 2);
                 matched_coords2(k, 0) = struc2.coords(assignment[k], 0);
-                //matched_coords2(k, 1) = struc2.coords(assignment[k], 1);
-                //matched_coords2(k, 2) = struc2.coords(assignment[k], 2);
+                matched_coords2(k, 1) = struc2.coords(assignment[k], 1);
+                matched_coords2(k, 2) = struc2.coords(assignment[k], 2);
             }
-	    std::cout << std::endl;
-            /*if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
+            if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
                 n_files -= 1;
                 break;
-            }*/
+            }
         }
     }
 
@@ -104,12 +106,12 @@ double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
 
     Eigen::JacobiSVD<Eigen::MatrixX3d> svd(H, Eigen::ComputeFullV | Eigen::ComputeFullU);
     
-    std::cout << svd.matrixU() << std::endl;
+    /*std::cout << svd.matrixU() << std::endl;
     std::cout << std::endl;
     std::cout << svd.matrixV() << std::endl;
     std::cout << std::endl;
     std::cout << svd.singularValues() << std::endl;
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
     det = (svd.matrixV(), svd.matrixU().transpose()).determinant();
     
@@ -126,18 +128,18 @@ double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
 
     R = (svd.matrixV() * helper_mat) * svd.matrixU().transpose();
 
-    std::cout << R << std::endl;
-    std::cout << std::endl; 
+    //std::cout << R << std::endl;
+    //std::cout << std::endl; 
 
-    std::cout << coords2 << std::endl;
-    std::cout << std::endl;
+    //std::cout << coords2 << std::endl;
+    //std::cout << std::endl;
 
     for (i = 0; i < coords2.rows(); i++){
         coords2.row(i) = coords2.row(i) * R;
     }
     
-    std::cout << coords2 << std::endl;
-    std::cout << std::endl;
+    //std::cout << coords2 << std::endl;
+    //std::cout << std::endl;
 
     rmsd = 0.0;
     for (i = 0; i < coords1.rows(); i++){
@@ -145,7 +147,7 @@ double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
     }
     rmsd = (1.0/(double)coords1.rows()) * rmsd;
 
-    std::cout << rmsd << std::endl;
+    //std::cout << rmsd << std::endl;
 
     return rmsd;
 }

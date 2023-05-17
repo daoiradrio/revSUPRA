@@ -46,6 +46,7 @@ void ConformerGenerator::generate_conformers(){
 
     this->generation_setup();
 
+    std::cout << "Generating conformer structures..." << std::endl;
     int i;
     int n_generated_conformers = 0;
     for (double increment: this->angle_increments){

@@ -8,19 +8,16 @@
 
 
 
-#define TOL 0.000001
+#define TOL 0.0001
 
 
 
-void dac(std::vector<double> arr, double search, int l, int r){
+int dac(std::vector<double> arr, double search, int l, int r){
         int m;
         while (l <= r){
                 m = l + (r - l)/2;
                 if (fabs(search - arr[m]) < TOL){
-                        std::cout << "Found at " << m << std::endl;
-			std::cout << search << " " << arr[m] << std::endl;
-			std::cout << std::endl;
-                        return;
+                        return 1;
                 }
                 else if (search < arr[m]){
                         r = m - 1;
@@ -29,8 +26,7 @@ void dac(std::vector<double> arr, double search, int l, int r){
                         l = m + 1;
                 }
         }
-        std::cout << "Not found..." << std::endl;
-        return;
+        return 0;
 }
 
 
@@ -56,7 +52,7 @@ int main(int argc, char **argv){
 		}
 	}
 
-	for (i = 0; i < energies.size(); i++){
+	/*for (i = 0; i < energies.size(); i++){
 		std::cout << energies[i] << std::endl;
 	}
 	std::cout << std::endl;
@@ -66,11 +62,15 @@ int main(int argc, char **argv){
 	for (i = 0; i < energies.size(); i++){
                 std::cout << energies[i] << std::endl;
         }
-	std::cout << std::endl;
+	std::cout << std::endl;*/
 
+    int counter = 0;
 	for (double energy: energies){
-		dac(energies, energy, 0, energies.size());
+		if (dac(energies, energy, 0, energies.size())){
+            counter++;
+        }
 	}
+    std::cout << "Von " << n_confs << " sind " << counter << " Doubles." << std::endl;
 
 	return 0;
 }

@@ -19,7 +19,7 @@ void Structure::read_xyz(std::string filepath){
     std::string element;
     std::string new_label;
     std::string line;
-    std::ifstream file(filepath);
+    std::ifstream file;
     double xcoord, ycoord, zcoord;
     int atom_index;
     int line_index;
@@ -27,6 +27,8 @@ void Structure::read_xyz(std::string filepath){
     this->n_atoms = 0;
     this->atoms.clear();
     this->coords.setZero();
+
+    file.open(filepath);
 
     if (file.is_open()){
         line_index = 0;

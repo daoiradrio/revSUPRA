@@ -25,6 +25,12 @@ vector
 -
 iostream
 -
+limits
+-
+algorithm
+-
+cmath
+-
 
 ../include/helper.hpp
 vector
@@ -68,7 +74,7 @@ sstream
 Eigen/Dense
 -
 
-/home/baum/revSUPRA/src/analyzer.cpp
+/home/dario/revSUPRA/src/analyzer.cpp
 analyzer.hpp
 -
 

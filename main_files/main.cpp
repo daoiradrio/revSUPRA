@@ -7,14 +7,14 @@
 
 
 int main(int argc, char **argv){
-    std::string filename;
+    /*std::string filename;
     if (argc == 2){
         filename = argv[1];
     }
     else{
         std::cout << "Type in .xyz file name: ";
         std::cin >> filename;
-    }
+    }*/
     //std::string filepath = "inputfiles/" + filename;
 
     /*std::string filepath1 = "inputfiles/Alanin.xyz";
@@ -26,10 +26,15 @@ int main(int argc, char **argv){
     Structure mol2;
     mol2.get_structure(filepath2);*/
 
-    Structure mol;
-    mol.get_structure(filename);
-    ConformerGenerator gen(mol);
-    gen.generate_conformers();
+    //Structure mol;
+    //mol.get_structure(filename);
+    //ConformerGenerator gen(mol);
+    //gen.generate_conformers();
+
+    std::string path;
+    Analyzer analyzer;
+    analyzer.extract_energies("/home/dario/revSUPRA/copy_apply2/", "opt_dir", 97);
+    analyzer.divide_and_conquer_remove_doubles("/home/dario/revSUPRA/copy_apply2/SUPRA_Output/", "conformer", 97);
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

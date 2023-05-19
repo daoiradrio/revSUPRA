@@ -64,6 +64,8 @@ void ConformerGenerator::generate_conformers(){
 	command = "mkdir SUPRA_Output";
 	system(command.c_str());
    	for (i = 0; i < n_generated_conformers; i++){
+        // HIER BESSER BASH SCRIPT SCHREIBEN UND STARTEN?
+        // SCHEINT BISHER RECHT LANGSAM ZU SEIN, VLLT DA system CALLS INEFFIZIENT
 	    current_workdir = this->workdir_name + std::to_string(i) + "/";
 	    coord = current_workdir + "coord";
 	    opt_struc = current_workdir + this->opt_struc_filename;

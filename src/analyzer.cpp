@@ -51,7 +51,7 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_
                     cost_mat[l][k] = cost;
                 }
             }
-  	    assignment = hungarian(cost_mat);
+  	        assignment = hungarian(cost_mat);
             for (k = 0; k < assignment.size(); k++){
                 matched_coords1(k, 0) = struc1.coords(k, 0);
                 matched_coords1(k, 1) = struc1.coords(k, 1);
@@ -71,6 +71,125 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_
 
     return;
 }
+
+
+void Analyzer::extract_energies(std::string folderpath, std::string foldername, int n_folders){
+    int i, j;
+    int dummy;
+    double energy;
+    std::string filepath;
+    std::string line;
+    std::ifstream file;
+
+    for (i = 0; i < n_folders; i++){
+        filepath = folderpath + foldername + std::to_string(i) + "/uffenergy";
+        file.open(filepath);
+        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (file.is_open()){
+            getline(file, line);
+            std::stringstream linestream(line);
+            linestream >> dummy >> energy;
+            this->container.push_back({energy, (double)i});
+        }
+        file.close();
+	}
+
+    std::sort(this->container.begin(), this->container.end(), this->sort_func);
+}
+
+
+void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::string filename, int n_files){
+    int i, j, k;
+    int n;
+    int l, m, r;
+    int counter;
+    double energy;
+    double element_term;
+    double cost;
+    std::string file1, file2;
+    std::vector<double> item;
+    std::vector<std::vector<double>> copy_container;
+    //std::vector<std::vector<double>>::iterator it;
+    Structure struc1;
+    Structure struc2;
+    std::vector<std::vector<double>> cost_mat;
+    std::vector<int> assignment;
+    Eigen::Vector3d diff_vec;
+    Eigen::MatrixX3d matched_coords1;
+    Eigen::MatrixX3d matched_coords2;
+
+    counter = n_files;
+    struc1.read_xyz(filepath + filename + "0.xyz");
+    cost_mat.resize(struc1.n_atoms, std::vector<double>(struc1.n_atoms, 0.0));
+    matched_coords1.resize(struc1.n_atoms, 3);
+    matched_coords1.setZero();
+    matched_coords2.resize(struc1.n_atoms, 3);
+    matched_coords2.setZero();
+
+    std::cout << filepath + filename + "0.xyz" << std::endl;
+    std::cout << cost_mat.size() << std::endl;
+    for (i = 0; i < cost_mat.size(); i++){
+        std::cout << cost_mat[i][0] << " " << cost_mat[i][1] << " " << cost_mat[i][2] << std::endl;
+    }
+
+    for (std::vector<double> item: this->container){
+        energy = item[0];
+        n = (int)item[1];
+        file1 = filepath + filename + std::to_string(n) + ".xyz";
+        struc1.read_xyz(file1);
+        copy_container = this->container;
+        for (i = n_files-1; i >=0; i--){
+            if (energy == copy_container[i][0]){
+                copy_container.erase(copy_container.begin()+i);
+            }
+        }
+        l = 0;
+        r = copy_container.size()-1;
+        while (l <= r){
+            m = l + (r - l)/2;
+            if (fabs(energy - copy_container[m][0]) < 0.00005){
+                file2 = filepath + filename + std::to_string(m) + ".xyz";
+                struc2.read_xyz(file2);
+                for (j = 0; j < struc1.n_atoms; j++){
+                    for (k = 0; k < j+1; k++){
+                        if (struc1.atoms[j]->element == struc2.atoms[k]->element){
+                            element_term = 0.0;
+                        }
+                        else{
+                            element_term = 100.0;
+                        }
+                        diff_vec = struc1.coords.row(j) - struc1.coords.row(k);
+                        cost = diff_vec.dot(diff_vec) + element_term;
+                        cost_mat[j][k] = cost;
+                        cost_mat[k][j] = cost;
+                    }
+                }
+  	            //assignment = hungarian(cost_mat);
+                /*std::cout << assignment.size() << std::endl;
+                for (j = 0; j < assignment.size(); j++){
+                    matched_coords1(j, 0) = 1.0;
+                    //matched_coords1(j, 0) = struc1.coords(j, 0);
+                    //matched_coords1(j, 1) = struc1.coords(j, 1);
+                    //matched_coords1(j, 2) = struc1.coords(j, 2);
+                    //matched_coords2(j, 0) = struc2.coords(assignment[j], 0);
+                    //matched_coords2(j, 1) = struc2.coords(assignment[j], 1);
+                    //matched_coords2(j, 2) = struc2.coords(assignment[j], 2);
+                }*/
+                /*if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
+                    counter -= 1;
+                }*/
+                break;
+            }
+            else if (energy < copy_container[m][0]){
+                r = m - 1;
+            }
+            else{
+                l = m + 1;
+            }
+        }
+    }
+}
+
 
 
 double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){

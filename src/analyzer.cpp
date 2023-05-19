@@ -126,12 +126,6 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
     matched_coords2.resize(struc1.n_atoms, 3);
     matched_coords2.setZero();
 
-    std::cout << filepath + filename + "0.xyz" << std::endl;
-    std::cout << cost_mat.size() << std::endl;
-    for (i = 0; i < cost_mat.size(); i++){
-        std::cout << cost_mat[i][0] << " " << cost_mat[i][1] << " " << cost_mat[i][2] << std::endl;
-    }
-
     for (std::vector<double> item: this->container){
         energy = item[0];
         n = (int)item[1];
@@ -147,7 +141,7 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
         r = copy_container.size()-1;
         while (l <= r){
             m = l + (r - l)/2;
-            if (fabs(energy - copy_container[m][0]) < 0.00005){
+            if (fabs(energy - copy_container[m][0]) < 0.0001){
                 file2 = filepath + filename + std::to_string(m) + ".xyz";
                 struc2.read_xyz(file2);
                 for (j = 0; j < struc1.n_atoms; j++){
@@ -164,20 +158,18 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
                         cost_mat[k][j] = cost;
                     }
                 }
-  	            //assignment = hungarian(cost_mat);
-                /*std::cout << assignment.size() << std::endl;
+  	            assignment = hungarian(cost_mat);
                 for (j = 0; j < assignment.size(); j++){
-                    matched_coords1(j, 0) = 1.0;
-                    //matched_coords1(j, 0) = struc1.coords(j, 0);
-                    //matched_coords1(j, 1) = struc1.coords(j, 1);
-                    //matched_coords1(j, 2) = struc1.coords(j, 2);
-                    //matched_coords2(j, 0) = struc2.coords(assignment[j], 0);
-                    //matched_coords2(j, 1) = struc2.coords(assignment[j], 1);
-                    //matched_coords2(j, 2) = struc2.coords(assignment[j], 2);
-                }*/
-                /*if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
+                    matched_coords1(j, 0) = struc1.coords(j, 0);
+                    matched_coords1(j, 1) = struc1.coords(j, 1);
+                    matched_coords1(j, 2) = struc1.coords(j, 2);
+                    matched_coords2(j, 0) = struc2.coords(assignment[j], 0);
+                    matched_coords2(j, 1) = struc2.coords(assignment[j], 1);
+                    matched_coords2(j, 2) = struc2.coords(assignment[j], 2);
+                }
+                if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
                     counter -= 1;
-                }*/
+                }
                 break;
             }
             else if (energy < copy_container[m][0]){
@@ -188,6 +180,7 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
             }
         }
     }
+    std::cout << "Von " << n_files << " erzeugten Konformeren sind " << counter << " individuelle Strukturen\n";
 }
 
 

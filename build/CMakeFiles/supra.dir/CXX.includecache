@@ -34,28 +34,6 @@ cmath
 utility
 -
 
-../include/conformergenerator.hpp
-helper.hpp
--
-structure.hpp
--
-analyzer.hpp
--
-vector
--
-memory
--
-string.h
--
-cmath
--
-fstream
--
-queue
--
-Eigen/Dense
--
-
 ../include/helper.hpp
 vector
 -
@@ -98,11 +76,7 @@ sstream
 Eigen/Dense
 -
 
-/home/dario/revSUPRA/main_files/main.cpp
-structure.hpp
--
-conformergenerator.hpp
--
-iostream
+/home/dario/revSUPRA/src/analyzer.cpp
+analyzer.hpp
 -
 

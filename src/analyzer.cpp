@@ -8,8 +8,8 @@ Analyzer::~Analyzer(){};
 
 
 void Analyzer::remove_doubles(std::string filepath, std::string filename){
-    int i, j, k, l;
-    int counter;
+    int i, j;
+    int counter = 0;
     Structure struc1;
     Structure struc2;
     std::string file1;
@@ -17,13 +17,6 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename){
     std::string command;
     std::vector<std::string> files;
     std::ifstream filestream;
-    std::vector<std::vector<double>> cost_mat;
-    std::vector<int> assignment;
-    double element_term;
-    double cost;
-    Eigen::Vector3d diff_vec;
-    Eigen::MatrixX3d matched_coords1;
-    Eigen::MatrixX3d matched_coords2;
 
     if (filepath.back() != '/'){
         filepath = filepath + "/";
@@ -44,14 +37,6 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename){
     command = "rm -f " + filepath + "files.tmp";
     system(command.c_str());
 
-    counter = 0;
-    struc1.read_xyz(filepath + files[0]);
-    cost_mat.resize(struc1.n_atoms, std::vector<double>(struc1.n_atoms, 0.0));
-    matched_coords1.resize(struc1.n_atoms, 3);
-    matched_coords1.setZero();
-    matched_coords2.resize(struc1.n_atoms, 3);
-    matched_coords2.setZero();
-
     std::cout << "Removing duplicate structures..." << std::endl;
 
     for (i = 0; i < files.size()-1; i++){
@@ -60,30 +45,7 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename){
         for (j = i + 1; j < files.size(); j++){
             file2 = filepath + "/" + filename + std::to_string(j) + ".xyz";
             struc2.read_xyz(file2);
-            for (k = 0; k < struc1.n_atoms; k++){
-                for (l = 0; l < k+1; l++){
-                    if (struc1.atoms[k]->element == struc2.atoms[l]->element){
-                        element_term = 0.0;
-                    }
-                    else{
-                        element_term = 100.0;
-                    }
-                    diff_vec = struc1.coords.row(k) - struc1.coords.row(l);
-                    cost = diff_vec.dot(diff_vec) + element_term;
-                    cost_mat[k][l] = cost;
-                    cost_mat[l][k] = cost;
-                }
-            }
-  	        assignment = hungarian(cost_mat);
-            for (k = 0; k < assignment.size(); k++){
-                matched_coords1(k, 0) = struc1.coords(k, 0);
-                matched_coords1(k, 1) = struc1.coords(k, 1);
-                matched_coords1(k, 2) = struc1.coords(k, 2);
-                matched_coords2(k, 0) = struc2.coords(assignment[k], 0);
-                matched_coords2(k, 1) = struc2.coords(assignment[k], 1);
-                matched_coords2(k, 2) = struc2.coords(assignment[k], 2);
-            }
-            if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
+            if (this->doubles(struc1, struc2)){
                 counter++;
                 break;
             }
@@ -145,6 +107,8 @@ void Analyzer::extract_energies(std::string folderpath, std::string foldername){
             return (a.first < b.first);
         }
     );
+
+    return;
 }
 
 
@@ -205,7 +169,7 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
         copy_container.erase(it);
         min_energy = energy - tol;
         max_energy = energy + tol;
-        /*std::vector<std::pair<double, int>>::iterator l = std::lower_bound(
+        std::vector<std::pair<double, int>>::iterator l = std::lower_bound(
             copy_container.begin(), copy_container.end(), min_energy,
             [](const std::pair<double, int>& item, const double& ref){
                 return (item.first < ref);
@@ -216,8 +180,8 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
             [](const std::pair<double, int>& item, const double& ref){
                 return (item.first < ref);
             }
-        );*/
-        std::vector<std::pair<double, int>>::iterator l = std::find_if(
+        );
+        /*std::vector<std::pair<double, int>>::iterator l = std::find_if(
             copy_container.begin(), copy_container.end(),
             [&](const std::pair<double, int>& item){
                 return (item.first >= min_energy);
@@ -228,7 +192,7 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
             [&](const std::pair<double, int>& item){
                 return (item.first >= max_energy);
             }
-        );
+        );*/
         for (; l != r; l++){
             index2 = (*l).second;
             file2 = filepath + files[index2];
@@ -242,62 +206,7 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
 
     std::cout << "Individual conformers: " << files.size()-counter << std::endl;
 
-    /*for (std::vector<double> item: this->container){
-        energy = item[0];
-        n = (int)item[1];
-        file1 = filepath + filename + std::to_string(n) + ".xyz";
-        struc1.read_xyz(file1);
-        copy_container = this->container;
-        for (i = n_files-1; i >=0; i--){
-            if (energy == copy_container[i][0]){
-                copy_container.erase(copy_container.begin()+i);
-            }
-        }
-        l = 0;
-        r = copy_container.size()-1;
-        while (l <= r){
-            m = l + (r - l)/2;
-            if (fabs(energy - copy_container[m][0]) < 0.0001){
-                file2 = filepath + filename + std::to_string(m) + ".xyz";
-                struc2.read_xyz(file2);
-                for (j = 0; j < struc1.n_atoms; j++){
-                    for (k = 0; k < j+1; k++){
-                        if (struc1.atoms[j]->element == struc2.atoms[k]->element){
-                            element_term = 0.0;
-                        }
-                        else{
-                            element_term = 100.0;
-                        }
-                        diff_vec = struc1.coords.row(j) - struc1.coords.row(k);
-                        cost = diff_vec.dot(diff_vec) + element_term;
-                        cost_mat[j][k] = cost;
-                        cost_mat[k][j] = cost;
-                    }
-                }
-  	            assignment = hungarian(cost_mat);
-                for (j = 0; j < assignment.size(); j++){
-                    matched_coords1(j, 0) = struc1.coords(j, 0);
-                    matched_coords1(j, 1) = struc1.coords(j, 1);
-                    matched_coords1(j, 2) = struc1.coords(j, 2);
-                    matched_coords2(j, 0) = struc2.coords(assignment[j], 0);
-                    matched_coords2(j, 1) = struc2.coords(assignment[j], 1);
-                    matched_coords2(j, 2) = struc2.coords(assignment[j], 2);
-                }
-                if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
-                    counter++;
-                }
-                break;
-            }
-            else if (energy < copy_container[m][0]){
-                r = m - 1;
-            }
-            else{
-                l = m + 1;
-            }
-        }
-    }*/
-
-    //std::cout << "Von " << files.size() << " erzeugten Konformeren sind " << files.size()-counter << " individuelle Strukturen\n";
+    return;
 }
 
 

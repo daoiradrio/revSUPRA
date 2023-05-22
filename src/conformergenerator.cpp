@@ -80,7 +80,7 @@ void ConformerGenerator::generate_conformers(){
     }
 
     Analyzer analyzer;
-    analyzer.remove_doubles("SUPRA_Output", "conformer", n_generated_conformers);
+    analyzer.remove_doubles("SUPRA_Output", "conformer");
 
     return;
 }

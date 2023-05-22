@@ -14,6 +14,7 @@
 #include <limits>
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
 
 class Analyzer{
@@ -26,16 +27,16 @@ class Analyzer{
         Eigen::MatrixX3d coords;
 
         double rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2);
-        void remove_doubles(std::string filepath, std::string filename, int n_files);
-        void extract_energies(std::string folderpath, std::string foldername, int n_folders);
-        void divide_and_conquer_remove_doubles(std::string filepath, std::string filename, int n_files);
+        void remove_doubles(std::string filepath, std::string filename);
+        void extract_energies(std::string folderpath, std::string foldername);
+        void divide_and_conquer_remove_doubles(std::string filepath, std::string filename);
 
-        std::vector<std::vector<double>> container;
+        std::vector<std::pair<double, int>> container;
 
     private:
         //std::vector<std::vector<double>> container;
 
-        static bool sort_func(std::vector<double> a, std::vector<double> b){return (a[0] < b[0]);};
+        static bool sort_func(std::pair<double, int> a, std::pair<double, int> b){return (a.first < b.first);};
 
 };
 

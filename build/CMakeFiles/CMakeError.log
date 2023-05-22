@@ -1,21 +1,22 @@
 Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
-Change Dir: /home/dario/revSUPRA/build/CMakeFiles/CMakeTmp
+Change Dir: /home/baum/revSUPRA/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_3f298/fast && /usr/bin/make -f CMakeFiles/cmTC_3f298.dir/build.make CMakeFiles/cmTC_3f298.dir/build
-make[1]: Entering directory '/home/dario/revSUPRA/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_3f298.dir/src.c.o
-/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_3f298.dir/src.c.o   -c /home/dario/revSUPRA/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_3f298
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3f298.dir/link.txt --verbose=1
-/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    CMakeFiles/cmTC_3f298.dir/src.c.o  -o cmTC_3f298 
-/usr/bin/ld: CMakeFiles/cmTC_3f298.dir/src.c.o: in function `main':
-src.c:(.text+0x46): undefined reference to `pthread_create'
-/usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
-/usr/bin/ld: src.c:(.text+0x63): undefined reference to `pthread_join'
+Run Build Command(s):/usr/bin/gmake cmTC_e75f7/fast && /usr/bin/gmake -f CMakeFiles/cmTC_e75f7.dir/build.make CMakeFiles/cmTC_e75f7.dir/build
+gmake[1]: Entering directory '/home/baum/revSUPRA/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_e75f7.dir/src.c.o
+/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_e75f7.dir/src.c.o   -c /home/baum/revSUPRA/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_e75f7
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e75f7.dir/link.txt --verbose=1
+/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD    CMakeFiles/cmTC_e75f7.dir/src.c.o  -o cmTC_e75f7 
+/usr/lib64/gcc/x86_64-suse-linux/7/../../../../x86_64-suse-linux/bin/ld: CMakeFiles/cmTC_e75f7.dir/src.c.o: in function `main':
+src.c:(.text+0x2d): undefined reference to `pthread_create'
+/usr/lib64/gcc/x86_64-suse-linux/7/../../../../x86_64-suse-linux/bin/ld: src.c:(.text+0x39): undefined reference to `pthread_detach'
+/usr/lib64/gcc/x86_64-suse-linux/7/../../../../x86_64-suse-linux/bin/ld: src.c:(.text+0x45): undefined reference to `pthread_cancel'
+/usr/lib64/gcc/x86_64-suse-linux/7/../../../../x86_64-suse-linux/bin/ld: src.c:(.text+0x56): undefined reference to `pthread_join'
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_3f298.dir/build.make:87: cmTC_3f298] Error 1
-make[1]: Leaving directory '/home/dario/revSUPRA/build/CMakeFiles/CMakeTmp'
-make: *** [Makefile:121: cmTC_3f298/fast] Error 2
+gmake[1]: *** [CMakeFiles/cmTC_e75f7.dir/build.make:104: cmTC_e75f7] Error 1
+gmake[1]: Leaving directory '/home/baum/revSUPRA/build/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:138: cmTC_e75f7/fast] Error 2
 
 
 Source file was:
@@ -31,6 +32,7 @@ int main(void)
   pthread_t thread;
   pthread_create(&thread, NULL, test_func, NULL);
   pthread_detach(thread);
+  pthread_cancel(thread);
   pthread_join(thread, NULL);
   pthread_atfork(NULL, NULL, NULL);
   pthread_exit(NULL);
@@ -39,20 +41,20 @@ int main(void)
 }
 
 Determining if the function pthread_create exists in the pthreads failed with the following output:
-Change Dir: /home/dario/revSUPRA/build/CMakeFiles/CMakeTmp
+Change Dir: /home/baum/revSUPRA/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_7cbe4/fast && /usr/bin/make -f CMakeFiles/cmTC_7cbe4.dir/build.make CMakeFiles/cmTC_7cbe4.dir/build
-make[1]: Entering directory '/home/dario/revSUPRA/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_7cbe4.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_7cbe4.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.16/Modules/CheckFunctionExists.c
-Linking C executable cmTC_7cbe4
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7cbe4.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_7cbe4.dir/CheckFunctionExists.c.o  -o cmTC_7cbe4  -lpthreads 
-/usr/bin/ld: cannot find -lpthreads
+Run Build Command(s):/usr/bin/gmake cmTC_150e1/fast && /usr/bin/gmake -f CMakeFiles/cmTC_150e1.dir/build.make CMakeFiles/cmTC_150e1.dir/build
+gmake[1]: Entering directory '/home/baum/revSUPRA/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_150e1.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_150e1.dir/CheckFunctionExists.c.o   -c /usr/share/cmake/Modules/CheckFunctionExists.c
+Linking C executable cmTC_150e1
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_150e1.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_150e1.dir/CheckFunctionExists.c.o  -o cmTC_150e1  -lpthreads 
+/usr/lib64/gcc/x86_64-suse-linux/7/../../../../x86_64-suse-linux/bin/ld: cannot find -lpthreads: No such file or directory
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_7cbe4.dir/build.make:87: cmTC_7cbe4] Error 1
-make[1]: Leaving directory '/home/dario/revSUPRA/build/CMakeFiles/CMakeTmp'
-make: *** [Makefile:121: cmTC_7cbe4/fast] Error 2
+gmake[1]: *** [CMakeFiles/cmTC_150e1.dir/build.make:104: cmTC_150e1] Error 1
+gmake[1]: Leaving directory '/home/baum/revSUPRA/build/CMakeFiles/CMakeTmp'
+gmake: *** [Makefile:138: cmTC_150e1/fast] Error 2
 
 
 

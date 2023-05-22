@@ -7,15 +7,16 @@ Analyzer::Analyzer(){};
 Analyzer::~Analyzer(){};
 
 
-void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_files){
-    std::cout << "Removing duplicate structures..." << std::endl;
-
+void Analyzer::remove_doubles(std::string filepath, std::string filename){
     int i, j, k, l;
+    int counter;
     Structure struc1;
     Structure struc2;
     std::string file1;
     std::string file2;
     std::string command;
+    std::vector<std::string> files;
+    std::ifstream filestream;
     std::vector<std::vector<double>> cost_mat;
     std::vector<int> assignment;
     double element_term;
@@ -24,17 +25,39 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_
     Eigen::MatrixX3d matched_coords1;
     Eigen::MatrixX3d matched_coords2;
 
-    struc1.read_xyz("../apply/" + filepath + "/" + filename + "0.xyz");
+    if (filepath.back() != '/'){
+        filepath = filepath + "/";
+    }
+
+    command = "ls " + filepath + " | grep " + filename + " > " + filepath + "files.tmp";
+    system(command.c_str());
+    filestream.open(filepath + "files.tmp");
+    if (filestream.is_open()){
+        while (getline(filestream, file1)){
+            files.push_back(file1);
+        }
+    }
+    else{
+        std::cout << "ERROR IN ANALYZER MODULE: COULD NOT OPEN FILES.TMP" << std::endl;
+    }
+    filestream.close();
+    command = "rm -f " + filepath + "files.tmp";
+    system(command.c_str());
+
+    counter = 0;
+    struc1.read_xyz(filepath + files[0]);
     cost_mat.resize(struc1.n_atoms, std::vector<double>(struc1.n_atoms, 0.0));
     matched_coords1.resize(struc1.n_atoms, 3);
     matched_coords1.setZero();
     matched_coords2.resize(struc1.n_atoms, 3);
     matched_coords2.setZero();
 
-    for (i = 0; i < n_files-1; i++){
+    std::cout << "Removing duplicate structures..." << std::endl;
+
+    for (i = 0; i < files.size()-1; i++){
         file1 = filepath + "/" + filename + std::to_string(i) + ".xyz";
         struc1.read_xyz(file1);
-        for (j = i + 1; j < n_files; j++){
+        for (j = i + 1; j < files.size(); j++){
             file2 = filepath + "/" + filename + std::to_string(j) + ".xyz";
             struc2.read_xyz(file2);
             for (k = 0; k < struc1.n_atoms; k++){
@@ -61,54 +84,84 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, int n_
                 matched_coords2(k, 2) = struc2.coords(assignment[k], 2);
             }
             if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
-                n_files -= 1;
+                counter++;
                 break;
             }
         }
     }
 
-    std::cout << "Individual conformers: " << n_files << std::endl;
+    std::cout << "Individual conformers: " << files.size()-counter << std::endl;
 
     return;
 }
 
 
-void Analyzer::extract_energies(std::string folderpath, std::string foldername, int n_folders){
+void Analyzer::extract_energies(std::string folderpath, std::string foldername){
     int i, j;
     int dummy;
     double energy;
+    std::string command;
     std::string filepath;
     std::string line;
-    std::ifstream file;
+    std::vector<std::string> folders;
+    std::ifstream filestream;
 
-    for (i = 0; i < n_folders; i++){
+    if (folderpath.back() != '/'){
+        folderpath = folderpath + "/";
+    }
+
+    command = "ls " + filepath + " | grep " + foldername + " > " + folderpath + "folders.tmp";
+    system(command.c_str());
+    filestream.open(folderpath + "folders.tmp");
+    if (filestream.is_open()){
+        while (getline(filestream, line)){
+            folders.push_back(line + "/");
+        }
+    }
+    else{
+        std::cout << "ERROR IN ANALYZER MODULE: COULD NOT OPEN FOLDERS.TMP" << std::endl;
+    }
+    filestream.close();
+    command = "rm -f " + folderpath + "folders.tmp";
+    system(command.c_str());
+
+    for (i = 0; i < folders.size(); i++){
         filepath = folderpath + foldername + std::to_string(i) + "/uffenergy";
-        file.open(filepath);
-        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        if (file.is_open()){
-            getline(file, line);
+        filestream.open(filepath);
+        filestream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (filestream.is_open()){
+            getline(filestream, line);
             std::stringstream linestream(line);
             linestream >> dummy >> energy;
-            this->container.push_back({energy, (double)i});
+            this->container.push_back(std::make_pair(energy, i));
         }
-        file.close();
+        filestream.close();
 	}
 
     std::sort(this->container.begin(), this->container.end(), this->sort_func);
 }
 
 
-void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::string filename, int n_files){
+void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::string filename){
+    if (this->container.size() == 0){
+        std::cout << "\nNO ENERGIES FOUND, SWITCHING TO STANDARD DOUBLE STRUCTURE REMOVAL\n" << std::endl;
+        return this->remove_doubles(filepath, filename);
+    }
+
     int i, j, k;
+    int index;
     int n;
     int l, m, r;
     int counter;
     double energy;
     double element_term;
     double cost;
+    std::string command;
     std::string file1, file2;
+    std::ifstream filestream;
+    std::vector<std::string> files;
     std::vector<double> item;
-    std::vector<std::vector<double>> copy_container;
+    std::vector<std::pair<double, int>> copy_container;
     //std::vector<std::vector<double>>::iterator it;
     Structure struc1;
     Structure struc2;
@@ -118,15 +171,43 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
     Eigen::MatrixX3d matched_coords1;
     Eigen::MatrixX3d matched_coords2;
 
-    counter = n_files;
-    struc1.read_xyz(filepath + filename + "0.xyz");
+    if (filepath.back() != '/'){
+        filepath = filepath + "/";
+    }
+
+    command = "ls " + filepath + " | grep " + filename + " > " + filepath + "files.tmp";
+    system(command.c_str());
+    filestream.open(filepath + "files.tmp");
+    if (filestream.is_open()){
+        while (getline(filestream, file1)){
+            files.push_back(file1 + "/");
+        }
+    }
+    else{
+        std::cout << "ERROR IN ANALYZER MODULE: COULD NOT OPEN FILES.TMP" << std::endl;
+    }
+    filestream.close();
+    command = "rm -f " + filepath + "files.tmp";
+    system(command.c_str());
+
+    counter = 0;
+    struc1.read_xyz(filepath + files[0]);
     cost_mat.resize(struc1.n_atoms, std::vector<double>(struc1.n_atoms, 0.0));
     matched_coords1.resize(struc1.n_atoms, 3);
     matched_coords1.setZero();
     matched_coords2.resize(struc1.n_atoms, 3);
     matched_coords2.setZero();
 
-    for (std::vector<double> item: this->container){
+    for (std::pair<double, int> item: container){
+        energy = item.first;
+        index = item.second;
+        file1 = filepath + filename + std::to_string(index) + ".xyz";
+        struc1.read_xyz(file1);
+        copy_container = this->container;
+        
+    }
+
+    /*for (std::vector<double> item: this->container){
         energy = item[0];
         n = (int)item[1];
         file1 = filepath + filename + std::to_string(n) + ".xyz";
@@ -168,7 +249,7 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
                     matched_coords2(j, 2) = struc2.coords(assignment[j], 2);
                 }
                 if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
-                    counter -= 1;
+                    counter++;
                 }
                 break;
             }
@@ -179,8 +260,9 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
                 l = m + 1;
             }
         }
-    }
-    std::cout << "Von " << n_files << " erzeugten Konformeren sind " << counter << " individuelle Strukturen\n";
+    }*/
+
+    //std::cout << "Von " << files.size() << " erzeugten Konformeren sind " << files.size()-counter << " individuelle Strukturen\n";
 }
 
 

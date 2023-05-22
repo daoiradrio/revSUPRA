@@ -65,6 +65,7 @@
         "forward_list": "cpp",
         "unordered_set": "cpp",
         "mutex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "cinttypes": "cpp"
     }
 }

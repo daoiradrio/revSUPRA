@@ -31,10 +31,11 @@ int main(int argc, char **argv){
     //ConformerGenerator gen(mol);
     //gen.generate_conformers();
 
-    std::string path;
     Analyzer analyzer;
-    analyzer.extract_energies("/home/dario/revSUPRA/copy_apply2/", "opt_dir", 97);
-    analyzer.divide_and_conquer_remove_doubles("/home/dario/revSUPRA/copy_apply2/SUPRA_Output/", "conformer", 97);
+    
+    //analyzer.remove_doubles("/home/baum/revSUPRA/apply2/", "conformer");
+    //analyzer.extract_energies("/home/dario/revSUPRA/copy_apply2/", "opt_dir", 97);
+    //analyzer.divide_and_conquer_remove_doubles("/home/dario/revSUPRA/copy_apply2/SUPRA_Output/", "conformer", 97);
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

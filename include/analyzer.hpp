@@ -30,11 +30,12 @@ class Analyzer{
         void remove_doubles(std::string filepath, std::string filename);
         void extract_energies(std::string folderpath, std::string foldername);
         void divide_and_conquer_remove_doubles(std::string filepath, std::string filename);
+        bool doubles(Structure& struc1, Structure& struc2);
 
         std::vector<std::pair<double, int>> container;
 
     private:
-        //std::vector<std::vector<double>> container;
+        //std::vector<std::pair<double, int>> container;
 
         static bool sort_func(std::pair<double, int> a, std::pair<double, int> b){return (a.first < b.first);};
 

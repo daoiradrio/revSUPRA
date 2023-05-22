@@ -110,7 +110,7 @@ void Analyzer::extract_energies(std::string folderpath, std::string foldername){
         folderpath = folderpath + "/";
     }
 
-    command = "ls " + filepath + " | grep " + foldername + " > " + folderpath + "folders.tmp";
+    command = "ls " + folderpath + " | grep " + foldername + " > " + folderpath + "folders.tmp";
     system(command.c_str());
     filestream.open(folderpath + "folders.tmp");
     if (filestream.is_open()){
@@ -138,7 +138,13 @@ void Analyzer::extract_energies(std::string folderpath, std::string foldername){
         filestream.close();
 	}
 
-    std::sort(this->container.begin(), this->container.end(), this->sort_func);
+    //std::sort(this->container.begin(), this->container.end(), this->sort_func);
+    std::sort(
+        this->container.begin(), this->container.end(), 
+        [](std::pair<double, int>& a, std::pair<double, int>& b){
+            return (a.first < b.first);
+        }
+    );
 }
 
 
@@ -148,12 +154,8 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
         return this->remove_doubles(filepath, filename);
     }
 
-    int i, j, k;
-    int index;
-    int n;
-    int l, m, r;
-    int counter;
-    double energy;
+    int index1, index2;
+    double energy, min_energy, max_energy;
     double element_term;
     double cost;
     std::string command;
@@ -162,14 +164,12 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
     std::vector<std::string> files;
     std::vector<double> item;
     std::vector<std::pair<double, int>> copy_container;
-    //std::vector<std::vector<double>>::iterator it;
+    std::vector<std::pair<double, int>>::iterator it;
     Structure struc1;
     Structure struc2;
-    std::vector<std::vector<double>> cost_mat;
-    std::vector<int> assignment;
-    Eigen::Vector3d diff_vec;
-    Eigen::MatrixX3d matched_coords1;
-    Eigen::MatrixX3d matched_coords2;
+
+    int counter = 0;
+    double tol = 0.0001;
 
     if (filepath.back() != '/'){
         filepath = filepath + "/";
@@ -180,7 +180,7 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
     filestream.open(filepath + "files.tmp");
     if (filestream.is_open()){
         while (getline(filestream, file1)){
-            files.push_back(file1 + "/");
+            files.push_back(file1);
         }
     }
     else{
@@ -190,22 +190,57 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
     command = "rm -f " + filepath + "files.tmp";
     system(command.c_str());
 
-    counter = 0;
-    struc1.read_xyz(filepath + files[0]);
-    cost_mat.resize(struc1.n_atoms, std::vector<double>(struc1.n_atoms, 0.0));
-    matched_coords1.resize(struc1.n_atoms, 3);
-    matched_coords1.setZero();
-    matched_coords2.resize(struc1.n_atoms, 3);
-    matched_coords2.setZero();
-
     for (std::pair<double, int> item: container){
         energy = item.first;
-        index = item.second;
-        file1 = filepath + filename + std::to_string(index) + ".xyz";
+        index1 = item.second;
+        file1 = filepath + files[index1];
         struc1.read_xyz(file1);
         copy_container = this->container;
-        
+        it = std::find_if(
+            copy_container.begin(), copy_container.end(), 
+            [&](std::pair<double, int>& item){
+                return (item.first == energy);
+            }
+        );
+        copy_container.erase(it);
+        min_energy = energy - tol;
+        max_energy = energy + tol;
+        /*std::vector<std::pair<double, int>>::iterator l = std::lower_bound(
+            copy_container.begin(), copy_container.end(), min_energy,
+            [](const std::pair<double, int>& item, const double& ref){
+                return (item.first < ref);
+            }
+        );
+        std::vector<std::pair<double, int>>::iterator r = std::lower_bound(
+            copy_container.begin(), copy_container.end(), max_energy,
+            [](const std::pair<double, int>& item, const double& ref){
+                return (item.first < ref);
+            }
+        );*/
+        std::vector<std::pair<double, int>>::iterator l = std::find_if(
+            copy_container.begin(), copy_container.end(),
+            [&](const std::pair<double, int>& item){
+                return (item.first >= min_energy);
+            }
+        );
+        std::vector<std::pair<double, int>>::iterator r = std::find_if(
+            copy_container.begin(), copy_container.end(),
+            [&](const std::pair<double, int>& item){
+                return (item.first >= max_energy);
+            }
+        );
+        for (; l != r; l++){
+            index2 = (*l).second;
+            file2 = filepath + files[index2];
+            struc2.read_xyz(file2);
+            if (this->doubles(struc1, struc2)){
+                counter++;
+                break;
+            }
+        }
     }
+
+    std::cout << "Individual conformers: " << files.size()-counter << std::endl;
 
     /*for (std::vector<double> item: this->container){
         energy = item[0];
@@ -265,6 +300,54 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
     //std::cout << "Von " << files.size() << " erzeugten Konformeren sind " << files.size()-counter << " individuelle Strukturen\n";
 }
 
+
+bool Analyzer::doubles(Structure& struc1, Structure& struc2){
+    int i, j;
+    int n_atoms = struc1.n_atoms;
+    bool doubles = false;
+    double element_term;
+    double cost;
+    std::vector<std::vector<double>> cost_mat;
+    std::vector<int> assignment;
+    Eigen::Vector3d diff_vec;
+    Eigen::MatrixX3d matched_coords1;
+    Eigen::MatrixX3d matched_coords2;
+
+    cost_mat.resize(n_atoms, std::vector<double>(n_atoms, 0.0));
+    matched_coords1.resize(n_atoms, 3);
+    matched_coords1.setZero();
+    matched_coords2.resize(n_atoms, 3);
+    matched_coords2.setZero();
+
+    for (i = 0; i < n_atoms; i++){
+        for (j = 0; j < i+1; j++){
+            if (struc1.atoms[i]->element == struc2.atoms[j]->element){
+                element_term = 0.0;
+            }
+            else{
+                element_term = 100.0;
+            }
+            diff_vec = struc1.coords.row(i) - struc1.coords.row(j);
+            cost = diff_vec.dot(diff_vec) + element_term;
+            cost_mat[i][j] = cost;
+            cost_mat[j][i] = cost;
+        }
+    }
+  	assignment = hungarian(cost_mat);
+    for (i = 0; i < assignment.size(); i++){
+        matched_coords1(i, 0) = struc1.coords(i, 0);
+        matched_coords1(i, 1) = struc1.coords(i, 1);
+        matched_coords1(i, 2) = struc1.coords(i, 2);
+        matched_coords2(i, 0) = struc2.coords(assignment[i], 0);
+        matched_coords2(i, 1) = struc2.coords(assignment[i], 1);
+        matched_coords2(i, 2) = struc2.coords(assignment[i], 2);
+    }
+    if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
+        doubles = true;
+    }
+
+    return doubles;
+}
 
 
 double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){

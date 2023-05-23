@@ -33,6 +33,7 @@ class Analyzer{
         bool doubles(Structure& struc1, Structure& struc2);
 
         std::vector<std::pair<double, int>> container;
+        std::vector<double> energies;
 
     private:
         //std::vector<std::pair<double, int>> container;

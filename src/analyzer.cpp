@@ -39,13 +39,21 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename){
 
     std::cout << "Removing duplicate structures..." << std::endl;
 
+    int compares = 0;
+
     for (i = 0; i < files.size()-1; i++){
-        file1 = filepath + "/" + filename + std::to_string(i) + ".xyz";
+        file1 = filepath + files[i];
         struc1.read_xyz(file1);
+        compares = 0;
         for (j = i + 1; j < files.size(); j++){
-            file2 = filepath + "/" + filename + std::to_string(j) + ".xyz";
+            compares++;
+            file2 = filepath + files[j];
             struc2.read_xyz(file2);
             if (this->doubles(struc1, struc2)){
+                std::cout << i << " " << j << std::endl;
+                std::cout << this->energies[i] << " " << this->energies[j] << std::endl;
+                std::cout << compares << std::endl;
+                std::cout << std::endl;
                 counter++;
                 break;
             }
@@ -96,6 +104,7 @@ void Analyzer::extract_energies(std::string folderpath, std::string foldername){
             std::stringstream linestream(line);
             linestream >> dummy >> energy;
             this->container.push_back(std::make_pair(energy, i));
+            this->energies.push_back(energy);
         }
         filestream.close();
 	}
@@ -128,12 +137,14 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
     std::vector<std::string> files;
     std::vector<double> item;
     std::vector<std::pair<double, int>> copy_container;
-    std::vector<std::pair<double, int>>::iterator it;
+    std::vector<std::pair<double, int>> working_container;
+    std::vector<std::pair<double, int>>::iterator it1;
+    std::vector<std::pair<double, int>>::iterator it2;
     Structure struc1;
     Structure struc2;
 
     int counter = 0;
-    double tol = 0.0001;
+    double tol = 0.025;
 
     if (filepath.back() != '/'){
         filepath = filepath + "/";
@@ -154,19 +165,27 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
     command = "rm -f " + filepath + "files.tmp";
     system(command.c_str());
 
+    int compares = 0;
+    working_container = this->container;
+
     for (std::pair<double, int> item: container){
         energy = item.first;
         index1 = item.second;
         file1 = filepath + files[index1];
         struc1.read_xyz(file1);
-        copy_container = this->container;
-        it = std::find_if(
+        copy_container = working_container;
+        /*it = std::find_if(
             copy_container.begin(), copy_container.end(), 
             [&](std::pair<double, int>& item){
                 return (item.first == energy);
             }
-        );
-        copy_container.erase(it);
+        );*/
+        for (it1 = copy_container.begin(), it2 = working_container.begin(); it1 != copy_container.end(); it1++, it2++){
+            if ((*it1).first == energy){
+                break;
+            }
+        }
+        copy_container.erase(it1);
         min_energy = energy - tol;
         max_energy = energy + tol;
         std::vector<std::pair<double, int>>::iterator l = std::lower_bound(
@@ -193,11 +212,18 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
                 return (item.first >= max_energy);
             }
         );*/
+        compares = 0;
         for (; l != r; l++){
+            compares++;
             index2 = (*l).second;
             file2 = filepath + files[index2];
             struc2.read_xyz(file2);
             if (this->doubles(struc1, struc2)){
+                std::cout << index1 << " " << index2 << std::endl;
+                std::cout << this->container[index1].first << " " << this->container[index2].first << std::endl;
+                std::cout << compares << std::endl;
+                std::cout << std::endl;
+                working_container.erase(it2);
                 counter++;
                 break;
             }

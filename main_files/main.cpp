@@ -33,9 +33,9 @@ int main(int argc, char **argv){
 
     Analyzer analyzer;
     
-    analyzer.remove_doubles("/home/dario/revSUPRA/copy_apply2/SUPRA_Output/", "conformer");
-    analyzer.extract_energies("/home/dario/revSUPRA/copy_apply2/", "opt_dir");
-    analyzer.divide_and_conquer_remove_doubles("/home/dario/revSUPRA/copy_apply2/SUPRA_Output/", "conformer");
+    analyzer.extract_energies("/home/baum/revSUPRA/apply3/", "optdir");
+    analyzer.remove_doubles("/home/baum/revSUPRA/apply3/SUPRA_Output/", "conformer");
+    analyzer.divide_and_conquer_remove_doubles("/home/baum/revSUPRA/apply3/SUPRA_Output/", "conformer");
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

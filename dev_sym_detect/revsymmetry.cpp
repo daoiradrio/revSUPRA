@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <iostream>
 //#include <vector>
 //#include <memory>
 
@@ -220,34 +221,44 @@ int establish_pairs( SYMMETRY_ELEMENT *elem )
   }
   for( i = 0 ; i < AtomsCount ; i++ ){
     if( elem->transform[i] >= AtomsCount ){ /* No symmetric atom yet          */
-      if( verbose > 2 ) printf( "        looking for a pair for %d\n", i ) ;
+      if( verbose > 2 ){
+        printf( "        looking for a pair for %d\n", i ) ;
+      }
       elem->transform_atom( elem, Atoms+i, &symmetric ) ;
-      if( verbose > 2 ) printf( "        new coordinates are: (%g,%g,%g)\n",
-				symmetric.x[0], symmetric.x[1], symmetric.x[2] ) ;
+      if( verbose > 2 ){
+        printf( "        new coordinates are: (%g,%g,%g)\n",
+                symmetric.x[0], symmetric.x[1], symmetric.x[2] ) ;
+      }
       best_j        = i ;
       best_distance = 2*TolerancePrimary ;/* Performance value we'll reject */
       for( j = 0 ; j < AtomsCount ; j++ ){
-	if( Atoms[j].type != symmetric.type || atom_used[j] )
-	  continue ;
-	for( k = 0, distance = 0 ; k < DIMENSION ; k++ ){
-	  distance += pow2( symmetric.x[k] - Atoms[j].x[k] ) ;
-	}
-	distance = sqrt( distance ) ;
-	if( verbose > 2 ) printf( "        distance to %d is %g\n", j, distance ) ;
-	if( distance < best_distance ){
-	  best_j        = j ;
-	  best_distance = distance ;
-	}
+        if( Atoms[j].type != symmetric.type || atom_used[j] ){
+	        continue ;
+        }
+	      for( k = 0, distance = 0 ; k < DIMENSION ; k++ ){
+	        distance += pow2( symmetric.x[k] - Atoms[j].x[k] ) ;
+	      }
+	      distance = sqrt( distance ) ;
+	      if( verbose > 2 ){
+          printf( "        distance to %d is %g\n", j, distance ) ;
+        }
+	      if( distance < best_distance ){
+	        best_j        = j ;
+	        best_distance = distance ;
+	      }
       }
       if( best_distance > TolerancePrimary ){ /* Too bad, there is no symmetric atom */
-	if( verbose > 0 )
-	  printf( "        no pair for atom %d - best was %d with err = %g\n", i, best_j, best_distance ) ;
-	free( atom_used ) ;
-	return -1 ;
+	      if( verbose > 0 ){
+	        printf( "        no pair for atom %d - best was %d with err = %g\n", i, best_j, best_distance );
+        }
+	      free( atom_used ) ;
+	      return -1 ;
       }
       elem->transform[i] = best_j ;
       atom_used[best_j]  = 1 ;
-      if( verbose > 1 ) printf( "        atom %d transforms to the atom %d, err = %g\n", i, best_j, best_distance ) ;
+      if( verbose > 1 ){
+        printf( "        atom %d transforms to the atom %d, err = %g\n", i, best_j, best_distance ) ;
+      }
     }
   }
   free( atom_used ) ;
@@ -905,17 +916,20 @@ SYMMETRY_ELEMENT* init_c2_axis( int i, int j, double support[ DIMENSION ] )
   axis->transform_atom = rotate_atom ;
   axis->order          = 2 ;
   axis->nparam         = 7 ;
-  for( k = 0, r = 0 ; k < DIMENSION ; k++ )
+  for( k = 0, r = 0 ; k < DIMENSION ; k++ ){
     r += CenterOfSomething[k]*CenterOfSomething[k] ;
+  }
   r = sqrt(r) ;
   if( r > 0 ){
-    for( k = 0 ; k < DIMENSION ; k++ )
+    for( k = 0 ; k < DIMENSION ; k++ ){
       axis->normal[k] = CenterOfSomething[k]/r ;
+    }
   }
-  else {
+  else{
     axis->normal[0] = 1 ;
-    for( k = 1 ; k < DIMENSION ; k++ )
+    for( k = 1 ; k < DIMENSION ; k++ ){
       axis->normal[k] = 0 ;
+    }
   }
   axis->distance = r ;
   for( k = 0, r = 0 ; k < DIMENSION ; k++ ){
@@ -925,34 +939,43 @@ SYMMETRY_ELEMENT* init_c2_axis( int i, int j, double support[ DIMENSION ] )
   r = sqrt(r) ;
   if( r <= TolerancePrimary ){ /* c2 is underdefined, let's do something special */
     if( MolecularPlane != NULL ){
-      if( verbose > 0 ) printf( "    c2 is underdefined, but there is a molecular plane\n" ) ;
-      for( k = 0 ; k < DIMENSION ; k++ )
-	axis->direction[k] = MolecularPlane->normal[k] ;
+      if( verbose > 0 ){
+      printf( "    c2 is underdefined, but there is a molecular plane\n" ) ;
+      }
+      for( k = 0 ; k < DIMENSION ; k++ ){
+	      axis->direction[k] = MolecularPlane->normal[k] ;
+      }
     }
-    else {
-      if( verbose > 0 ) printf( "    c2 is underdefined, trying random direction\n" ) ;
-      for( k = 0 ; k < DIMENSION ; k++ )
-	center[k] = Atoms[i].x[k] - Atoms[j].x[k] ;
+    else{
+      if( verbose > 0 ){
+        printf( "    c2 is underdefined, trying random direction\n" ) ;
+      }
+      for( k = 0 ; k < DIMENSION ; k++ ){
+	      center[k] = Atoms[i].x[k] - Atoms[j].x[k] ;
+      }
       if( fabs( center[2] ) + fabs( center[1] ) > ToleranceSame ){
-	axis->direction[0] =  0 ;
-	axis->direction[1] =  center[2] ;
-	axis->direction[2] = -center[1] ;
+        axis->direction[0] =  0 ;
+        axis->direction[1] =  center[2] ;
+        axis->direction[2] = -center[1] ;
       }
-      else {
-	axis->direction[0] = -center[2] ;
-	axis->direction[1] =  0 ;
-	axis->direction[2] =  center[0] ;
+      else{
+        axis->direction[0] = -center[2] ;
+        axis->direction[1] =  0 ;
+        axis->direction[2] =  center[0] ;
       }
-      for( k = 0, r = 0 ; k < DIMENSION ; k++ )
-	r += axis->direction[k] * axis->direction[k] ;
+      for( k = 0, r = 0 ; k < DIMENSION ; k++ ){
+	      r += axis->direction[k] * axis->direction[k] ;
+      }
       r = sqrt(r) ;
-      for( k = 0 ; k < DIMENSION ; k++ )
-	axis->direction[k] /= r ;
+      for( k = 0 ; k < DIMENSION ; k++ ){
+	      axis->direction[k] /= r ;
+      }
     }
   }
-  else { /* direction is Ok, renormalize it */
-    for( k = 0 ; k < DIMENSION ; k++ )
+  else{ /* direction is Ok, renormalize it */
+    for( k = 0 ; k < DIMENSION ; k++ ){
       axis->direction[k] = center[k]/r ;
+    }
   }
   if( refine_symmetry_element( axis, 1 ) < 0 ){
     if( verbose > 0 ) printf( "    refinement failed for the c2 axis\n" ) ;
@@ -1224,6 +1247,53 @@ void find_infinity_axis()
 
 
 
+void test_c2_axis(){
+  //double             pos[DIMENSION] = {-6.6086217, 3.46322366, 0.0}; // HARD CODED FOR TESTING
+  double             pos_axis_atom[DIMENSION] = {Atoms[0].x[0], Atoms[0].x[1], Atoms[0].x[2]};
+  int                i, j, k;
+  double             distance_i;
+  double             distance_j;
+  SYMMETRY_ELEMENT*  axis ;
+  int                flags[AtomsCount] = {0};
+  int                sum = 0;
+
+  find_center_of_something();
+
+  for (i = 1; i < AtomsCount; i++){
+    for (j = 0; j < i; j++){
+      if( Atoms[i].type != Atoms[j].type ){
+	      continue ;
+      }
+      if( fabs( DistanceFromCenter[i] - DistanceFromCenter[j] ) > TolerancePrimary ){
+	      continue ;
+      } 
+      distance_i = 0.0;
+      distance_j = 0.0;
+      for (k = 0; k < DIMENSION; k++){
+        distance_i += pow2(Atoms[i].x[k] - pos_axis_atom[k]);
+        distance_j += pow2(Atoms[j].x[k] - pos_axis_atom[k]);
+      }
+      distance_i = sqrt(distance_i);
+      distance_j = sqrt(distance_j);
+      if ( (distance_i - distance_i) > ToleranceSame ){
+        continue;
+      }
+      if( ( axis = init_c2_axis( i, j, pos_axis_atom ) ) != NULL ){
+        flags[i] = 1;
+	      /*NormalAxesCount++ ;
+	      NormalAxes = (SYMMETRY_ELEMENT**) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
+	      if( NormalAxes == NULL ){
+	        perror( "Out of memory in find_c2_axes" ) ;
+	        exit( EXIT_FAILURE ) ;
+	      }
+	      NormalAxes[ NormalAxesCount - 1 ] = axis ;*/
+	    }
+    }
+  }
+}
+
+
+
 void find_c2_axes()
 {
   int                i, j, k, l, m ;
@@ -1245,15 +1315,15 @@ void find_c2_axes()
 	      continue ;
       } 
       /* A very cheap, but quite effective check */
-      /*
-       *   First, let's try to get it cheap and use CenterOfSomething
-       */
-      for( k = 0, r = 0 ; k < DIMENSION ; k++ ){
+      
+      /* First, let's try to get it cheap and use CenterOfSomething */
+       
+      /*for( k = 0, r = 0 ; k < DIMENSION ; k++ ){
 	      center[k] = ( Atoms[i].x[k] + Atoms[j].x[k] ) / 2 ;
 	      r        += pow2( center[k] - CenterOfSomething[k] ) ;
       }
       r = sqrt(r) ;
-      if( r > 5*TolerancePrimary ){ /* It's Ok to use CenterOfSomething */
+      if( r > 5*TolerancePrimary ){ /* It's Ok to use CenterOfSomething 
 	      if( ( axis = init_c2_axis( i, j, CenterOfSomething ) ) != NULL ){
 	        NormalAxesCount++ ;
 	        NormalAxes = (SYMMETRY_ELEMENT **) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
@@ -1261,10 +1331,12 @@ void find_c2_axes()
 	          perror( "Out of memory in find_c2_axes" ) ;
 	          exit( EXIT_FAILURE ) ;
 	        }
+          std::cout << "************** hier1 *****************" << std::endl;
+          std::cout << i << " " <<  j << " " << k << std::endl;
 	        NormalAxes[ NormalAxesCount - 1 ] = axis ;
 	      }
 	      continue ;
-      }
+      }*/
       /*
        *  Now, C2 axis can either pass through an atom, or through the
        *  middle of the other pair.
@@ -1277,13 +1349,15 @@ void find_c2_axes()
 	          perror( "Out of memory in find_c2_axes" ) ;
 	          exit( EXIT_FAILURE ) ;
 	        }
+          std::cout << "************** hier2 *****************" << std::endl;
+          std::cout << i << " " <<  j << " " << k << std::endl;
 	        NormalAxes[ NormalAxesCount - 1 ] = axis ;
 	      }
       }
       /*
        *  Prepare data for an additional pre-screening check
        */
-      for( k = 0 ; k < AtomsCount ; k++ ){
+      /*for( k = 0 ; k < AtomsCount ; k++ ){
 	      for( l = 0, r = 0 ; l < DIMENSION ; l++ ){
 	        r += pow2( Atoms[k].x[l] - center[l] ) ;
 	        distances[k] = sqrt(r) ;
@@ -1296,7 +1370,7 @@ void find_c2_axes()
           }
 	        if( fabs( DistanceFromCenter[k] - DistanceFromCenter[l] ) > TolerancePrimary ||
 	            fabs( distances[k] - distances[l] ) > TolerancePrimary ){
-	          continue ; /* We really need this one to run reasonably fast! */
+	          continue ; /* We really need this one to run reasonably fast! 
           }
 	        for( m = 0 ; m < DIMENSION ; m++ ){
 	          center[m] = ( Atoms[k].x[m] + Atoms[l].x[m] ) / 2 ;
@@ -1308,10 +1382,12 @@ void find_c2_axes()
 	            perror( "Out of memory in find_c2_axes" ) ;
 	            exit( EXIT_FAILURE ) ;
 	          }
+            std::cout << "************** hier3 *****************" << std::endl;
+            std::cout << i << " " <<  j << " " << k << std::endl;
 	          NormalAxes[ NormalAxesCount - 1 ] = axis ;
 	        }
 	      }
-      }
+      }*/
     }
   }
   free( distances ) ;
@@ -1408,10 +1484,10 @@ void report_axes()
 void find_symmetry_elements()
 {
   find_center_of_something() ;
-  find_planes() ;
-  find_infinity_axis() ;
+  //find_planes() ;
+  //find_infinity_axis() ;
   find_c2_axes() ;
-  find_higher_axes() ;
+  //find_higher_axes() ;
 }
 
 
@@ -1662,10 +1738,11 @@ int main( int argc, char **argv )
     exit( EXIT_FAILURE ) ;
   }
   fclose( in ) ;
-  find_symmetry_elements();
-  sort_symmetry_elements();
-  summarize_symmetry_elements();
-  report_symmetry_elements_brief();
+  test_c2_axis();
+  //find_symmetry_elements();
+  //sort_symmetry_elements();
+  //summarize_symmetry_elements();
+  //report_symmetry_elements_brief();
   if( BadOptimization )
     printf( "Refinement of some symmetry elements was terminated before convergence was reached.\n"
 	    "Some symmetry elements may remain unidentified.\n" ) ;

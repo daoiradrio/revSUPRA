@@ -877,14 +877,15 @@ SYMMETRY_ELEMENT* init_ultimate_axis()
 
 SYMMETRY_ELEMENT* init_c2_axis( int i, int j, double support[ DIMENSION ] )
 {
-  SYMMETRY_ELEMENT * axis ;
+  SYMMETRY_ELEMENT*  axis ;
   int                k ;
   double             ris, rjs ;
   double             r, center[ DIMENSION ] ;
 
-  if( verbose > 0 )
+  if( verbose > 0 ){
     printf( "Trying c2 axis for the pair (%d,%d) with the support (%g,%g,%g)\n",
 	    i, j, support[0], support[1], support[2] ) ;
+  }
   StatTotal++ ;
   /* First, do a quick sanity check */
   for( k = 0, ris = rjs = 0 ; k < DIMENSION ; k++ ){
@@ -895,8 +896,10 @@ SYMMETRY_ELEMENT* init_c2_axis( int i, int j, double support[ DIMENSION ] )
   rjs = sqrt( rjs ) ;
   if( fabs( ris - rjs ) > TolerancePrimary ){
     StatEarly++ ;
-    if( verbose > 0 ) printf( "    Support can't actually define a rotation axis\n" ) ;
-    return NULL ;
+    if( verbose > 0 ){
+      printf( "    Support can't actually define a rotation axis\n" ) ;
+      return NULL ;
+    }
   }
   axis                 = alloc_symmetry_element() ;
   axis->transform_atom = rotate_atom ;
@@ -1139,25 +1142,30 @@ void find_center_of_something()
   double             coord_sum[ DIMENSION ] ;
   double             r ;
 
-  for( j = 0 ; j < DIMENSION ; j++ )
+  for( j = 0 ; j < DIMENSION ; j++ ){
     coord_sum[j] = 0 ;
-  for( i = 0 ; i < AtomsCount ; i++ ){
-    for( j = 0 ; j < DIMENSION ; j++ )
-      coord_sum[j] += Atoms[i].x[j] ;
   }
-  for( j = 0 ; j < DIMENSION ; j++ )
+  for( i = 0 ; i < AtomsCount ; i++ ){
+    for( j = 0 ; j < DIMENSION ; j++ ){
+      coord_sum[j] += Atoms[i].x[j] ;
+    }
+  }
+  for( j = 0 ; j < DIMENSION ; j++ ){
     CenterOfSomething[j] = coord_sum[j]/AtomsCount ;
-  if( verbose > 0 )
+  }
+  if( verbose > 0 ){
     printf( "Center of something is at %15.10f, %15.10f, %15.10f\n",
-	    CenterOfSomething[0], CenterOfSomething[1], CenterOfSomething[2] ) ;
+	  CenterOfSomething[0], CenterOfSomething[1], CenterOfSomething[2] ) ;
+  }
   DistanceFromCenter = (double *) calloc( AtomsCount, sizeof( double ) ) ;
   if( DistanceFromCenter == NULL ){
     fprintf( stderr, "Unable to allocate array for the distances\n" ) ;
     exit( EXIT_FAILURE ) ;
   }
   for( i = 0 ; i < AtomsCount ; i++ ){
-    for( j = 0, r = 0 ; j < DIMENSION ; j++ )
+    for( j = 0, r = 0 ; j < DIMENSION ; j++ ){
       r += pow2( Atoms[i].x[j] - CenterOfSomething[j] ) ;
+    }
     DistanceFromCenter[i] = r ;
   }
 }
@@ -1216,13 +1224,13 @@ void find_infinity_axis()
 
 
 
-void find_c2_axes(void)
+void find_c2_axes()
 {
   int                i, j, k, l, m ;
   double             center[ DIMENSION ] ;
-  double*           distances = (double*)calloc( AtomsCount, sizeof( double ) ) ;
+  double*            distances = (double*)calloc( AtomsCount, sizeof( double ) ) ;
   double             r ;
-  SYMMETRY_ELEMENT * axis ;
+  SYMMETRY_ELEMENT*  axis ;
 
   if( distances == NULL ){
     fprintf( stderr, "Out of memory in find_c2_axes()\n" ) ;
@@ -1230,72 +1238,79 @@ void find_c2_axes(void)
   }
   for( i = 1 ; i < AtomsCount ; i++ ){
     for( j = 0 ; j < i ; j++ ){
-      if( Atoms[i].type != Atoms[j].type )
-	continue ;
-      if( fabs( DistanceFromCenter[i] - DistanceFromCenter[j] ) > TolerancePrimary )
-	continue ; /* A very cheap, but quite effective check */
+      if( Atoms[i].type != Atoms[j].type ){
+	      continue ;
+      }
+      if( fabs( DistanceFromCenter[i] - DistanceFromCenter[j] ) > TolerancePrimary ){
+	      continue ;
+      } 
+      /* A very cheap, but quite effective check */
       /*
        *   First, let's try to get it cheap and use CenterOfSomething
        */
       for( k = 0, r = 0 ; k < DIMENSION ; k++ ){
-	center[k] = ( Atoms[i].x[k] + Atoms[j].x[k] ) / 2 ;
-	r        += pow2( center[k] - CenterOfSomething[k] ) ;
+	      center[k] = ( Atoms[i].x[k] + Atoms[j].x[k] ) / 2 ;
+	      r        += pow2( center[k] - CenterOfSomething[k] ) ;
       }
       r = sqrt(r) ;
       if( r > 5*TolerancePrimary ){ /* It's Ok to use CenterOfSomething */
-	if( ( axis = init_c2_axis( i, j, CenterOfSomething ) ) != NULL ){
-	  NormalAxesCount++ ;
-	  NormalAxes = (SYMMETRY_ELEMENT **) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
-	  if( NormalAxes == NULL ){
-	    perror( "Out of memory in find_c2_axes" ) ;
-	    exit( EXIT_FAILURE ) ;
-	  }
-	  NormalAxes[ NormalAxesCount - 1 ] = axis ;
-	}
-	continue ;
+	      if( ( axis = init_c2_axis( i, j, CenterOfSomething ) ) != NULL ){
+	        NormalAxesCount++ ;
+	        NormalAxes = (SYMMETRY_ELEMENT **) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
+	        if( NormalAxes == NULL ){
+	          perror( "Out of memory in find_c2_axes" ) ;
+	          exit( EXIT_FAILURE ) ;
+	        }
+	        NormalAxes[ NormalAxesCount - 1 ] = axis ;
+	      }
+	      continue ;
       }
       /*
        *  Now, C2 axis can either pass through an atom, or through the
-         *  middle of the other pair.
-         */
+       *  middle of the other pair.
+       */
       for( k = 0 ; k < AtomsCount ; k++ ){
-	if( ( axis = init_c2_axis( i, j, Atoms[k].x ) ) != NULL ){
-	  NormalAxesCount++ ;
-	  NormalAxes = (SYMMETRY_ELEMENT **) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
-	  if( NormalAxes == NULL ){
-	    perror( "Out of memory in find_c2_axes" ) ;
-	    exit( EXIT_FAILURE ) ;
-	  }
-	  NormalAxes[ NormalAxesCount - 1 ] = axis ;
-	}
+	      if( ( axis = init_c2_axis( i, j, Atoms[k].x ) ) != NULL ){
+	        NormalAxesCount++ ;
+	        NormalAxes = (SYMMETRY_ELEMENT**) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
+	        if( NormalAxes == NULL ){
+	          perror( "Out of memory in find_c2_axes" ) ;
+	          exit( EXIT_FAILURE ) ;
+	        }
+	        NormalAxes[ NormalAxesCount - 1 ] = axis ;
+	      }
       }
       /*
        *  Prepare data for an additional pre-screening check
        */
       for( k = 0 ; k < AtomsCount ; k++ ){
-	for( l = 0, r = 0 ; l < DIMENSION ; l++ )
-	  r += pow2( Atoms[k].x[l] - center[l] ) ;
-	distances[k] = sqrt(r) ;
+	      for( l = 0, r = 0 ; l < DIMENSION ; l++ ){
+	        r += pow2( Atoms[k].x[l] - center[l] ) ;
+	        distances[k] = sqrt(r) ;
+        }
       }
       for( k = 0 ; k < AtomsCount ; k++ ){
-	for( l = 0 ; l < AtomsCount ; l++ ){
-	  if( Atoms[k].type != Atoms[l].type )
-	    continue ;
-	  if( fabs( DistanceFromCenter[k] - DistanceFromCenter[l] ) > TolerancePrimary ||
-	      fabs( distances[k] - distances[l] ) > TolerancePrimary )
-	    continue ; /* We really need this one to run reasonably fast! */
-	  for( m = 0 ; m < DIMENSION ; m++ )
-	    center[m] = ( Atoms[k].x[m] + Atoms[l].x[m] ) / 2 ;
-	  if( ( axis = init_c2_axis( i, j, center ) ) != NULL ){
-	    NormalAxesCount++ ;
-	    NormalAxes = (SYMMETRY_ELEMENT **) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
-	    if( NormalAxes == NULL ){
-	      perror( "Out of memory in find_c2_axes" ) ;
-	      exit( EXIT_FAILURE ) ;
-	    }
-	    NormalAxes[ NormalAxesCount - 1 ] = axis ;
-	  }
-	}
+	      for( l = 0 ; l < AtomsCount ; l++ ){
+	        if( Atoms[k].type != Atoms[l].type ){
+	          continue ;
+          }
+	        if( fabs( DistanceFromCenter[k] - DistanceFromCenter[l] ) > TolerancePrimary ||
+	            fabs( distances[k] - distances[l] ) > TolerancePrimary ){
+	          continue ; /* We really need this one to run reasonably fast! */
+          }
+	        for( m = 0 ; m < DIMENSION ; m++ ){
+	          center[m] = ( Atoms[k].x[m] + Atoms[l].x[m] ) / 2 ;
+          }
+	        if( ( axis = init_c2_axis( i, j, center ) ) != NULL ){
+	          NormalAxesCount++ ;
+	          NormalAxes = (SYMMETRY_ELEMENT **) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
+	          if( NormalAxes == NULL ){
+	            perror( "Out of memory in find_c2_axes" ) ;
+	            exit( EXIT_FAILURE ) ;
+	          }
+	          NormalAxes[ NormalAxesCount - 1 ] = axis ;
+	        }
+	      }
       }
     }
   }
@@ -1307,29 +1322,33 @@ void find_c2_axes(void)
 void find_higher_axes()
 {
   int                i, j, k ;
-  SYMMETRY_ELEMENT * axis ;
+  SYMMETRY_ELEMENT* axis ;
 
   for( i = 0 ; i < AtomsCount ; i++ ){
     for( j = i + 1 ; j < AtomsCount ; j++ ){
-      if( Atoms[i].type != Atoms[j].type )
-	continue ;
-      if( fabs( DistanceFromCenter[i] - DistanceFromCenter[j] ) > TolerancePrimary )
-	continue ; /* A very cheap, but quite effective check */
+      if( Atoms[i].type != Atoms[j].type ){
+	      continue ;
+      }
+      if( fabs( DistanceFromCenter[i] - DistanceFromCenter[j] ) > TolerancePrimary ){
+	      continue ; /* A very cheap, but quite effective check */
+      }
       for( k = 0 ; k < AtomsCount ; k++ ){
-	if( Atoms[i].type != Atoms[k].type )
-	  continue ;
-	if( ( fabs( DistanceFromCenter[i] - DistanceFromCenter[k] ) > TolerancePrimary ) ||
-	    ( fabs( DistanceFromCenter[j] - DistanceFromCenter[k] ) > TolerancePrimary ) )
-	  continue ;
-	if( ( axis = init_higher_axis( i, j, k ) ) != NULL ){
-	  NormalAxesCount++ ;
-	  NormalAxes = (SYMMETRY_ELEMENT **) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
-	  if( NormalAxes == NULL ){
-	    perror( "Out of memory in find_higher_axes" ) ;
-	    exit( EXIT_FAILURE ) ;
-	  }
-	  NormalAxes[ NormalAxesCount - 1 ] = axis ;
-	}
+	      if( Atoms[i].type != Atoms[k].type ){
+	        continue ;
+        }
+	      if( ( fabs( DistanceFromCenter[i] - DistanceFromCenter[k] ) > TolerancePrimary ) ||
+	          ( fabs( DistanceFromCenter[j] - DistanceFromCenter[k] ) > TolerancePrimary ) ){
+	        continue ;
+        }
+	      if( ( axis = init_higher_axis( i, j, k ) ) != NULL ){
+	        NormalAxesCount++ ;
+	        NormalAxes = (SYMMETRY_ELEMENT **) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
+	        if( NormalAxes == NULL ){
+	          perror( "Out of memory in find_higher_axes" ) ;
+	          exit( EXIT_FAILURE ) ;
+	        }
+	        NormalAxes[ NormalAxesCount - 1 ] = axis ;
+	      }
       }
     }
   }

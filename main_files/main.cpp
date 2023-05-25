@@ -1,6 +1,7 @@
 #include <structure.hpp>
 #include <conformergenerator.hpp>
-//#include <analyzer.hpp>
+#include <analyzer.hpp>
+#include <symmetry.hpp>
 
 #include <iostream>
 
@@ -17,25 +18,38 @@ int main(int argc, char **argv){
     }*/
     //std::string filepath = "inputfiles/" + filename;
 
-    /*std::string filepath1 = "inputfiles/Alanin.xyz";
-    std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
+    std::string filepath1 = "inputfiles/Alanin.xyz";
+    //std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
 
     Structure mol1;
     mol1.get_structure(filepath1);
 
-    Structure mol2;
-    mol2.get_structure(filepath2);*/
+    //Structure mol2;
+    //mol2.get_structure(filepath2);
 
     //Structure mol;
     //mol.get_structure(filename);
-    //ConformerGenerator gen(mol);
+    ConformerGenerator gen(mol1);
     //gen.generate_conformers();
 
-    Analyzer analyzer;
-    
-    analyzer.extract_energies("/home/baum/revSUPRA/apply3/", "optdir");
-    analyzer.remove_doubles("/home/baum/revSUPRA/apply3/SUPRA_Output/", "conformer");
-    analyzer.divide_and_conquer_remove_doubles("/home/baum/revSUPRA/apply3/SUPRA_Output/", "conformer");
+    gen.get_torsions();
+    gen.find_cycles();
+    gen.selection_menu();
+    gen.generation_setup();
+
+    int atom;
+    for (int i = 0; i < gen.torsions.size(); i++){
+        std::cout << gen.torsions[i].atom_index1 << " " << gen.torsions[i].atom_index2 << std::endl;
+        for (int j = 0; j < gen.torsion_atoms[i].size(); j++){
+            atom = gen.torsion_atoms[i][j];
+            std::cout << atom << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
+    Symmetry sym;
+
+    //sym.detect_rot_sym(std::make_shared<Structure>(mol1), gen.torsion_atoms[0]);
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

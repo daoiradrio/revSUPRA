@@ -2,7 +2,7 @@
 
 
 
-extern std::unordered_map<std::string, int> element_numbers({
+std::unordered_map<std::string, int> element_numbers({
     {"H", 1},
     {"B", 5},
     {"C", 6},

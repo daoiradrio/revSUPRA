@@ -26,26 +26,8 @@
  * Revision 1.12  1996/05/23  16:10:47  ps
  * First reasonably stable version.
  *
+ * Cloned from GitHub Repository https://github.com/nquesada/symmetry
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <iostream>
-//#include <vector>
-//#include <memory>
-
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795028841971694
-#endif
-
-#define DIMENSION 3
-#define MAXPARAM  7
-
-typedef struct{
-  int     type ;
-  double  x[ DIMENSION ] ;
-}ATOM;
 
 /*
  *  All specific structures should have corresponding elements in the
@@ -71,6 +53,25 @@ typedef struct{
  *
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <iostream>
+
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795028841971694
+#endif
+
+#define DIMENSION 3
+#define MAXPARAM  7
+
+
+typedef struct{
+  int     type ;
+  double  x[ DIMENSION ] ;
+}ATOM;
+
 typedef struct _SYMMETRY_ELEMENT_{
   void    (*transform_atom)( struct _SYMMETRY_ELEMENT_ *el, ATOM *from, ATOM *to ) ;
   int *   transform ;     /*   Correspondence table for the transformation         */
@@ -87,6 +88,7 @@ typedef struct{
   char *  symmetry_code ;     /* Group symmetry code                               */
   int     (*check)( void ) ;  /* Additional verification routine, not used         */
 }POINT_GROUP;
+
 
 double                 ToleranceSame         = 1e-3 ;
 double                 TolerancePrimary      = 5e-2 ;
@@ -1279,16 +1281,24 @@ void test_c2_axis(){
         continue;
       }
       if( ( axis = init_c2_axis( i, j, pos_axis_atom ) ) != NULL ){
+	std::cout << i << " " << j << std::endl;
+        std::cout << Atoms[i].type << " " << Atoms[j].type << std::endl;
+        std::cout << std::endl;
         flags[i] = 1;
-	      /*NormalAxesCount++ ;
-	      NormalAxes = (SYMMETRY_ELEMENT**) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
-	      if( NormalAxes == NULL ){
-	        perror( "Out of memory in find_c2_axes" ) ;
-	        exit( EXIT_FAILURE ) ;
-	      }
-	      NormalAxes[ NormalAxesCount - 1 ] = axis ;*/
-	    }
+	flags[j] = 1;
+	/*NormalAxesCount++ ;
+	NormalAxes = (SYMMETRY_ELEMENT**) realloc( NormalAxes, sizeof( SYMMETRY_ELEMENT* ) * NormalAxesCount ) ;
+	if( NormalAxes == NULL ){
+	  perror( "Out of memory in find_c2_axes" ) ;
+	  exit( EXIT_FAILURE ) ;
+	}
+	NormalAxes[ NormalAxesCount - 1 ] = axis ;*/
+      }
     }
+  }
+  std::cout << "***" << std::endl;
+  for (i = 0; i < AtomsCount; i++){
+     std::cout << flags[i] << std::endl;
   }
 }
 

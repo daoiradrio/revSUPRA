@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/baum/revSUPRA/src/helper.cpp" "/home/baum/revSUPRA/build/CMakeFiles/supra.dir/src/helper.cpp.o"
   "/home/baum/revSUPRA/src/hungarian.cpp" "/home/baum/revSUPRA/build/CMakeFiles/supra.dir/src/hungarian.cpp.o"
   "/home/baum/revSUPRA/src/structure.cpp" "/home/baum/revSUPRA/build/CMakeFiles/supra.dir/src/structure.cpp.o"
+  "/home/baum/revSUPRA/src/symmetry.cpp" "/home/baum/revSUPRA/build/CMakeFiles/supra.dir/src/symmetry.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

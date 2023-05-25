@@ -5,6 +5,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/supra.dir/src/helper.cpp.o"
   "CMakeFiles/supra.dir/src/hungarian.cpp.o"
   "CMakeFiles/supra.dir/src/structure.cpp.o"
+  "CMakeFiles/supra.dir/src/symmetry.cpp.o"
   "supra"
   "supra.pdb"
 )

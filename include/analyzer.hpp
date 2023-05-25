@@ -17,6 +17,7 @@
 #include <utility>
 
 
+
 class Analyzer{
 
     public:
@@ -41,6 +42,7 @@ class Analyzer{
         static bool sort_func(std::pair<double, int> a, std::pair<double, int> b){return (a.first < b.first);};
 
 };
+
 
 
 #endif

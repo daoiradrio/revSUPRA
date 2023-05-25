@@ -90,7 +90,7 @@ void ConformerGenerator::get_torsions(){
     int i, j;
     std::string element_i, element_j;
 
-    for (bond bond: this->mol->bonds){
+    for (BOND bond: this->mol->bonds){
         if (bond.bond_order != 1){
             continue;
         }
@@ -300,28 +300,28 @@ void ConformerGenerator::selection_menu(){
             std::cin >> mode_input;
             switch (mode_input){
                 case 1:
-                    for (bond torsion: this->central_torsions){
+                    for (BOND torsion: this->central_torsions){
                         this->torsions.push_back(torsion);
                     }
-                    for (bond torsion: this->terminal_torsions){
+                    for (BOND torsion: this->terminal_torsions){
                         this->torsions.push_back(torsion);
                     }
-                    for (bond torsion: this->methylalike_torsions){
+                    for (BOND torsion: this->methylalike_torsions){
                         this->torsions.push_back(torsion);
                     }
                     valid_mode_input = true;
                     break;
                 case 2:
-                    for (bond torsion: this->central_torsions){
+                    for (BOND torsion: this->central_torsions){
                         this->torsions.push_back(torsion);
                     }
                     valid_mode_input = true;
                     break;
                 case 3:
-                    for (bond torsion: this->central_torsions){
+                    for (BOND torsion: this->central_torsions){
                         this->torsions.push_back(torsion);
                     }
-                    for (bond torsion: this->terminal_torsions){
+                    for (BOND torsion: this->terminal_torsions){
                         this->torsions.push_back(torsion);
                     }
                     valid_mode_input = true;
@@ -412,7 +412,7 @@ void ConformerGenerator::generation_setup(){
     std::vector<int> left_atoms;
     std::vector<int> right_atoms;
 
-    for (bond torsion: this->torsions){
+    for (BOND torsion: this->torsions){
         atom1 = torsion.atom_index1;
         atom2 = torsion.atom_index2;
         memset(status, 0, sizeof(status));
@@ -437,7 +437,7 @@ void ConformerGenerator::generation_setup(){
         }
     }
 
-    for (std::shared_ptr<atom> atom_ptr: this->mol->atoms){
+    for (std::shared_ptr<ATOM> atom_ptr: this->mol->atoms){
         Eigen::Vector3d coords(atom_ptr->coords.data());
         this->input_coords.push_back(coords);
     }

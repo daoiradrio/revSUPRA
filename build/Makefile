@@ -411,6 +411,33 @@ src/structure.cpp.s:
 	$(MAKE) -f CMakeFiles/supra.dir/build.make CMakeFiles/supra.dir/src/structure.cpp.s
 .PHONY : src/structure.cpp.s
 
+src/symmetry.o: src/symmetry.cpp.o
+
+.PHONY : src/symmetry.o
+
+# target to build an object file
+src/symmetry.cpp.o:
+	$(MAKE) -f CMakeFiles/supra.dir/build.make CMakeFiles/supra.dir/src/symmetry.cpp.o
+.PHONY : src/symmetry.cpp.o
+
+src/symmetry.i: src/symmetry.cpp.i
+
+.PHONY : src/symmetry.i
+
+# target to preprocess a source file
+src/symmetry.cpp.i:
+	$(MAKE) -f CMakeFiles/supra.dir/build.make CMakeFiles/supra.dir/src/symmetry.cpp.i
+.PHONY : src/symmetry.cpp.i
+
+src/symmetry.s: src/symmetry.cpp.s
+
+.PHONY : src/symmetry.s
+
+# target to generate assembly for a file
+src/symmetry.cpp.s:
+	$(MAKE) -f CMakeFiles/supra.dir/build.make CMakeFiles/supra.dir/src/symmetry.cpp.s
+.PHONY : src/symmetry.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -447,6 +474,9 @@ help:
 	@echo "... src/structure.o"
 	@echo "... src/structure.i"
 	@echo "... src/structure.s"
+	@echo "... src/symmetry.o"
+	@echo "... src/symmetry.i"
+	@echo "... src/symmetry.s"
 .PHONY : help
 
 

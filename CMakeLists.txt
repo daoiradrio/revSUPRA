@@ -4,14 +4,15 @@ project(SUPRA)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_BUILD_TYPE Debug)
 
-add_compile_options(-fsanitize=address)
-add_link_options(-fsanitize=address)
+#add_compile_options(-fsanitize=address)
+#add_link_options(-fsanitize=address)
 
 include_directories(include)
 
 file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 add_executable(supra main_files/main.cpp ${SRC_FILES})
+#add_executable(sym main_files/revsymmetry.cpp ${SRC_FILES})
 # add more executables?
 
 include(FetchContent)

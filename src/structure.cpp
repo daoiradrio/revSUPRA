@@ -15,7 +15,7 @@ void Structure::get_structure(std::string filepath){
 
 
 void Structure::read_xyz(std::string filepath){
-    std::shared_ptr<atom> new_atom;
+    std::shared_ptr<ATOM> new_atom;
     std::string element;
     std::string new_label;
     std::string line;
@@ -41,8 +41,9 @@ void Structure::read_xyz(std::string filepath){
             }
             else if (line_index >= 2){
                 linestream >> element >> xcoord >> ycoord >> zcoord;  
-                new_atom = std::make_shared<atom>();
+                new_atom = std::make_shared<ATOM>();
                 new_atom->element = element;
+                new_atom->pse_num = element_numbers[element];
                 new_atom->index = atom_index;
                 new_atom->coords = {xcoord, ycoord, zcoord};
                 this->atoms.push_back(std::move(new_atom));
@@ -71,7 +72,7 @@ void Structure::get_connectivity(){
     int bond_order;
     int atom_i;
     int atom_j;
-    bond new_bond;
+    BOND new_bond;
     std::string element1, element2;
     int terminal_counter;
 

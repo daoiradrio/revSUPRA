@@ -7,6 +7,7 @@ CMakeFiles/supra.dir/main_files/main.cpp.o
  ../include/helper.hpp
  ../include/hungarian.hpp
  ../include/structure.hpp
+ ../include/symmetry.hpp
  /home/baum/revSUPRA/main_files/main.cpp
 CMakeFiles/supra.dir/src/analyzer.cpp.o
  ../include/analyzer.hpp
@@ -31,3 +32,8 @@ CMakeFiles/supra.dir/src/structure.cpp.o
  ../include/helper.hpp
  ../include/structure.hpp
  /home/baum/revSUPRA/src/structure.cpp
+CMakeFiles/supra.dir/src/symmetry.cpp.o
+ ../include/helper.hpp
+ ../include/structure.hpp
+ ../include/symmetry.hpp
+ /home/baum/revSUPRA/src/symmetry.cpp

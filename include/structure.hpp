@@ -11,6 +11,7 @@
 #include <Eigen/Dense>
 
 
+
 class Structure{
 
     public:
@@ -18,8 +19,8 @@ class Structure{
         ~Structure();
 
         int n_atoms;
-        std::vector<std::shared_ptr<atom>> atoms;
-        std::vector<bond> bonds;
+        std::vector<std::shared_ptr<ATOM>> atoms;
+        std::vector<BOND> bonds;
         Eigen::MatrixX3d coords;
 
         void get_structure(std::string filepath);

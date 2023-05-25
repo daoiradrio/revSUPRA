@@ -6,6 +6,7 @@ CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/conformergenerator.hpp
 CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/helper.hpp
 CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/hungarian.hpp
 CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/structure.hpp
+CMakeFiles/supra.dir/main_files/main.cpp.o: ../include/symmetry.hpp
 CMakeFiles/supra.dir/main_files/main.cpp.o: ../main_files/main.cpp
 
 CMakeFiles/supra.dir/src/analyzer.cpp.o: ../include/analyzer.hpp
@@ -30,4 +31,9 @@ CMakeFiles/supra.dir/src/hungarian.cpp.o: ../src/hungarian.cpp
 CMakeFiles/supra.dir/src/structure.cpp.o: ../include/helper.hpp
 CMakeFiles/supra.dir/src/structure.cpp.o: ../include/structure.hpp
 CMakeFiles/supra.dir/src/structure.cpp.o: ../src/structure.cpp
+
+CMakeFiles/supra.dir/src/symmetry.cpp.o: ../include/helper.hpp
+CMakeFiles/supra.dir/src/symmetry.cpp.o: ../include/structure.hpp
+CMakeFiles/supra.dir/src/symmetry.cpp.o: ../include/symmetry.hpp
+CMakeFiles/supra.dir/src/symmetry.cpp.o: ../src/symmetry.cpp
 

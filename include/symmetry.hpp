@@ -68,6 +68,7 @@
 #include <cmath>
 #include <math.h>
 #include <iostream>
+#include <algorithm>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795028841971694
@@ -92,9 +93,10 @@ class Symmetry{
 
         bool detect_rot_sym(std::shared_ptr<Structure> mol, std::vector<int> torsion_atoms, int order);
         void find_geometric_center();
-        void C2_axis();
+        void check_C2_axis();
         int init_C2(int i, int j, std::vector<double> support);
-        //int establish_pairs(std::shared_ptr<SYMMETRY_ELEMENT> elem);
+        int refine_symmetry_element(std::shared_ptr<SYMMETRY_ELEMENT> elem);
+        int establish_pairs(std::shared_ptr<SYMMETRY_ELEMENT> elem);
 
     private:
 

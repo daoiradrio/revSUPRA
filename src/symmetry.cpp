@@ -10,26 +10,21 @@ Symmetry::~Symmetry(){}
 
 
 
-/*int Symmetry::establish_pairs(std::shared_ptr<SYMMETRY_ELEMENT> elem)
+int Symmetry::establish_pairs(std::shared_ptr<SYMMETRY_ELEMENT> elem)
 {
-    int                 i, j, k;
-    int                 best_j;
-    double              distance, best_distance;
-    std::vector<int>    atom_used(this->AtomsCount, 1);
-    ATOM                symmetric;
-
-    if (atom_used.size() == 0){
-        std::cout << "Out of memory for tagging array in establish_pairs()" << std::endl;
-        exit(EXIT_FAILURE);
-    }
+    int                     i, j, k;
+    int                     best_j;
+    double                  distance, best_distance;
+    std::vector<int>        atom_used(this->AtomsCount, 1);
+    std::shared_ptr<ATOM>   symmetric;
 
     for (i = 0; i < this->AtomsCount; i++){
         if (elem->transform[i] >= this->AtomsCount){
             continue;
         }
-        elem->transform_atom(elem, this->atoms[i], &symmetric);
+        elem->transform_atom(elem, this->atoms[i], symmetric); // HIER TESTEN OB BEIDE VERSIONEN GLEICH LAUFEN
     }
-}*/
+}
 
 
 
@@ -62,12 +57,12 @@ void Symmetry::find_geometric_center()
 
 
 
-void Symmetry::C2_axis()
+void Symmetry::check_C2_axis()
 {
     int                                 i, j, k;
     int                                 sum;
     double                              distance_i, distance_j;
-    int                                 flags[AtomsCount] = {0};
+    std::vector<int>                    flags(this->AtomsCount, 0);
     std::shared_ptr<SYMMETRY_ELEMENT>   axis;
 
     for (i = 1; i < this->AtomsCount; i++){
@@ -108,6 +103,8 @@ int Symmetry::init_C2(int atom1, int atom2, std::vector<double> support)
     double                              r, r1, r2;
     std::vector<double>                 middle(DIMENSION, 0.0);
 
+    std::fill(axis->transform.begin(), axis->transform.end(), this->AtomsCount+1);
+
     r1 = 0.0;
     r2 = 0.0;
     for (i = 0; i < DIMENSION; i++){
@@ -119,8 +116,6 @@ int Symmetry::init_C2(int atom1, int atom2, std::vector<double> support)
     if (fabs(r1 - r2) > TolerancePrimary){
         return 0;
     }
-
-    //this->init_symmetry_element(); // CORRESPONDS TO alloc_symmetry_element, sets values in an array to "impossible" values, so maybe needed
 
     r = 0.0;
 
@@ -144,11 +139,42 @@ int Symmetry::init_C2(int atom1, int atom2, std::vector<double> support)
 
     for (i = 0; i < DIMENSION; i++){
         middle[i] =  (this->atoms[atom1]->coords[i] + this->atoms[atom2]->coords[i]) / 2 - support[i];
-        r         += middle[i]*middle[i];
+        r         += middle[i] * middle[i];
     }
     r = sqrt(r);
 
-    // ...
+    if (r <= TolerancePrimary){
+        for (i = 0; i < DIMENSION; i++){
+            middle[i] = this->atoms[atom1]->coords[i] - this->atoms[atom2]->coords[i];
+        }
+        if (fabs(middle[2]) + fabs(middle[1]) > ToleranceSame){
+            axis->direction[0] =  0.0;
+            axis->direction[1] =  middle[2];
+            axis->direction[2] = -middle[1];
+        }
+        else{
+            axis->direction[0] = -middle[2];
+            axis->direction[1] =  0.0;;
+            axis->direction[2] = -middle[0];
+        }
+        r = 0.0;
+        for (i = 0; i < DIMENSION; i++){
+            r += axis->direction[i] * axis->direction[i];
+        }
+        r = sqrt(r);
+        for (i = 0; i < DIMENSION; i++){
+            axis->direction[i] /= r;
+        }
+    }
+    else{
+        for (i = 0; i < DIMENSION; i++){
+            axis->direction[i] = middle[i] / r;
+        }
+    }
+
+    this->establish_pairs(axis);
+    
+    return 1;
 }
 
 
@@ -165,7 +191,7 @@ bool Symmetry::detect_rot_sym(std::shared_ptr<Structure> mol, std::vector<int> t
     this->find_geometric_center();
 
     if (order == 2){
-        this->C2_axis();
+        this->check_C2_axis();
     }
     //else{
     //    this->Cn_axis();

@@ -941,6 +941,7 @@ SYMMETRY_ELEMENT* init_c2_axis( int i, int j, double support[ DIMENSION ] )
   r = sqrt(r) ;
   if( r <= TolerancePrimary ){ /* c2 is underdefined, let's do something special */
     if( MolecularPlane != NULL ){
+      std::cout << "*************************" << std::endl;
       if( verbose > 0 ){
       printf( "    c2 is underdefined, but there is a molecular plane\n" ) ;
       }
@@ -1295,10 +1296,6 @@ void test_c2_axis(){
 	NormalAxes[ NormalAxesCount - 1 ] = axis ;*/
       }
     }
-  }
-  std::cout << "***" << std::endl;
-  for (i = 0; i < AtomsCount; i++){
-     std::cout << flags[i] << std::endl;
   }
 }
 

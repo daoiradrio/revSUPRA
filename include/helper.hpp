@@ -7,8 +7,9 @@
 #include <functional>
 #include <memory>
 
-#define DIMENSION 3
+#define DIMENSION        3
 #define TolerancePrimary 5e-2
+#define ToleranceSame    1e-3
 
 
 

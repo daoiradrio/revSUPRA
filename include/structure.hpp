@@ -24,7 +24,8 @@ class Structure{
         Eigen::MatrixX3d coords;
 
         void get_structure(std::string filepath);
-        void read_xyz(std::string filepath);
+        //void read_xyz(std::string filepath);
+        int read_xyz(std::string filepath);
         //void read_xyz(std::string filepath);
         //void get_bonds();
     

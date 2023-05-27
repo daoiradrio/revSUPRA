@@ -24,6 +24,9 @@ int Symmetry::establish_pairs(std::shared_ptr<SYMMETRY_ELEMENT> elem)
         }
         elem->transform_atom(elem, this->atoms[i], symmetric); // HIER TESTEN OB BEIDE VERSIONEN GLEICH LAUFEN
     }
+    
+    // DUMMY, ENTFERNEN
+    return 0;
 }
 
 

@@ -52,7 +52,7 @@ struct BOND{
 
 
 struct SYMMETRY_ELEMENT{
-    std::vector<int>    transform; // NECESSARY??
+    std::vector<int>    transform;
     int                 order;
     int                 nparam; // NECESSARY??
     double              maxdev;

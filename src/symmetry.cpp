@@ -37,6 +37,9 @@ void Symmetry::find_geometric_center()
     double              r;
     std::vector<double> coord_sum(DIMENSION, 0.0);
 
+    this->geom_center.resize(DIMENSION);
+    this->dist_geom_center.resize(this->AtomsCount);
+
     for (i = 0; i < this->AtomsCount; i++){
         for (j = 0; j < DIMENSION; j++){
             coord_sum[j] += this->atoms[i]->coords[j];
@@ -99,14 +102,17 @@ void Symmetry::check_C2_axis()
 
 
 
+// MUSS AXIS TATSÄCHLICH ALS POINTER VERWENDET WERDEN??
 int Symmetry::init_C2(int atom1, int atom2, std::vector<double> support)
-{
-    std::shared_ptr<SYMMETRY_ELEMENT>   axis;
+{   
+    SYMMETRY_ELEMENT                    axis;
+    std::shared_ptr<SYMMETRY_ELEMENT>   axis_ptr = std::make_shared<SYMMETRY_ELEMENT>(axis);
     int                                 i;
     double                              r, r1, r2;
     std::vector<double>                 middle(DIMENSION, 0.0);
 
-    std::fill(axis->transform.begin(), axis->transform.end(), this->AtomsCount+1);
+    axis_ptr->transform.resize(this->AtomsCount);
+    std::fill(axis_ptr->transform.begin(), axis_ptr->transform.end(), this->AtomsCount+1);
 
     r1 = 0.0;
     r2 = 0.0;
@@ -128,16 +134,16 @@ int Symmetry::init_C2(int atom1, int atom2, std::vector<double> support)
     r = sqrt(r);
     if (r > 0.0){
         for (i = 0; i < DIMENSION; i++){
-            axis->normal[i] = this->geom_center[i] / r;
+            axis_ptr->normal[i] = this->geom_center[i] / r;
         }
     }
     else{
-        axis->normal[0] = 1.0;
-        axis->normal[1] = 0.0;
-        axis->normal[2] = 0.0;
+        axis_ptr->normal[0] = 1.0;
+        axis_ptr->normal[1] = 0.0;
+        axis_ptr->normal[2] = 0.0;
     }
 
-    axis->distance = r;
+    axis_ptr->distance = r;
     r = 0.0;
 
     for (i = 0; i < DIMENSION; i++){
@@ -151,31 +157,31 @@ int Symmetry::init_C2(int atom1, int atom2, std::vector<double> support)
             middle[i] = this->atoms[atom1]->coords[i] - this->atoms[atom2]->coords[i];
         }
         if (fabs(middle[2]) + fabs(middle[1]) > ToleranceSame){
-            axis->direction[0] =  0.0;
-            axis->direction[1] =  middle[2];
-            axis->direction[2] = -middle[1];
+            axis_ptr->direction[0] =  0.0;
+            axis_ptr->direction[1] =  middle[2];
+            axis_ptr->direction[2] = -middle[1];
         }
         else{
-            axis->direction[0] = -middle[2];
-            axis->direction[1] =  0.0;;
-            axis->direction[2] = -middle[0];
+            axis_ptr->direction[0] = -middle[2];
+            axis_ptr->direction[1] =  0.0;;
+            axis_ptr->direction[2] = -middle[0];
         }
         r = 0.0;
         for (i = 0; i < DIMENSION; i++){
-            r += axis->direction[i] * axis->direction[i];
+            r += axis_ptr->direction[i] * axis_ptr->direction[i];
         }
         r = sqrt(r);
         for (i = 0; i < DIMENSION; i++){
-            axis->direction[i] /= r;
+            axis_ptr->direction[i] /= r;
         }
     }
     else{
         for (i = 0; i < DIMENSION; i++){
-            axis->direction[i] = middle[i] / r;
+            axis_ptr->direction[i] = middle[i] / r;
         }
     }
 
-    this->establish_pairs(axis);
+    this->establish_pairs(axis_ptr);
     
     return 1;
 }
@@ -185,6 +191,7 @@ int Symmetry::init_C2(int atom1, int atom2, std::vector<double> support)
 bool Symmetry::detect_rot_sym(std::shared_ptr<Structure> mol, std::vector<int> torsion_atoms, int order) // ANGLE STATT ORDER
 {   
     this->support_atom = torsion_atoms[0];
+    this->support = mol->atoms[this->support_atom]->coords;
     this->AtomsCount = torsion_atoms.size();
 
     for (int atom: torsion_atoms){

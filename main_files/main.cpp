@@ -22,32 +22,30 @@ int main(int argc, char **argv){
     //std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
 
     Structure mol1;
-    mol1.get_structure(filepath1);
+    //mol1.get_structure(filepath1);
 
     //Structure mol2;
     //mol2.get_structure(filepath2);
 
-    //Structure mol;
-    //mol.get_structure(filename);
-    ConformerGenerator gen(mol1);
+    //ConformerGenerator gen(mol1);
     //gen.generate_conformers();
+    
+    // DAS HIER ENTFERNEN UND ENTSPRECHEND CONFORMERGENERATOR REFACTOREN
+    //gen.get_torsions();
+    //gen.find_cycles();
+    //gen.selection_menu();
+    //gen.generation_setup();
 
-    gen.get_torsions();
-    gen.find_cycles();
-    gen.selection_menu();
-    gen.generation_setup();
-
-    int atom;
-    for (int i = 0; i < gen.torsions.size(); i++){
-        std::cout << gen.torsions[i].atom_index1 << " " << gen.torsions[i].atom_index2 << std::endl;
-        for (int j = 0; j < gen.torsion_atoms[i].size(); j++){
-            atom = gen.torsion_atoms[i][j];
-            std::cout << atom << std::endl;
-        }
-        std::cout << std::endl;
+    std::shared_ptr<Structure> mol_ptr = std::make_shared<Structure>(mol1);
+    (*mol_ptr).get_structure(filepath1); 
+    
+    std::vector<int> atoms;
+    for (int i = 0; i < mol_ptr->n_atoms; i++){
+        atoms.push_back(i);
     }
 
     Symmetry sym;
+    sym.detect_rot_sym(mol_ptr, atoms, 2);
 
     //sym.detect_rot_sym(std::make_shared<Structure>(mol1), gen.torsion_atoms[0]);
 

@@ -18,7 +18,7 @@ int main(int argc, char **argv){
     }*/
     //std::string filepath = "inputfiles/" + filename;
 
-    std::string filepath1 = "inputfiles/Alanin.xyz";
+    std::string filepath1 = "inputfiles/Benzol1.xyz";
     //std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
 
     Structure mol1;

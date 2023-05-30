@@ -1,7 +1,7 @@
 #ifndef STRUCTURE_HPP
 #define STRUCTURE_HPP
 
-#include <helper.hpp>
+#include <utils.hpp>
 
 #include <vector>
 #include <fstream>
@@ -19,8 +19,8 @@ class Structure{
         ~Structure();
 
         int n_atoms;
-        std::vector<std::shared_ptr<ATOM>> atoms;
-        std::vector<BOND> bonds;
+        std::vector<std::shared_ptr<Atom>> atoms;
+        std::vector<Bond> bonds;
         Eigen::MatrixX3d coords;
 
         void get_structure(std::string filepath);

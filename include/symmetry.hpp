@@ -56,12 +56,10 @@
 #ifndef SYMMETRY_HPP
 #define SYMMETRY_HPP
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <helper.hpp>
+#include <utils.hpp>
 #include <structure.hpp>
+#include <symmetryelement.hpp>
+#include <rotationaxis.hpp>
 
 #include <vector>
 #include <memory>
@@ -70,9 +68,9 @@
 #include <iostream>
 #include <algorithm>
 
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795028841971694
-#endif
+//#ifndef M_PI
+//#define M_PI 3.1415926535897932384626433832795028841971694
+//#endif
 
 #define DIMENSION 3
 #define MAXPARAM  7
@@ -89,14 +87,18 @@ class Symmetry{
         std::vector<double>                 support;
         std::vector<double>                 geom_center;
         std::vector<double>                 dist_geom_center;
-        std::vector<std::shared_ptr<ATOM>>  atoms;
+        std::vector<std::shared_ptr<Atom>>  atoms;
 
-        bool detect_rot_sym(std::shared_ptr<Structure> mol, std::vector<int> torsion_atoms, int order);
-        void find_geometric_center();
-        void check_C2_axis();
-        int init_C2(int i, int j, std::vector<double> support);
-        int refine_symmetry_element(std::shared_ptr<SYMMETRY_ELEMENT> elem);
-        int establish_pairs(std::shared_ptr<SYMMETRY_ELEMENT> elem);
+        bool    detect_rot_sym(std::shared_ptr<Structure> mol, std::vector<int> torsion_atoms, int order);
+        void    find_geometric_center();
+        void    check_C2_axis();
+        int     init_C2(int i, int j);
+        int     establish_pairs(std::shared_ptr<SymmetryElement> elem);
+        int     check_transform_order(std::shared_ptr<SymmetryElement> elem);
+        int     optimize_transform_params(std::shared_ptr<SymmetryElement> elem);
+        double  eval_opt_target_func(std::shared_ptr<SymmetryElement> elem, std::shared_ptr<int> finish);
+        void    get_params(std::shared_ptr<SymmetryElement> elem, std::vector<double> values);
+        void    set_params(std::shared_ptr<SymmetryElement> elem, std::vector<double> values);
 
     private:
 

@@ -1,7 +1,7 @@
 #ifndef CONFORMERGENERATOR_HPP
 #define CONFORMERGENERATOR_HPP
 
-#include <helper.hpp>
+#include <utils.hpp>
 #include <structure.hpp>
 #include <analyzer.hpp>
 
@@ -25,10 +25,10 @@ class ConformerGenerator{
 
         std::shared_ptr<Structure> mol;
 
-        std::vector<BOND> torsions;
-        std::vector<BOND> central_torsions;
-        std::vector<BOND> methylalike_torsions;
-        std::vector<BOND> terminal_torsions;
+        std::vector<Bond> torsions;
+        std::vector<Bond> central_torsions;
+        std::vector<Bond> methylalike_torsions;
+        std::vector<Bond> terminal_torsions;
         std::vector<std::vector<int>> torsion_atoms;
 
         std::vector<double> angle_increments; // IN RAD STATT DEGREE??
@@ -65,10 +65,10 @@ class ConformerGenerator{
     private:
         /*std::shared_ptr<Structure> mol;
 
-        std::vector<BOND> torsions;
-        std::vector<BOND> central_torsions;
-        std::vector<BOND> methylalike_torsions;
-        std::vector<BOND> terminal_torsions;
+        std::vector<Bond> torsions;
+        std::vector<Bond> central_torsions;
+        std::vector<Bond> methylalike_torsions;
+        std::vector<Bond> terminal_torsions;
         std::vector<std::vector<int>> torsion_atoms;
 
         std::vector<double> angle_increments; // IN RAD STATT DEGREE??

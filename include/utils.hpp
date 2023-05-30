@@ -1,5 +1,5 @@
-#ifndef HELPER_HPP
-#define HELPER_HPP
+#ifndef UTILS_HPP
+#define UTILS_HPP
 
 #include <vector>
 #include <unordered_map>
@@ -7,9 +7,16 @@
 #include <functional>
 #include <memory>
 
-#define DIMENSION        3
-#define TolerancePrimary 5e-2
-#define ToleranceSame    1e-3
+#define DIMENSION           3
+#define TolerancePrimary    5e-2
+#define ToleranceSame       1e-3
+#define ToleranceFinal      1e-4
+#define MaxOptCycles        200
+#define MaxOptStep          5e-1
+#define MinOptStep          1e-7
+#define OptChangeThreshold  1e-10
+#define GradientStep        1e-7
+#define OptChangeHits       5
 
 
 
@@ -31,7 +38,7 @@ std::string get_element(std::string label);
 bool is_terminal_atom(std::string element);
 
 
-struct ATOM{
+struct Atom{
     std::string         element;
     int                 pse_num;
     int                 index;
@@ -39,19 +46,19 @@ struct ATOM{
     std::vector<int>    bond_partners;
     bool                core_of_terminal_group = false;
 
-    ATOM(): coords(DIMENSION, 0.0) {}
-    ~ATOM(){}
+    Atom(): coords(DIMENSION, 0.0) {}
+    ~Atom(){}
 };
 
 
-struct BOND{
+struct Bond{
     int atom_index1;
     int atom_index2;
     int bond_order;
 };
 
 
-struct SYMMETRY_ELEMENT{
+/*struct SymmetryElement{
     std::vector<int>    transform;
     int                 order;
     int                 nparam; // NECESSARY??
@@ -60,15 +67,21 @@ struct SYMMETRY_ELEMENT{
     std::vector<double> normal;
     std::vector<double> direction;
 
-    SYMMETRY_ELEMENT(): normal(DIMENSION, 0.0), direction(DIMENSION, 0.0) {}
-    ~SYMMETRY_ELEMENT(){}
+    SymmetryElement(): normal(DIMENSION, 0.0), direction(DIMENSION, 0.0) {}
+    ~SymmetryElement(){}
 
-    std::function<void(
-        std::shared_ptr<struct SYMMETRY_ELEMENT>,
-        std::shared_ptr<ATOM> from,
-        std::shared_ptr<ATOM> to
-    )> transform_atom;
-};
+    //std::function<void(
+    //    std::shared_ptr<SymmetryElement>,
+    //    std::shared_ptr<Atom>,
+    //    std::shared_ptr<Atom>
+    //)> transform_atom;
+
+    void(Symmetry::*transform_atom)(
+        std::shared_ptr<SymmetryElement>,
+        std::shared_ptr<Atom>,
+        std::shared_ptr<Atom>
+    );
+};*/
 
 
 

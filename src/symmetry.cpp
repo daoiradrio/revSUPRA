@@ -10,42 +10,85 @@ Symmetry::~Symmetry(){}
 
 
 
-int Symmetry::establish_pairs(std::shared_ptr<SymmetryElement> elem)
+int Symmetry::old_establish_pairs(std::shared_ptr<SymmetryElement> elem)
 {
     int                     i, j, k;
     int                     best_j;
     double                  distance, best_distance;
-    std::vector<int>        atom_used(this->AtomsCount, 1);
+    std::vector<int>        atom_used(this->AtomsCount, 0);
     std::shared_ptr<Atom>   symmetric;
 
     for (i = 0; i < this->AtomsCount; i++){
+        //std::cout << i << std::endl;
         if (elem->transform[i] >= this->AtomsCount){
-            continue;
-        }
-        elem->transform_atom(this->atoms[i], symmetric);
-        best_j = i;
-        best_distance = 2 * TolerancePrimary;
-        for (j = 0; j < this->AtomsCount; j++){
-            if (this->atoms[i]->pse_num != symmetric->pse_num || atom_used[j]){
-                continue;
+            symmetric = elem->transform_atom(this->atoms[i]);
+            //std::cout << symmetric->coords[0] << " " << symmetric->coords[1] << " " << symmetric->coords[2] << std::endl;
+            best_j = i;
+            best_distance = 2 * TolerancePrimary;
+            for (j = 0; j < this->AtomsCount; j++){
+                if (this->atoms[i]->pse_num != symmetric->pse_num || atom_used[j]){
+                    std::cout << "Continue" << std::endl;
+                    continue;
+                }
+                distance = 0.0;
+                for (k = 0; k < DIMENSION; k++){
+                    distance += pow(symmetric->coords[k] - this->atoms[j]->coords[k], 2);
+                }
+                distance = sqrt(distance);
+                if (distance < best_distance){
+                    best_j = j;
+                    best_distance = distance;
+                }
             }
-            distance = 0.0;
-            for (k = 0; k < DIMENSION; k++){
-                distance = distance + pow(symmetric->coords[k] - this->atoms[k]->coords[k], 2);
+            if (best_distance > TolerancePrimary){
+                std::cout << "Fail" << std::endl;
+                return 0;
             }
-            distance = sqrt(distance);
-            if (distance < best_distance){
-                best_j = j;
-                best_distance = distance;
-            }
+            elem->transform[i] = j;
+            atom_used[best_j] = 1;
+            std::cout << "Geschafft" << std::endl;
         }
-        if (best_distance > TolerancePrimary){
-            return 0;
-        }
-        elem->transform[i] = j;
-        atom_used[i] = 1;
     }
     
+    return 1;
+}
+
+
+
+int Symmetry::establish_pairs(){
+    int                     i, j, k;
+    int                     best_j;
+    double                  distance, best_distance;
+    std::vector<int>        atom_used(this->AtomsCount, 0);
+    std::shared_ptr<Atom>   symmetric;
+
+    for (i = 0; i < this->AtomsCount; i++){
+        if (this->rot_axis->transform[i] >= this->AtomsCount){
+            symmetric = this->rot_axis->transform_atom(this->atoms[i]);
+            best_j = i;
+            best_distance = 2 * TolerancePrimary;
+            for (j = 0; j < this->AtomsCount; j++){
+                if (this->atoms[j]->pse_num != symmetric->pse_num || atom_used[j]){
+                    continue;
+                }
+                distance = 0.0;
+                for (k = 0; k < DIMENSION; k++){
+                    distance += pow(symmetric->coords[k] - this->atoms[j]->coords[k], 2);
+                }
+                distance = sqrt(distance);
+                if (distance < best_distance){
+                    best_j = j;
+                    best_distance = distance;
+                }
+            }
+            if (best_distance > TolerancePrimary){
+                return 0;
+            }
+            this->rot_axis->transform[i] = j;
+            atom_used[best_j] = 1;
+        }
+    }
+
     return 1;
 }
 
@@ -58,6 +101,7 @@ int Symmetry::check_transform_order(std::shared_ptr<SymmetryElement> elem){
         if (elem->transform[i] == i){
             continue;
         }
+        
         for (j = elem->order-1, k = elem->transform[i]; j > 0; j--, k = elem->transform[k]){
             if (k == i){
                 return 0;
@@ -67,21 +111,26 @@ int Symmetry::check_transform_order(std::shared_ptr<SymmetryElement> elem){
             return 0;
         }
     }
-
     return 1;
 }
 
 
 
 int Symmetry::optimize_transform_params(std::shared_ptr<SymmetryElement> elem){
-    int i;
-    int cycle = 0;
-    int hits = 0;
-    int finish = 0;
-    double f = 0;
-    double fold, snorm;
+    int                     i;
+    int                     cycle = 0;
+    int                     hits = 0;
+    int                     finish = 0;
+    int                     vars = elem->nparam;
+    double                  f = 0.0;
+    double                  fold, fnew, fnew2, fdn, fup;
+    double                  a, b, x;
+    double                  snorm;
+    std::vector<double>     values;
+    std::vector<double>     grad;
+    std::vector<double>     force;
+    std::vector<double>     step;
 
-    f = 0.0;
     do{
         fold = f;
         f    = this->eval_opt_target_func(elem, std::make_shared<int>(finish));
@@ -99,11 +148,98 @@ int Symmetry::optimize_transform_params(std::shared_ptr<SymmetryElement> elem){
                 break;
             }
         }
-        
+        this->get_params(elem, values);
+        for (i = 0; i < vars; i++){
+            values[i] -= GradientStep;
+            this->set_params(elem, values);
+            fdn = this->eval_opt_target_func(elem, nullptr);
+            values[i] += 2*GradientStep;
+            this->set_params(elem, values);
+            fup = this->eval_opt_target_func(elem, nullptr);
+            values[i] -= GradientStep;
+            grad[i] = (fup - fdn) / (2*GradientStep);
+            force[i] = (fup + fdn - 2*f) / (GradientStep*GradientStep);
+        }
+        snorm = 0.0;
+        for (i = 0; i < vars; i++){
+            if (force[i] < 0){
+                force[i] = -force[i];
+            }
+            if (force[i] < 1e-3){
+                force[i] = 1e-3;
+            }
+            else if (force[i] > 1e3){
+                force[i] = 1e3;
+            }
+            step[i] = -grad[i] / force[i];
+            snorm += step[i]*step[i];
+        }
+        snorm = sqrt(snorm);
+        if (snorm > MaxOptStep){
+            for (i = 0; i < vars; i++){
+                step[i] *= MaxOptStep / snorm;
+            }
+            snorm = MaxOptStep;
+        }
+        do{
+            for (i = 0; i < vars; i++){
+                values[i] += step[i];
+            }
+            this->set_params(elem, values);
+            fnew = this->eval_opt_target_func(elem, nullptr);
+            if (fnew < f){
+                break;
+            }
+            for (i = 0; i < vars; i++){
+                values[i] -= step[i];
+                step[i] /= 2;
+            }
+            this->set_params(elem, values);
+            snorm /= 2;
+        }while (snorm > MinOptStep);
+        if ((snorm > MinOptStep) && (snorm < MaxOptStep / 2)){
+            for (i = 0; i < vars; i++){
+                values[i] += step[i];
+            }
+            this->set_params(elem, values);
+            fnew2 = this->eval_opt_target_func(elem, nullptr);
+            for (i = 0; i < vars; i++){
+                values[i] -= 2*step[i];
+            }
+            a = (4*f - fnew2 - 3*fnew) / 2;
+            b = (f + fnew2 - 2*fnew) / 2;
+            if (b > 0){
+                x = -a/(2*b);
+                if (x > 0.2 && x < 1.8){
+                    for (i = 0; i < vars; i++){
+                        values[i] += x*step[i];
+                    }
+                }
+                else{
+                    b = 0;
+                }
+            }
+            if (b <= 0){
+                if (fnew2 < fnew){
+                    for (i = 0; i < vars; i++){
+                        values[i] += 2*step[i];
+                    }
+                }
+                else{
+                    for (i = 0; i < vars; i++){
+                        values[i] += step[i];
+                    }
+                }
+            }
+            this->set_params(elem, values);
+        } 
     }while(snorm > MinOptStep && cycle++ < MaxOptCycles);
 
-    // DUMMY
-    return 0;
+    f = this->eval_opt_target_func(elem, nullptr);
+    if (cycle >= MaxOptCycles){
+        return 0;
+    }
+    return 1;
 }
 
 
@@ -131,7 +267,7 @@ double Symmetry::eval_opt_target_func(std::shared_ptr<SymmetryElement> elem, std
     target = 0.0;
     maxr   = 0.0;
     for (i = 0; i < this->AtomsCount; i++){
-        elem->transform_atom(this->atoms[i], symmetric);
+        symmetric = elem->transform_atom(this->atoms[i]);
         j = elem->transform[i];
         r = 0.0;
         for(j = 0; j < DIMENSION; j++){
@@ -153,12 +289,26 @@ double Symmetry::eval_opt_target_func(std::shared_ptr<SymmetryElement> elem, std
 
 
 void Symmetry::get_params(std::shared_ptr<SymmetryElement> elem, std::vector<double> values){
+    int i;
+
+    if (values.size() != elem->nparam){
+        values.resize(elem->nparam);
+    }
+
+    for (i = 0; i < elem->nparam; i++){
+        values[i] = elem->distance;
+    }
+
     return;
 }
 
 
 
 void Symmetry::set_params(std::shared_ptr<SymmetryElement> elem, std::vector<double> values){
+    if (values.size() != 0){
+        elem->distance = values[0];
+    }
+
     return;
 }
 
@@ -198,13 +348,10 @@ void Symmetry::find_geometric_center()
 
 void Symmetry::check_C2_axis()
 {
-    int                                 i, j, k;
-    int                                 sum;
-    double                              distance_i, distance_j;
-    std::vector<int>                    flags(this->AtomsCount, 0);
-    //std::shared_ptr<SYMMETRY_ELEMENT>   axis;
-    //RotationAxis                        axis;
-    //std::shared_ptr<RotationAxis>       axis_ptr = std::make_shared<RotationAxis>(axis);
+    int                 i, j, k;
+    int                 sum;
+    double              distance_i, distance_j;
+    std::vector<int>    flags(this->AtomsCount, 0);
 
     for (i = 1; i < this->AtomsCount; i++){
         for (j = 0; j < i; j++){
@@ -214,18 +361,7 @@ void Symmetry::check_C2_axis()
             if (fabs(this->dist_geom_center[i] - this->dist_geom_center[j]) > TolerancePrimary){
                 continue;
             }
-            distance_i = 0.0;
-            distance_j = 0.0;
-            for (k = 0; k < DIMENSION; k++){
-                distance_i += pow(this->atoms[i]->coords[k] - this->support[k], 2);
-                distance_j += pow(this->atoms[j]->coords[k] - this->support[k], 2);
-            }
-            distance_i = sqrt(distance_i);
-            distance_j = sqrt(distance_j);
-            if ((distance_i - distance_j) > TolerancePrimary){
-                continue;
-            }
-            if (this->init_C2(i, j)){
+            if (this->old_init_C2(i, j)){
                 flags[i] = 1;
                 flags[j] = 1;
             }
@@ -238,12 +374,9 @@ void Symmetry::check_C2_axis()
 
 
 // MUSS AXIS TATSÄCHLICH ALS POINTER VERWENDET WERDEN??
-int Symmetry::init_C2(int atom1, int atom2)
+int Symmetry::old_init_C2(int atom1, int atom2)
 {   
-    //SYMMETRY_ELEMENT                    axis;
-    //std::shared_ptr<SYMMETRY_ELEMENT>   axis_ptr = std::make_shared<SYMMETRY_ELEMENT>(axis);
-    RotationAxis                        axis;
-    std::shared_ptr<RotationAxis>       axis_ptr = std::make_shared<RotationAxis>(axis);
+    std::shared_ptr<RotationAxis>       axis_ptr = std::make_shared<RotationAxis>();
     int                                 i;
     double                              r, r1, r2;
     std::vector<double>                 middle(DIMENSION, 0.0);
@@ -320,39 +453,92 @@ int Symmetry::init_C2(int atom1, int atom2)
         }
     }
 
-    if (!this->establish_pairs(axis_ptr)){
+    //std::cout << "1" << std::endl;
+
+    if (!this->old_establish_pairs(axis_ptr)){
         return 0;
     }
-    if (!this->check_transform_order(axis_ptr)){
+    //std::cout << "2" << std::endl;
+    for (i = 0; i < this->AtomsCount; i++){
+        std::cout << i << " " << axis_ptr->transform[i] << std::endl;
+    }
+    /*if (!this->check_transform_order(axis_ptr)){
         return 0;
     }
-    if (!this->optimize_transform_params(axis_ptr)){
+    std::cout << "3" << std::endl;*/
+    /*if (!this->optimize_transform_params(axis_ptr)){
         return 0;
     }
+    std::cout << "4" << std::endl;*/
     
     return 1;
 }
 
 
 
-bool Symmetry::detect_rot_sym(std::shared_ptr<Structure> mol, std::vector<int> torsion_atoms, int order) // ANGLE STATT ORDER
-{   
-    this->support_atom = torsion_atoms[0];
-    this->support = mol->atoms[this->support_atom]->coords;
-    this->AtomsCount = torsion_atoms.size();
+int Symmetry::init_rot_axis(int from, int to, int order){
+    int                             i;
+    double                          r, r1, r2;
 
-    for (int atom: torsion_atoms){
-        this->atoms.push_back(std::make_shared<Atom>(*(mol->atoms[atom])));
+    this->rot_axis = std::make_shared<RotationAxis>();
+    this->rot_axis->order = order;
+    this->rot_axis->axis_from = std::make_shared<Atom>(*(this->atoms[from]));
+    this->rot_axis->axis_to = std::make_shared<Atom>(*(this->atoms[to]));
+    this->rot_axis->transform.resize(this->AtomsCount);
+    std::fill(this->rot_axis->transform.begin(), this->rot_axis->transform.end(), this->AtomsCount+1);
+
+    r = 0.0;
+
+    for (i = 0; i < DIMENSION; i++){
+        r += pow(this->geom_center[i], 2);
+    }
+    r = sqrt(r);
+    if (r > 0.0){
+        for (i = 0; i < DIMENSION; i++){
+            this->rot_axis->normal[i] = this->geom_center[i] / r;
+        }
+    }
+    else{
+        this->rot_axis->normal[0] = 1.0;
+        this->rot_axis->normal[1] = 0.0;
+        this->rot_axis->normal[2] = 0.0;
+    }
+
+    this->rot_axis->distance = r;
+    r = 0.0;
+
+    for (i = 0; i < DIMENSION; i++){
+        this->rot_axis->direction[i] = this->atoms[to]->coords[i] - this->atoms[from]->coords[i];
+        r += pow(this->rot_axis->direction[i], 2);
+    }
+    r = sqrt(r);
+    for (i = 0; i < DIMENSION; i++){
+        this->rot_axis->direction[i] /= r;
+    }
+    
+    return 0;
+}
+
+
+
+bool Symmetry::detect_rot_sym(std::shared_ptr<Structure> mol, int from, int to, int order) // ANGLE STATT ORDER
+{   
+    //this->support_atom = torsion_atoms[0];
+    //this->support = mol->atoms[this->support_atom]->coords;
+    this->AtomsCount = mol->n_atoms;
+
+    for (std::shared_ptr<Atom> atom: mol->atoms){
+        //this->atoms.push_back(std::make_shared<Atom>(*(mol->atoms[atom])));
+        this->atoms.push_back(std::make_shared<Atom>(*atom));
     }
 
     this->find_geometric_center();
 
-    if (order == 2){
-        this->check_C2_axis();
+    this->init_rot_axis(from, to, order);
+
+    if (!this->establish_pairs()){
+        std::cout << "Keine C2 Symmetrie" << std::endl;
     }
-    //else{
-    //    this->Cn_axis();
-    //}
 
     return false;
 }

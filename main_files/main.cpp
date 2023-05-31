@@ -38,14 +38,9 @@ int main(int argc, char **argv){
 
     std::shared_ptr<Structure> mol_ptr = std::make_shared<Structure>(mol1);
     (*mol_ptr).get_structure(filepath1); 
-    
-    std::vector<int> atoms;
-    for (int i = 0; i < mol_ptr->n_atoms; i++){
-        atoms.push_back(i);
-    }
 
     Symmetry sym;
-    sym.detect_rot_sym(mol_ptr, atoms, 2);
+    sym.detect_rot_sym(mol_ptr, 8, 0, 2);
 
     //sym.detect_rot_sym(std::make_shared<Structure>(mol1), gen.torsion_atoms[0]);
 

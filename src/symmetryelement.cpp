@@ -2,4 +2,4 @@
 
 
 
-int SymmetryElement::transform_atom(std::shared_ptr<Atom> from, std::shared_ptr<Atom> to){}
+std::shared_ptr<Atom> SymmetryElement::transform_atom(std::shared_ptr<Atom> from){}

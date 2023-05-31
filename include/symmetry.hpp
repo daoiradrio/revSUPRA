@@ -88,12 +88,15 @@ class Symmetry{
         std::vector<double>                 geom_center;
         std::vector<double>                 dist_geom_center;
         std::vector<std::shared_ptr<Atom>>  atoms;
+        std::shared_ptr<RotationAxis>       rot_axis;
 
-        bool    detect_rot_sym(std::shared_ptr<Structure> mol, std::vector<int> torsion_atoms, int order);
+        bool    detect_rot_sym(std::shared_ptr<Structure> mol, int from, int to, int order);
         void    find_geometric_center();
         void    check_C2_axis();
-        int     init_C2(int i, int j);
-        int     establish_pairs(std::shared_ptr<SymmetryElement> elem);
+        int     init_rot_axis(int from, int to, int order);
+        int     establish_pairs();
+        int     old_init_C2(int i, int j);
+        int     old_establish_pairs(std::shared_ptr<SymmetryElement> elem);
         int     check_transform_order(std::shared_ptr<SymmetryElement> elem);
         int     optimize_transform_params(std::shared_ptr<SymmetryElement> elem);
         double  eval_opt_target_func(std::shared_ptr<SymmetryElement> elem, std::shared_ptr<int> finish);

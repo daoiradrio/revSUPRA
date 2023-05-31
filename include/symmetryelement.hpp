@@ -20,13 +20,14 @@ class SymmetryElement{
         int                 order;
         double              maxdev;
         double              distance;
+        double              nparam;
         std::vector<double> normal;
         std::vector<double> direction;
 
         SymmetryElement(): normal(DIMENSION, 0.0), direction(DIMENSION, 0.0) {}
         ~SymmetryElement(){}
 
-        virtual int transform_atom(std::shared_ptr<Atom> from, std::shared_ptr<Atom> to);
+        virtual std::shared_ptr<Atom> transform_atom(std::shared_ptr<Atom> from);
 
     private:
 

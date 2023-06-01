@@ -1,5 +1,0 @@
-add_test( StructureTest.ReadInput /home/baum/revSUPRA/build/runtests [==[--gtest_filter=StructureTest.ReadInput]==] --gtest_also_run_disabled_tests)
-set_tests_properties( StructureTest.ReadInput PROPERTIES WORKING_DIRECTORY /home/baum/revSUPRA/build)
-add_test( SymmetryTest.DetectRotationalSymmetry /home/baum/revSUPRA/build/runtests [==[--gtest_filter=SymmetryTest.DetectRotationalSymmetry]==] --gtest_also_run_disabled_tests)
-set_tests_properties( SymmetryTest.DetectRotationalSymmetry PROPERTIES WORKING_DIRECTORY /home/baum/revSUPRA/build)
-set( runtests_TESTS StructureTest.ReadInput SymmetryTest.DetectRotationalSymmetry)

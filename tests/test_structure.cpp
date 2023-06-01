@@ -1,9 +1,9 @@
 // unbedingt nötig
 #include <gtest/gtest.h> // Error weil VSCOde Pfad nicht findet
 
-//#include <structure.hpp>
+#include <structure.hpp>
 
-//#include <string>
+#include <string>
 
 
 
@@ -20,8 +20,7 @@
 
 TEST(StructureTest, ReadInput)
 {   
-    //Structure mol;
-    //std::string file = "Alanin.xyz";
-    //EXPECT_EQ(mol.read_xyz(file), 1);
-    EXPECT_EQ(7*6, 42); // PLACEHOLDER, DELETE LATER
+    Structure mol;
+    std::string file = "/home/baum/revSUPRA/inputfiles/Alanin.xyz";
+    EXPECT_EQ(mol.read_xyz(file), 1);
 }

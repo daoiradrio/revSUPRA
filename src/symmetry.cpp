@@ -10,7 +10,7 @@ Symmetry::~Symmetry(){}
 
 
 
-int Symmetry::old_establish_pairs(std::shared_ptr<SymmetryElement> elem)
+/*int Symmetry::old_establish_pairs(std::shared_ptr<SymmetryElement> elem)
 {
     int                     i, j, k;
     int                     best_j;
@@ -55,7 +55,7 @@ int Symmetry::old_establish_pairs(std::shared_ptr<SymmetryElement> elem)
 
 
 
-int Symmetry::establish_pairs(){
+int Symmetry::find_pairs(){
     int                     i, j, k;
     int                     best_j;
     double                  distance, best_distance;
@@ -314,38 +314,6 @@ void Symmetry::set_params(std::shared_ptr<SymmetryElement> elem, std::vector<dou
 
 
 
-void Symmetry::find_geometric_center()
-{
-    int                 i, j;
-    double              r;
-    std::vector<double> coord_sum(DIMENSION, 0.0);
-
-    this->geom_center.resize(DIMENSION);
-    this->dist_geom_center.resize(this->AtomsCount);
-
-    for (i = 0; i < this->AtomsCount; i++){
-        for (j = 0; j < DIMENSION; j++){
-            coord_sum[j] += this->atoms[i]->coords[j];
-        }
-    }
-
-    for (i = 0; i < DIMENSION; i++){
-        this->geom_center[i] = coord_sum[i] / this->AtomsCount;
-    }
-
-    for (i = 0; i < this->AtomsCount; i++){
-        r = 0.0;
-        for (j = 0; j < DIMENSION; j++){
-            r += pow(this->atoms[i]->coords[j] - this->geom_center[j], 2);
-        }
-        this->dist_geom_center[i] = r;
-    }
-
-    return;
-}
-
-
-
 void Symmetry::check_C2_axis()
 {
     int                 i, j, k;
@@ -384,7 +352,6 @@ int Symmetry::old_init_C2(int atom1, int atom2)
     axis_ptr->order = 2;
     axis_ptr->transform.resize(this->AtomsCount);
     std::fill(axis_ptr->transform.begin(), axis_ptr->transform.end(), this->AtomsCount+1);
-    //axis_ptr->transform_atom = &rotate_atom;
 
     r1 = 0.0;
     r2 = 0.0;
@@ -453,23 +420,15 @@ int Symmetry::old_init_C2(int atom1, int atom2)
         }
     }
 
-    //std::cout << "1" << std::endl;
-
     if (!this->old_establish_pairs(axis_ptr)){
         return 0;
     }
-    //std::cout << "2" << std::endl;
-    for (i = 0; i < this->AtomsCount; i++){
-        std::cout << i << " " << axis_ptr->transform[i] << std::endl;
-    }
-    /*if (!this->check_transform_order(axis_ptr)){
+    if (!this->check_transform_order(axis_ptr)){
         return 0;
     }
-    std::cout << "3" << std::endl;*/
-    /*if (!this->optimize_transform_params(axis_ptr)){
+    if (!this->optimize_transform_params(axis_ptr)){
         return 0;
     }
-    std::cout << "4" << std::endl;*/
     
     return 1;
 }
@@ -517,28 +476,94 @@ int Symmetry::init_rot_axis(int from, int to, int order){
     }
     
     return 0;
+}*/
+
+
+
+void Symmetry::find_geometric_center()
+{
+    int                 i, j;
+    double              r;
+    std::vector<double> coord_sum(DIMENSION, 0.0);
+
+    this->geom_center.resize(DIMENSION);
+    this->dist_geom_center.resize(this->n_atoms);
+
+    for (i = 0; i < this->n_atoms; i++){
+        for (j = 0; j < DIMENSION; j++){
+            coord_sum[j] += this->atoms[i]->coords[j];
+        }
+    }
+
+    for (i = 0; i < DIMENSION; i++){
+        this->geom_center[i] = coord_sum[i] / this->n_atoms;
+    }
+
+    for (i = 0; i < this->n_atoms; i++){
+        r = 0.0;
+        for (j = 0; j < DIMENSION; j++){
+            r += pow(this->atoms[i]->coords[j] - this->geom_center[j], 2);
+        }
+        this->dist_geom_center[i] = r;
+    }
+
+    return;
 }
 
 
 
-bool Symmetry::detect_rot_sym(std::shared_ptr<Structure> mol, int from, int to, int order) // ANGLE STATT ORDER
-{   
-    //this->support_atom = torsion_atoms[0];
-    //this->support = mol->atoms[this->support_atom]->coords;
-    this->AtomsCount = mol->n_atoms;
+bool Symmetry::rot_sym_along_bond(
+    std::shared_ptr<Structure> mol, std::vector<int> rot_atoms, int axis_from, int axis_to, int order
+){   
+    int                                 i, j, k;
+    int                                 best_j;
+    int                                 n_atoms = rot_atoms.size();
+    double                              distance, best_distance;
+    std::shared_ptr<Atom>               symmetric;
+    RotationAxis                        rot_axis(mol->atoms[axis_from], mol->atoms[axis_to], order);
+    std::vector<int>                    atom_used(rot_atoms.size(), 0);
+    std::vector<int>                    transform_pairs(rot_atoms.size(), rot_atoms.size()+1);
+    std::vector<std::shared_ptr<Atom>>  atoms;
 
-    for (std::shared_ptr<Atom> atom: mol->atoms){
-        //this->atoms.push_back(std::make_shared<Atom>(*(mol->atoms[atom])));
-        this->atoms.push_back(std::make_shared<Atom>(*atom));
+    for (int atom_i: rot_atoms){
+        atoms.push_back(std::make_shared<Atom>(*(mol->atoms[atom_i])));
     }
 
-    this->find_geometric_center();
-
-    this->init_rot_axis(from, to, order);
-
-    if (!this->establish_pairs()){
-        std::cout << "Keine C2 Symmetrie" << std::endl;
+    for (i = 0; i < n_atoms; i++){
+        if (transform_pairs[i] >= n_atoms){
+            //std::cout << std::endl;
+            //std::cout << i << ": " << atoms[i]->coords[0] << " " << atoms[i]->coords[1] << " " << atoms[i]->coords[2] << std::endl;
+            best_j = i;
+            best_distance = 1.0;
+            //best_distance = 2 * TolerancePrimary;
+            symmetric = rot_axis.rotate_atom(atoms[i]);
+            //std::cout << "symmetric: " << symmetric->coords[0] << " " << symmetric->coords[1] << " " << symmetric->coords[2] << std::endl;
+            for (j = 0; j < n_atoms; j++){
+                if (atoms[j]->pse_num != symmetric->pse_num || atom_used[j]){
+                    continue;
+                }
+                //std::cout << j << ": " << atoms[j]->coords[0] << " " << atoms[j]->coords[1] << " " << atoms[j]->coords[2] << std::endl;
+                distance = 0.0;
+                for (k = 0; k < DIMENSION; k++){
+                    distance += pow(atoms[j]->coords[k] - symmetric->coords[k], 2);
+                }
+                distance = sqrt(distance);
+                //std::cout << "distance: " << distance << std::endl;
+                if (distance < best_distance){
+                    best_j = j;
+                    best_distance = distance;
+                }
+            }
+            if (best_distance > 0.5){
+            //if (best_distance > TolerancePrimary){
+                //std::cout << "Keine Symmetrie" << std::endl;
+                return false;
+            }
+            transform_pairs[i] = j;
+            atom_used[best_j] = 1;
+        }
     }
 
-    return false;
+    //std::cout << "Symmetrie" << std::endl;
+    return true;
 }

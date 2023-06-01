@@ -2,88 +2,55 @@
 
 
 
-std::shared_ptr<Atom> RotationAxis::transform_atom(std::shared_ptr<Atom> from){
-    int                     i;
-    double                  dot = 0.0;
-    double                  angle = 0.0;
-    std::vector<double>     v1(DIMENSION, 0.0);
-    std::vector<double>     v2(DIMENSION, 0.0);
-    std::vector<double>     v3(DIMENSION, 0.0);
-    std::vector<double>     cross(DIMENSION, 0.0);
-    std::shared_ptr<Atom>   to = std::make_shared<Atom>();
+RotationAxis::RotationAxis(std::shared_ptr<Atom> from_atom, std::shared_ptr<Atom> to_atom, int order){
+    this->order = order;
+    this->from << from_atom->coords[0], from_atom->coords[1], from_atom->coords[2];
+    this->to << to_atom->coords[0], to_atom->coords[1], to_atom->coords[2];
+    this->axis = this->to - this->from;
+    this->axis.normalize();
+}
+
+
+
+Eigen::Vector3d RotationAxis::rotate_atom(Eigen::Vector3d coords){
+    Eigen::Vector3d     new_coords;
+    double              angle = (2.0 * M_PI) / (double)this->order;
     
-    if (!this->order){
-        std::cout << "Order of rotation axis is zero!" << std::endl;
-        return nullptr;
-    }
+    new_coords = coords - this->from;
+    new_coords = axis.dot(new_coords) * axis
+                + cos(angle) * this->axis.cross(new_coords).cross(this->axis)
+                + sin(angle) * this->axis.cross(new_coords);
+    new_coords = new_coords + this->from;
 
-    angle =  (2.0 * M_PI) / (double)this->order;
+    return new_coords;
+}
 
-    Eigen::Vector3d new_coord(from->coords.data());
-    Eigen::Vector3d axis_vec1(this->axis_from->coords.data());
-    Eigen::Vector3d axis_vec2(this->axis_to->coords.data());
-    Eigen::Vector3d axis;
-    //Eigen::Vector3d t1;
-    //Eigen::Vector3d t2;
-    //Eigen::Vector3d t3;
-    axis = axis_vec2 - axis_vec1;
-    axis.normalize();
-    new_coord = new_coord - axis_vec1;
-    new_coord = axis.dot(new_coord) * axis
-                + cos(angle) * axis.cross(new_coord).cross(axis) // FUNKTIONIERT cross().cross()??
-                + sin(angle) * axis.cross(new_coord);
-    /*t1 = axis * axis.dot(new_coord);
-    t2 = axis.cross(new_coord);
-    t2 = t2.cross(axis) * cos(angle);
-    t3 = axis.cross(new_coord) * sin(angle);
-    new_coord = t1 + t2 + t3;*/
-    new_coord = new_coord + axis_vec1;
 
-    /*for (i = 0; i < DIMENSION; i++){
-        to->coords[i] = from->coords[i] - this->axis_from->coords[i];
-    }
 
-    for (i = 0; i < DIMENSION; i++){
-        dot += this->direction[i] * from->coords[i];
-    }
+std::vector<double> RotationAxis::rotate_atom(std::vector<double> coords){
+    std::vector<double>     new_coords(DIMENSION, 0.0);
+    Eigen::Vector3d         parsed_coords(coords.data());
+
+    parsed_coords = this->rotate_atom(parsed_coords);
+    new_coords[0] = parsed_coords(0);
+    new_coords[1] = parsed_coords(1);
+    new_coords[2] = parsed_coords(2);
+
+    return new_coords;
+}
+
+
+
+std::shared_ptr<Atom> RotationAxis::rotate_atom(std::shared_ptr<Atom> atom){
+    std::shared_ptr<Atom>   new_atom = std::make_shared<Atom>();
+    Eigen::Vector3d         new_coords(atom->coords.data());
     
-    for (i = 0; i < DIMENSION; i++){
-        v1[i] = this->direction[i] * dot;
-    }
+    new_coords = this->rotate_atom(new_coords);
+    new_atom->coords[0] = new_coords(0);
+    new_atom->coords[1] = new_coords(1);
+    new_atom->coords[2] = new_coords(2);
+    new_atom->element = atom->element;
+    new_atom->pse_num = atom->pse_num;
 
-    cross[0] = this->direction[1] * from->coords[2] - this->direction[2] * from->coords[1];
-    cross[1] = this->direction[2] * from->coords[0] - this->direction[0] * from->coords[2];
-    cross[2] = this->direction[0] * from->coords[1] - this->direction[1] * from->coords[0];
-
-    v2[0] = cross[1] * this->direction[2] - cross[2] * this->direction[1];
-    v2[1] = cross[2] * this->direction[0] - cross[0] * this->direction[2];
-    v2[2] = cross[0] * this->direction[1] - cross[1] * this->direction[0];
-
-    for (i = 0; i < DIMENSION; i++){
-        v2[i] *= cos(angle);
-    }
-
-    v3[0] = this->direction[1] * from->coords[2] - this->direction[2] * from->coords[1];
-    v3[1] = this->direction[2] * from->coords[0] - this->direction[0] * from->coords[2];
-    v3[2] = this->direction[0] * from->coords[1] - this->direction[1] * from->coords[0];
-
-    for (i = 0; i < DIMENSION; i++){
-        v3[i] *= sin(angle);
-    }
-
-    for (i = 0; i < DIMENSION; i++){
-        to->coords[i] = v1[i] + v2[i] + v3[i];
-    }
-
-    for (i = 0; i < DIMENSION; i++){
-        to->coords[i] += this->axis_from->coords[i];
-    }*/
-
-    to->element = from->element;
-    to->pse_num = from->pse_num;
-    for (i = 0; i < DIMENSION; i++){
-        to->coords[i] = new_coord(i);
-    }
-
-    return to;
+    return new_atom;
 }

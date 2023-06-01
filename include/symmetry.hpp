@@ -58,7 +58,6 @@
 
 #include <utils.hpp>
 #include <structure.hpp>
-#include <symmetryelement.hpp>
 #include <rotationaxis.hpp>
 
 #include <vector>
@@ -82,26 +81,28 @@ class Symmetry{
         Symmetry();
         ~Symmetry();
 
-        int                                 support_atom;
-        int                                 AtomsCount;
-        std::vector<double>                 support;
+        //int                                 support_atom;
+        int                                 n_atoms;
+        //std::vector<int>                    transform_pairs;
+        //std::vector<double>                 support;
         std::vector<double>                 geom_center;
         std::vector<double>                 dist_geom_center;
         std::vector<std::shared_ptr<Atom>>  atoms;
-        std::shared_ptr<RotationAxis>       rot_axis;
+        //std::shared_ptr<RotationAxis>       rot_axis;
 
-        bool    detect_rot_sym(std::shared_ptr<Structure> mol, int from, int to, int order);
+        bool    rot_sym_along_bond(std::shared_ptr<Structure> mol, int from, int to, int order);
+        bool    rot_sym_along_bond(std::shared_ptr<Structure> mol, std::vector<int> rot_atoms, int axis_from, int axis_to, int order);
         void    find_geometric_center();
-        void    check_C2_axis();
+        /*void    check_C2_axis();
         int     init_rot_axis(int from, int to, int order);
-        int     establish_pairs();
+        int     find_pairs();
         int     old_init_C2(int i, int j);
         int     old_establish_pairs(std::shared_ptr<SymmetryElement> elem);
         int     check_transform_order(std::shared_ptr<SymmetryElement> elem);
         int     optimize_transform_params(std::shared_ptr<SymmetryElement> elem);
         double  eval_opt_target_func(std::shared_ptr<SymmetryElement> elem, std::shared_ptr<int> finish);
         void    get_params(std::shared_ptr<SymmetryElement> elem, std::vector<double> values);
-        void    set_params(std::shared_ptr<SymmetryElement> elem, std::vector<double> values);
+        void    set_params(std::shared_ptr<SymmetryElement> elem, std::vector<double> values);*/
 
     private:
 

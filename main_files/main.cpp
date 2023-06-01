@@ -18,7 +18,7 @@ int main(int argc, char **argv){
     }*/
     //std::string filepath = "inputfiles/" + filename;
 
-    std::string filepath1 = "inputfiles/Benzol1.xyz";
+    std::string filepath1 = "inputfiles/Alanin.xyz";
     //std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
 
     Structure mol1;
@@ -36,13 +36,8 @@ int main(int argc, char **argv){
     //gen.selection_menu();
     //gen.generation_setup();
 
+    mol1.get_structure(filepath1); 
     std::shared_ptr<Structure> mol_ptr = std::make_shared<Structure>(mol1);
-    (*mol_ptr).get_structure(filepath1); 
-
-    Symmetry sym;
-    sym.detect_rot_sym(mol_ptr, 8, 0, 2);
-
-    //sym.detect_rot_sym(std::make_shared<Structure>(mol1), gen.torsion_atoms[0]);
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

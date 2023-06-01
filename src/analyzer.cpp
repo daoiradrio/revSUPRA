@@ -50,10 +50,6 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename){
             file2 = filepath + files[j];
             struc2.read_xyz(file2);
             if (this->doubles(struc1, struc2)){
-                std::cout << i << " " << j << std::endl;
-                std::cout << this->energies[i] << " " << this->energies[j] << std::endl;
-                std::cout << compares << std::endl;
-                std::cout << std::endl;
                 counter++;
                 break;
             }

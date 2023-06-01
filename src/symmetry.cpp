@@ -520,7 +520,7 @@ bool Symmetry::rot_sym_along_bond(
     int                                 n_atoms = rot_atoms.size();
     double                              distance, best_distance;
     std::shared_ptr<Atom>               symmetric;
-    RotationAxis                        rot_axis(mol->atoms[axis_from], mol->atoms[axis_to], order);
+    RotationAxis                        rot_axis(mol->atoms[axis_from], mol->atoms[axis_to]);
     std::vector<int>                    atom_used(rot_atoms.size(), 0);
     std::vector<int>                    transform_pairs(rot_atoms.size(), rot_atoms.size()+1);
     std::vector<std::shared_ptr<Atom>>  atoms;
@@ -536,7 +536,7 @@ bool Symmetry::rot_sym_along_bond(
             best_j = i;
             best_distance = 1.0;
             //best_distance = 2 * TolerancePrimary;
-            symmetric = rot_axis.rotate_atom(atoms[i]);
+            symmetric = rot_axis.rotate_atom(atoms[i], 360/order);
             //std::cout << "symmetric: " << symmetric->coords[0] << " " << symmetric->coords[1] << " " << symmetric->coords[2] << std::endl;
             for (j = 0; j < n_atoms; j++){
                 if (atoms[j]->pse_num != symmetric->pse_num || atom_used[j]){

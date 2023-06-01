@@ -21,23 +21,12 @@ int main(int argc, char **argv){
     std::string filepath1 = "inputfiles/Alanin.xyz";
     //std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
 
-    Structure mol1;
-    //mol1.get_structure(filepath1);
+    Structure mol;
+    mol.get_structure(filepath1); 
+    std::shared_ptr<Structure> mol_ptr = std::make_shared<Structure>(mol);
 
-    //Structure mol2;
-    //mol2.get_structure(filepath2);
-
-    //ConformerGenerator gen(mol1);
-    //gen.generate_conformers();
-    
-    // DAS HIER ENTFERNEN UND ENTSPRECHEND CONFORMERGENERATOR REFACTOREN
-    //gen.get_torsions();
-    //gen.find_cycles();
-    //gen.selection_menu();
-    //gen.generation_setup();
-
-    mol1.get_structure(filepath1); 
-    std::shared_ptr<Structure> mol_ptr = std::make_shared<Structure>(mol1);
+    ConformerGenerator gen(mol);
+    gen.generate_conformers();
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

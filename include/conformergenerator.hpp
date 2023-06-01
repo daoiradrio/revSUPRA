@@ -4,6 +4,7 @@
 #include <utils.hpp>
 #include <structure.hpp>
 #include <analyzer.hpp>
+#include <rotationaxis.hpp>
 
 #include <vector>
 #include <memory>
@@ -34,11 +35,12 @@ class ConformerGenerator{
         std::vector<double> angle_increments; // IN RAD STATT DEGREE??
         std::vector<double> angles;
 
-        std::vector<Eigen::Vector3d> input_coords;
+        //std::vector<Eigen::Vector3d> input_coords;
+        Eigen::MatrixX3d input_coords;
 
-        std::string workdir_name;
-        std::string struc_filename;
-        std::string opt_struc_filename;
+        std::string workdir_name = "opt_dir";
+        std::string struc_filename = "struc.xyz";
+        std::string opt_struc_filename = "opt_struc.xyz";
         //std::string coord_file;
         //std::string control_file;
 
@@ -54,13 +56,15 @@ class ConformerGenerator{
         std::vector<int> torsion_atom_counter(int start, int last, int* status, std::vector<int> container);
 
         int combinations(std::vector<Eigen::Vector3d> new_coords, int index, int counter);
+        int combinations(Eigen::MatrixX3d new_coords, int index, int counter);
 
         bool clashes(std::vector<Eigen::Vector3d> coords);
         bool distant_atoms(int atom1, int atom2);
 
-        void write_xyz(std::vector<Eigen::Vector3d> coords, std::string destination);
+        bool clashes(Eigen::MatrixX3d coords);
 
-        void uff_optimization(std::string workdir);
+        void write_xyz(std::vector<Eigen::Vector3d> coords, std::string destination);
+        void write_xyz(Eigen::MatrixX3d coords, std::string destination);
     
     private:
         /*std::shared_ptr<Structure> mol;

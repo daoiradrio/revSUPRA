@@ -22,5 +22,21 @@ TEST(StructureTest, ReadInput)
 {   
     Structure mol;
     std::string file = "/home/baum/revSUPRA/inputfiles/Alanin.xyz";
+
     EXPECT_EQ(mol.read_xyz(file), 1);
+    EXPECT_EQ(mol.n_atoms, 13);
+    EXPECT_EQ(mol.coords.rows(), 13);
+    EXPECT_EQ(mol.coords.cols(), 3);
+}
+
+
+TEST(StructureTest, GetConnectivity)
+{
+    Structure mol;
+    std::string file = "/home/baum/revSUPRA/inputfiles/Alanin.xyz";
+    mol.get_structure(file);
+
+    EXPECT_EQ(mol.bonds.size(), 12);
+    EXPECT_EQ(mol.bonds[4].bond_order, 2);
+    EXPECT_EQ(mol.atoms[2]->core_of_terminal_group, true);
 }

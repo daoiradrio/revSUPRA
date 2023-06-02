@@ -5,6 +5,7 @@
 #include <structure.hpp>
 #include <analyzer.hpp>
 #include <rotationaxis.hpp>
+#include <symmetry.hpp>
 
 #include <vector>
 #include <memory>
@@ -12,6 +13,7 @@
 #include <cmath>
 #include <fstream>
 #include <queue>
+#include <algorithm>
 #include <Eigen/Dense>
 
 
@@ -53,7 +55,8 @@ class ConformerGenerator{
 
         void selection_menu();
         void generation_setup();
-        std::vector<int> torsion_atom_counter(int start, int last, int* status, std::vector<int> container);
+        std::vector<int> torsion_atom_counter(int start, int last, std::vector<int> status, std::vector<int> container);
+	std::vector<int> get_torsion_group(int start, int last, std::vector<int> status, std::vector<int> container);
 
         int combinations(std::vector<Eigen::Vector3d> new_coords, int index, int counter);
         int combinations(Eigen::MatrixX3d new_coords, int index, int counter);

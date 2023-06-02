@@ -53,7 +53,8 @@ void ConformerGenerator::generate_conformers(){
         for (i = 0; i < 360/increment; i++){
             this->angles.push_back(i*increment);
         }
-        n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
+	//n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
+        n_generated_conformers = this->combinations(this->input_coords_mat, 0, n_generated_conformers);
     }
     std::string command;
     std::string current_workdir;
@@ -414,7 +415,11 @@ void ConformerGenerator::generation_setup(){
     std::vector<int> left_atoms;
     std::vector<int> right_atoms;
 
-    this->input_coords = this->mol->coords;
+    this->input_coords_mat = this->mol->coords;
+
+    for (i = 0; i < this->mol->coords.rows(); i++){
+	this->input_coords.push_back(this->mol->coords.row(i));
+    }
 
     for (Bond torsion: this->torsions){
         atom1 = torsion.atom_index1;
@@ -514,13 +519,15 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
     else{
         int atom1 = this->torsions[index].atom_index1;
         int atom2 = this->torsions[index].atom_index2;
-        Eigen::Vector3d axis_vec1(new_coords[atom1].data());
-        Eigen::Vector3d axis_vec2(new_coords[atom2].data());
+        //Eigen::Vector3d axis_vec1(new_coords[atom1].data());
+        //Eigen::Vector3d axis_vec2(new_coords[atom2].data());
+	Eigen::Vector3d axis_vec1(new_coords[atom1]);
+	Eigen::Vector3d axis_vec2(new_coords[atom2]);
         Eigen::Vector3d axis = axis_vec2 - axis_vec1;
         axis.normalize();
         Eigen::Vector3d new_coord;
-        for (double deg: this->angles){
-            double rad = 2*M_PI*deg/360.0;
+        for (int deg: this->angles){
+            double rad = 2*M_PI*(double)deg/360.0;
             std::vector<Eigen::Vector3d> new_coords_copy = new_coords;
             for (int torsion_atom: this->torsion_atoms[index]){
                 new_coord = new_coords_copy[torsion_atom];
@@ -588,7 +595,7 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         int atom1 = this->torsions[index].atom_index1;
         int atom2 = this->torsions[index].atom_index2;
         for (int angle: this->angles){
-            RotationAxis rot_axis(this->mol->atoms[atom1], this->mol->atoms[atom2]);
+	    RotationAxis rot_axis(new_coords.row(atom1), new_coords.row(atom2));
             Eigen::MatrixX3d new_coords_copy = new_coords;
             Eigen::Vector3d new_coord;
             for (int torsion_atom: this->torsion_atoms[index]){

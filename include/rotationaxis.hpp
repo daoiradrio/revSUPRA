@@ -17,6 +17,8 @@ class RotationAxis{
         Eigen::Vector3d     axis;
 
         RotationAxis(std::shared_ptr<Atom> from_atom, std::shared_ptr<Atom> to_atom);
+	RotationAxis(std::vector<double> from_coords, std::vector<double> to_coords);
+	RotationAxis(Eigen::Vector3d from_coords, Eigen::Vector3d to_coords);
         ~RotationAxis(){}
 
         Eigen::Vector3d         rotate_atom(Eigen::Vector3d coords, double deg);

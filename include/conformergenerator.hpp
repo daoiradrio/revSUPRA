@@ -32,11 +32,11 @@ class ConformerGenerator{
         std::vector<Bond> terminal_torsions;
         std::vector<std::vector<int>> torsion_atoms;
 
-        std::vector<double> angle_increments; // IN RAD STATT DEGREE??
-        std::vector<double> angles;
+        std::vector<int> angle_increments; // IN RAD STATT DEGREE??
+        std::vector<int> angles;
 
-        //std::vector<Eigen::Vector3d> input_coords;
-        Eigen::MatrixX3d input_coords;
+        std::vector<Eigen::Vector3d> input_coords;
+        Eigen::MatrixX3d input_coords_mat;
 
         std::string workdir_name = "opt_dir";
         std::string struc_filename = "struc.xyz";
@@ -59,9 +59,9 @@ class ConformerGenerator{
         int combinations(Eigen::MatrixX3d new_coords, int index, int counter);
 
         bool clashes(std::vector<Eigen::Vector3d> coords);
+        bool clashes(Eigen::MatrixX3d coords);
         bool distant_atoms(int atom1, int atom2);
 
-        bool clashes(Eigen::MatrixX3d coords);
 
         void write_xyz(std::vector<Eigen::Vector3d> coords, std::string destination);
         void write_xyz(Eigen::MatrixX3d coords, std::string destination);

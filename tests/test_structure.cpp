@@ -23,7 +23,7 @@ TEST(TestStructure, ReadInput)
 {   
     Structure mol;
     std::string home_path = getenv("HOME");
-    std::string file = home_path + "/revSUPRA/inputfiles/Alanin.xyz";
+    std::string file = home_path + "/revSUPRA/inputfiles/D-Alanin.xyz";
 
     EXPECT_EQ(mol.read_xyz(file), 1);
     EXPECT_EQ(mol.n_atoms, 13);
@@ -36,7 +36,7 @@ TEST(TestStructure, GetConnectivity)
 {
     Structure mol;
     std::string home_path = getenv("HOME");
-    std::string file = home_path + "/revSUPRA/inputfiles/Alanin.xyz";
+    std::string file = home_path + "/revSUPRA/inputfiles/D-Alanin.xyz";
     mol.get_structure(file);
 
     EXPECT_EQ(mol.bonds.size(), 12);

@@ -29,7 +29,7 @@ TEST(SymmetryTest, DetectRotationalSymmetry)
     std::string benzol_file  = "/revSUPRA/inputfiles/Benzol.xyz";
     std::string tyrosin_file = "/revSUPRA/inputfiles/Tyrosin.xyz";*/
     std::string home_path = getenv("HOME");
-    std::string alanin_file = home_path + "/revSUPRA/inputfiles/Alanin.xyz";
+    std::string alanin_file = home_path + "/revSUPRA/inputfiles/D-Alanin.xyz";
     std::string benzol_file = home_path + "/revSUPRA/inputfiles/Benzol.xyz";
     std::string tyrosin_file = home_path + "/revSUPRA/inputfiles/Tyrosin.xyz";
     

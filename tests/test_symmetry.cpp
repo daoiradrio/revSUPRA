@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <stdlib.h>
 
 
 TEST(SymmetryTest, DetectRotationalSymmetry)
@@ -24,9 +25,14 @@ TEST(SymmetryTest, DetectRotationalSymmetry)
     std::vector<int> tyrosin_atoms;
     std::vector<int> tyrosin_ring_atoms;
 
-    std::string alanin_file  = "/home/baum/revSUPRA/inputfiles/Alanin.xyz";
-    std::string benzol_file  = "/home/baum/revSUPRA/inputfiles/Benzol.xyz";
-    std::string tyrosin_file = "/home/baum/revSUPRA/inputfiles/Tyrosin.xyz";
+    /*std::string alanin_file  = "/revSUPRA/inputfiles/Alanin.xyz";
+    std::string benzol_file  = "/revSUPRA/inputfiles/Benzol.xyz";
+    std::string tyrosin_file = "/revSUPRA/inputfiles/Tyrosin.xyz";*/
+    std::string home_path = getenv("HOME");
+    std::string alanin_file = home_path + "/revSUPRA/inputfiles/Alanin.xyz";
+    std::string benzol_file = home_path + "/revSUPRA/inputfiles/Benzol.xyz";
+    std::string tyrosin_file = home_path + "/revSUPRA/inputfiles/Tyrosin.xyz";
+    
 
     Alanin_ptr->read_xyz(alanin_file);
     for (i = 0; i < Alanin_ptr->n_atoms; i++){

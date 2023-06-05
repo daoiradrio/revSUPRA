@@ -83,6 +83,7 @@ class Symmetry{
 
         //int                                 support_atom;
         int                                 n_atoms;
+        std::vector<int>                    possible_orders;
         //std::vector<int>                    transform_pairs;
         //std::vector<double>                 support;
         std::vector<double>                 geom_center;
@@ -90,7 +91,7 @@ class Symmetry{
         std::vector<std::shared_ptr<Atom>>  atoms;
         //std::shared_ptr<RotationAxis>       rot_axis;
 
-        bool    rot_sym_along_bond(std::shared_ptr<Structure> mol, int from, int to, int order);
+        int     rot_sym_along_bond(std::shared_ptr<Structure> mol, std::vector<int> rot_atoms, int from, int to);
         bool    rot_sym_along_bond(std::shared_ptr<Structure> mol, std::vector<int> rot_atoms, int axis_from, int axis_to, int order);
         void    find_geometric_center();
         /*void    check_C2_axis();

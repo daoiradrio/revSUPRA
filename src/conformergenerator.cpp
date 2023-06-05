@@ -431,7 +431,7 @@ void ConformerGenerator::generation_setup(){
         left_atoms.clear();
 	std::fill(status.begin(), status.end(), 0);
         left_atoms = this->torsion_atom_counter(atom1, atom2, status, left_atoms);
-	//***
+	//***1
 	std::fill(status.begin(), status.end(), 0);
 	torsion_group_left.clear();
 	torsion_group_left = this->get_torsion_group(atom1, atom2, status, torsion_group_left);
@@ -452,11 +452,11 @@ void ConformerGenerator::generation_setup(){
                 std::cout << angle << ": Keine Symmetrie" << std::endl;
             }
         }
-	//***
+	//***2
         right_atoms.clear();
 	std::fill(status.begin(), status.end(), 0);
         right_atoms = this->torsion_atom_counter(atom2, atom1, status, right_atoms);
-	//***
+	//***1
 	std::fill(status.begin(), status.end(), 0);
         torsion_group_right.clear();
         torsion_group_right = this->get_torsion_group(atom2, atom1, status, torsion_group_right);
@@ -477,7 +477,7 @@ void ConformerGenerator::generation_setup(){
             }
         }
 	std::cout << std::endl;
-	//***
+	//***2
         if (left_atoms.size() <= right_atoms.size()){
             this->torsion_atoms.push_back(std::vector<int>());
 	    i = this->torsion_atoms.size() - 1;

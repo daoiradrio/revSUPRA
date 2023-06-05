@@ -2,7 +2,15 @@
 
 
 
-Symmetry::Symmetry(){}
+Symmetry::Symmetry()
+{
+    this->possible_orders = {
+        6, // corresponds to angle increment  60°
+        4, // corresponds to angle increment  90°
+        3, // corresponds to angle increment 120°
+        2, // corresponds to angle increment 180°
+    };
+}
 
 
 
@@ -566,4 +574,17 @@ bool Symmetry::rot_sym_along_bond(
 
     //std::cout << "Symmetrie" << std::endl;
     return true;
+}
+
+
+
+int Symmetry::rot_sym_along_bond(std::shared_ptr<Structure> mol, std::vector<int> rot_atoms, int from, int to)
+{
+    for (int order: this->possible_orders){
+        if (this->rot_sym_along_bond(mol, rot_atoms, from, to, order)){
+            return order;
+        }
+    }
+
+    return 1;
 }

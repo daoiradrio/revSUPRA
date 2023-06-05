@@ -1,5 +1,0 @@
-if(EXISTS "/home/dario/revSUPRA/build/runtests[1]_tests.cmake")
-  include("/home/dario/revSUPRA/build/runtests[1]_tests.cmake")
-else()
-  add_test(runtests_NOT_BUILT runtests_NOT_BUILT)
-endif()

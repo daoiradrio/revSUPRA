@@ -312,16 +312,31 @@ double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
 
     H = coords1_T * coords2;
 
-    Eigen::JacobiSVD<Eigen::MatrixX3d> svd(H, Eigen::ComputeFullV | Eigen::ComputeFullU);
-    
-    /*std::cout << svd.matrixU() << std::endl;
+    std::cout << "H" << std::endl;
+    std::cout << H << std::endl;
     std::cout << std::endl;
-    std::cout << svd.matrixV() << std::endl;
-    std::cout << std::endl;
-    std::cout << svd.singularValues() << std::endl;
-    std::cout << std::endl;*/
 
-    det = (svd.matrixV(), svd.matrixU().transpose()).determinant();
+    //Eigen::JacobiSVD<Eigen::MatrixX3d> svd(H, Eigen::ComputeFullV | Eigen::ComputeFullU);
+    Eigen::BDCSVD<Eigen::MatrixX3d> svd(H, Eigen::ComputeFullV | Eigen::ComputeFullU);
+    
+    std::cout << "U:" << std::endl;
+    std::cout << svd.matrixU() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "S:" << std::endl;
+    std::cout << svd.singularValues() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "V:" << std::endl;
+    std::cout << svd.matrixV().transpose() << std::endl;
+    std::cout << std::endl;
+
+    //det = (svd.matrixV(), svd.matrixU().transpose()).determinant();
+    det = (svd.matrixV() * svd.matrixU().transpose()).determinant();
+
+    std::cout << "det:" << std::endl;
+    std::cout << det << std::endl;
+    std::cout << std::endl;
     
     if (det >= 0.0){
         det = 1.0;
@@ -336,8 +351,9 @@ double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
 
     R = (svd.matrixV() * helper_mat) * svd.matrixU().transpose();
 
-    //std::cout << R << std::endl;
-    //std::cout << std::endl; 
+    std::cout << "R" << std::endl;
+    std::cout << R << std::endl;
+    std::cout << std::endl; 
 
     //std::cout << coords2 << std::endl;
     //std::cout << std::endl;
@@ -355,7 +371,8 @@ double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
     }
     rmsd = (1.0/(double)coords1.rows()) * rmsd;
 
-    //std::cout << rmsd << std::endl;
+    std::cout << "RMSD:" << std::endl;
+    std::cout << rmsd << std::endl;
 
     return rmsd;
 }

@@ -15,29 +15,7 @@ ConformerGenerator::~ConformerGenerator(){};
 void ConformerGenerator::generate_conformers(){
     this->get_torsions();
 
-    /*
-    // CHECK NUMBER OF CENTRAL TORSIONS BEFORE CYCLE DETECTION
-    int atom1, atom2;
-    for (bond torsion: this->central_torsions){
-        atom1 = torsion.atom_index1;
-        atom2 = torsion.atom_index2;
-        std::cout << this->mol->atoms[atom1]->element << this->mol->atoms[atom1]->index << " " 
-                  << this->mol->atoms[atom2]->element << this->mol->atoms[atom2]->index << std::endl;
-    }
-    */
-
     this->find_cycles();
-
-    /*
-    // CHECK NUMBER OF CENTRAL TORSIONS AFTER CYCLE DETECTION
-    std::cout << "__________\n" << std::endl;
-    for (bond torsion: this->central_torsions){
-        atom1 = torsion.atom_index1;
-        atom2 = torsion.atom_index2;
-        std::cout << this->mol->atoms[atom1]->element << this->mol->atoms[atom1]->index << " " 
-                  << this->mol->atoms[atom2]->element << this->mol->atoms[atom2]->index << std::endl;
-    }
-    */
 
     this->find_peptidebonds();
 

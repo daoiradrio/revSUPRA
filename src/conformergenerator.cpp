@@ -22,7 +22,6 @@ void ConformerGenerator::generate_conformers(){
     this->selection_menu();
 
     this->generation_setup();
-    return;
 
     std::cout << "Generating conformer structures..." << std::endl;
     int i;
@@ -32,7 +31,7 @@ void ConformerGenerator::generate_conformers(){
         for (i = 0; i < 360/increment; i++){
             this->angles.push_back(i*increment);
         }
-	//n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
+	    //n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
         n_generated_conformers = this->combinations(this->input_coords_mat, 0, n_generated_conformers);
     }
     std::string command;
@@ -49,7 +48,7 @@ void ConformerGenerator::generate_conformers(){
 	    coord = current_workdir + "coord";
 	    opt_struc = current_workdir + this->opt_struc_filename;
 	    command = "t2x " + coord + " > " + opt_struc + " 2>/dev/null";
-            system(command.c_str());
+        system(command.c_str());
 	    command = "mv " + opt_struc + " SUPRA_Output/conformer" + std::to_string(i) + ".xyz";
 	    system(command.c_str());
 	    command = "rm -r " + current_workdir;
@@ -664,9 +663,9 @@ void ConformerGenerator::write_xyz(std::vector<Eigen::Vector3d> coords, std::str
     file << "\n\n";
     for (int i = 0; i < this->mol->n_atoms; i++){
         file << this->mol->atoms[i]->element << "   " 
-             << coords[i][0]             << "   " 
-             << coords[i][1]             << "   " 
-             << coords[i][2]             << "\n";
+             << coords[i][0]                 << "   " 
+             << coords[i][1]                 << "   " 
+             << coords[i][2]                 << "\n";
     }
     file.close();
 }
@@ -679,9 +678,9 @@ void ConformerGenerator::write_xyz(Eigen::MatrixX3d coords, std::string destinat
     file << "\n\n";
     for (int i = 0; i < this->mol->n_atoms; i++){
         file << this->mol->atoms[i]->element << "   " 
-             << coords(i, 0)             << "   " 
-             << coords(i, 1)             << "   " 
-             << coords(i, 2)             << "\n";
+             << coords(i, 0)                 << "   " 
+             << coords(i, 1)                 << "   " 
+             << coords(i, 2)                 << "\n";
     }
     file.close();
 }

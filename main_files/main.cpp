@@ -28,18 +28,20 @@ int main(int argc, char **argv){
     //ConformerGenerator gen(mol);
     //gen.generate_conformers();
 
-    /* 
-    FOR DEBUGGING RMSD (ALIGNING PYTHON AND C++ VERSION)
-    
-    */
-    std::string file1 = argv[1];
+    //***
+    //FOR DEBUGGING RMSD (ALIGNING PYTHON AND C++ VERSION)
+    /*std::string file1 = argv[1];
     std::string file2 = argv[2];
     Structure mol1;
     Structure mol2;
     mol1.get_structure(file1);
-    mol2.get_structure(file2);
+    mol2.get_structure(file2);*/
     Analyzer analyzer;
-    analyzer.rmsd(mol1.coords, mol2.coords);
+    //analyzer.rmsd(mol1.coords, mol2.coords);
+    //analyzer.doubles(mol1, mol2);
+    analyzer.remove_doubles("/home/baum/SUPRA_Output/", "conformer");
+    //***
+
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},
                                            { 1, 50, 51, 52},

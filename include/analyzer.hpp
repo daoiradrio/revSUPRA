@@ -11,10 +11,10 @@
 #include <sstream>
 #include <vector>
 #include <iostream>
-#include <limits>
-#include <algorithm>
+//#include <limits>
+//#include <algorithm>
 #include <cmath>
-#include <utility>
+//#include <utility>
 
 
 
@@ -27,10 +27,11 @@ class Analyzer{
         std::vector<std::string> elements;
         Eigen::MatrixX3d coords;
 
+        void kabsch(Eigen::MatrixX3d& coords1, Eigen::MatrixX3d& coords2);
         double rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2);
         void remove_doubles(std::string filepath, std::string filename);
-        void extract_energies(std::string folderpath, std::string foldername);
-        void divide_and_conquer_remove_doubles(std::string filepath, std::string filename);
+        //void extract_energies(std::string folderpath, std::string foldername);
+        //void divide_and_conquer_remove_doubles(std::string filepath, std::string filename);
         bool doubles(Structure& struc1, Structure& struc2);
 
         std::vector<std::pair<double, int>> container;
@@ -39,7 +40,7 @@ class Analyzer{
     private:
         //std::vector<std::pair<double, int>> container;
 
-        static bool sort_func(std::pair<double, int> a, std::pair<double, int> b){return (a.first < b.first);};
+        //static bool sort_func(std::pair<double, int> a, std::pair<double, int> b){return (a.first < b.first);};
 
 };
 

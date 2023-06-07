@@ -1,10 +1,13 @@
 #include <analyzer.hpp>
 
 
+
 Analyzer::Analyzer(){};
 
 
+
 Analyzer::~Analyzer(){};
+
 
 
 void Analyzer::remove_doubles(std::string filepath, std::string filename){
@@ -62,7 +65,8 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename){
 }
 
 
-void Analyzer::extract_energies(std::string folderpath, std::string foldername){
+
+/*void Analyzer::extract_energies(std::string folderpath, std::string foldername){
     int i, j;
     int dummy;
     double energy;
@@ -114,10 +118,11 @@ void Analyzer::extract_energies(std::string folderpath, std::string foldername){
     );
 
     return;
-}
+}*/
 
 
-void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::string filename){
+
+/*void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::string filename){
     if (this->container.size() == 0){
         std::cout << "\nNO ENERGIES FOUND, SWITCHING TO STANDARD DOUBLE STRUCTURE REMOVAL\n" << std::endl;
         return this->remove_doubles(filepath, filename);
@@ -170,12 +175,12 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
         file1 = filepath + files[index1];
         struc1.read_xyz(file1);
         copy_container = working_container;
-        /*it = std::find_if(
-            copy_container.begin(), copy_container.end(), 
-            [&](std::pair<double, int>& item){
-                return (item.first == energy);
-            }
-        );*/
+        //it = std::find_if(
+        //    copy_container.begin(), copy_container.end(), 
+        //    [&](std::pair<double, int>& item){
+        //        return (item.first == energy);
+        //    }
+        //);
         for (it1 = copy_container.begin(), it2 = working_container.begin(); it1 != copy_container.end(); it1++, it2++){
             if ((*it1).first == energy){
                 break;
@@ -196,18 +201,18 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
                 return (item.first < ref);
             }
         );
-        /*std::vector<std::pair<double, int>>::iterator l = std::find_if(
-            copy_container.begin(), copy_container.end(),
-            [&](const std::pair<double, int>& item){
-                return (item.first >= min_energy);
-            }
-        );
-        std::vector<std::pair<double, int>>::iterator r = std::find_if(
-            copy_container.begin(), copy_container.end(),
-            [&](const std::pair<double, int>& item){
-                return (item.first >= max_energy);
-            }
-        );*/
+        //std::vector<std::pair<double, int>>::iterator l = std::find_if(
+        //    copy_container.begin(), copy_container.end(),
+        //    [&](const std::pair<double, int>& item){
+        //        return (item.first >= min_energy);
+        //    }
+        //);
+        //std::vector<std::pair<double, int>>::iterator r = std::find_if(
+        //    copy_container.begin(), copy_container.end(),
+        //    [&](const std::pair<double, int>& item){
+        //        return (item.first >= max_energy);
+        //    }
+        //);
         compares = 0;
         for (; l != r; l++){
             compares++;
@@ -229,7 +234,8 @@ void Analyzer::divide_and_conquer_remove_doubles(std::string filepath, std::stri
     std::cout << "Individual conformers: " << files.size()-counter << std::endl;
 
     return;
-}
+}*/
+
 
 
 bool Analyzer::doubles(Structure& struc1, Structure& struc2){
@@ -241,6 +247,8 @@ bool Analyzer::doubles(Structure& struc1, Structure& struc2){
     std::vector<std::vector<double>> cost_mat;
     std::vector<int> assignment;
     Eigen::Vector3d diff_vec;
+    Eigen::MatrixX3d coords1 = struc1.coords;
+    Eigen::MatrixX3d coords2 = struc2.coords;
     Eigen::MatrixX3d matched_coords1;
     Eigen::MatrixX3d matched_coords2;
 
@@ -250,15 +258,25 @@ bool Analyzer::doubles(Structure& struc1, Structure& struc2){
     matched_coords2.resize(n_atoms, 3);
     matched_coords2.setZero();
 
+    /*std::cout << "coords1" << std::endl;
+    std::cout << struc1.coords << std::endl;
+    std::cout << std::endl;*/
+
+    this->kabsch(coords1, coords2);
+
+    /*std::cout << "coords1" << std::endl;
+    std::cout << struc1.coords << std::endl;
+    std::cout << std::endl;*/
+
     for (i = 0; i < n_atoms; i++){
         for (j = 0; j < i+1; j++){
             if (struc1.atoms[i]->element == struc2.atoms[j]->element){
                 element_term = 0.0;
             }
             else{
-                element_term = 100.0;
+                element_term = 1000.0;
             }
-            diff_vec = struc1.coords.row(i) - struc1.coords.row(j);
+            diff_vec = coords1.row(i) - coords2.row(j);
             cost = diff_vec.dot(diff_vec) + element_term;
             cost_mat[i][j] = cost;
             cost_mat[j][i] = cost;
@@ -266,13 +284,15 @@ bool Analyzer::doubles(Structure& struc1, Structure& struc2){
     }
   	assignment = hungarian(cost_mat);
     for (i = 0; i < assignment.size(); i++){
-        matched_coords1(i, 0) = struc1.coords(i, 0);
-        matched_coords1(i, 1) = struc1.coords(i, 1);
-        matched_coords1(i, 2) = struc1.coords(i, 2);
-        matched_coords2(i, 0) = struc2.coords(assignment[i], 0);
-        matched_coords2(i, 1) = struc2.coords(assignment[i], 1);
-        matched_coords2(i, 2) = struc2.coords(assignment[i], 2);
+        matched_coords1(i, 0) = coords1(i, 0);
+        matched_coords1(i, 1) = coords1(i, 1);
+        matched_coords1(i, 2) = coords1(i, 2);
+        matched_coords2(i, 0) = coords2(assignment[i], 0);
+        matched_coords2(i, 1) = coords2(assignment[i], 1);
+        matched_coords2(i, 2) = coords2(assignment[i], 2);
     }
+
+    //if (this->rmsd(coords1, coords2) <= 0.1){
     if (this->rmsd(matched_coords1, matched_coords2) <= 0.1){
         doubles = true;
     }
@@ -281,10 +301,11 @@ bool Analyzer::doubles(Structure& struc1, Structure& struc2){
 }
 
 
-double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
+
+void Analyzer::kabsch(Eigen::MatrixX3d& coords1, Eigen::MatrixX3d& coords2)
+{
     int i;
     double det;
-    double rmsd;
     Eigen::Matrix3Xd coords1_T;
     Eigen::Matrix3Xd coords2_T;
     Eigen::MatrixX3d H;
@@ -312,14 +333,14 @@ double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
 
     H = coords1_T * coords2;
 
-    std::cout << "H" << std::endl;
+    /*std::cout << "H:" << std::endl;
     std::cout << H << std::endl;
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
     //Eigen::JacobiSVD<Eigen::MatrixX3d> svd(H, Eigen::ComputeFullV | Eigen::ComputeFullU);
     Eigen::BDCSVD<Eigen::MatrixX3d> svd(H, Eigen::ComputeFullV | Eigen::ComputeFullU);
     
-    std::cout << "U:" << std::endl;
+    /*std::cout << "U:" << std::endl;
     std::cout << svd.matrixU() << std::endl;
     std::cout << std::endl;
 
@@ -329,14 +350,13 @@ double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
 
     std::cout << "V:" << std::endl;
     std::cout << svd.matrixV().transpose() << std::endl;
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
-    //det = (svd.matrixV(), svd.matrixU().transpose()).determinant();
     det = (svd.matrixV() * svd.matrixU().transpose()).determinant();
 
-    std::cout << "det:" << std::endl;
+    /*std::cout << "det:" << std::endl;
     std::cout << det << std::endl;
-    std::cout << std::endl;
+    std::cout << std::endl;*/
     
     if (det >= 0.0){
         det = 1.0;
@@ -351,28 +371,43 @@ double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2){
 
     R = (svd.matrixV() * helper_mat) * svd.matrixU().transpose();
 
-    std::cout << "R" << std::endl;
+    /*std::cout << "R:" << std::endl;
     std::cout << R << std::endl;
-    std::cout << std::endl; 
-
-    //std::cout << coords2 << std::endl;
-    //std::cout << std::endl;
+    std::cout << std::endl;*/
 
     for (i = 0; i < coords2.rows(); i++){
         coords2.row(i) = coords2.row(i) * R;
     }
-    
-    //std::cout << coords2 << std::endl;
-    //std::cout << std::endl;
 
-    rmsd = 0.0;
-    for (i = 0; i < coords1.rows(); i++){
-        rmsd = rmsd + (coords1.row(i) - coords2.row(i)).norm();
+    return;
+}
+
+
+
+double Analyzer::rmsd(Eigen::MatrixX3d coords1, Eigen::MatrixX3d coords2)
+{
+    int             i;
+    int             n = coords1.rows();
+    double          rmsd = 0.0;
+    Eigen::Vector3d diff_vec;
+
+    /*std::cout << "coords1" << std::endl;
+    std::cout << coords1 << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "coords2 hinterher" << std::endl;
+    std::cout << coords2 << std::endl;
+    std::cout << std::endl;*/
+
+    for (i = 0; i < n; i++){
+        diff_vec = coords1.row(i) - coords2.row(i);
+        rmsd    += diff_vec.dot(diff_vec);
     }
-    rmsd = (1.0/(double)coords1.rows()) * rmsd;
+    rmsd = (1.0/(double)n) * rmsd;
+    rmsd = sqrt(rmsd);
 
-    std::cout << "RMSD:" << std::endl;
-    std::cout << rmsd << std::endl;
+    //std::cout << "RMSD:" << std::endl;
+    //std::cout << rmsd << std::endl;
 
     return rmsd;
 }

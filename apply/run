@@ -1,4 +1,0 @@
-#!/bin/bash
-
-rm -r SUPRA_Output
-./../build/supra ../inputfiles/$1.xyz

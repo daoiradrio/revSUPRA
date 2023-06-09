@@ -36,37 +36,14 @@ void ConformerGenerator::generate_conformers(){
         }
 	    //n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
         n_generated_conformers = this->combinations(this->input_coords_mat, 0, n_generated_conformers);
-        //n_generated_conformers = this->old_combinations(this->input_coords_mat, 0, n_generated_conformers);
     }
     std::string command;
     if (n_generated_conformers){
         command = "mkdir " + this->output_foldername;
         system(command.c_str());
-        for (i = 0; i < n_generated_conformers; i++){
-            command = "mv " + this->curr_work_dir + this->struc_filename + std::to_string(i) + ".xyz " + this->curr_work_dir + this->output_foldername;
-            system(command.c_str());
-        }
-    }
-    /*std::string current_workdir;
-    std::string coord;
-    std::string opt_struc;
-    if (n_generated_conformers){
-        command = "mkdir " + this->output_foldername;
+        command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
         system(command.c_str());
-        for (i = 0; i < n_generated_conformers; i++){
-            // HIER BESSER BASH SCRIPT SCHREIBEN UND STARTEN?
-            // SCHEINT BISHER RECHT LANGSAM ZU SEIN, VLLT DA system CALLS INEFFIZIENT
-            current_workdir = this->workdir_name + std::to_string(i) + "/";
-            coord = current_workdir + "coord";
-            opt_struc = current_workdir + this->opt_struc_filename;
-            command = "t2x " + coord + " > " + opt_struc + " 2>/dev/null";
-            system(command.c_str());
-            command = "mv " + opt_struc + " " + this->curr_work_dir + "SUPRA_Output/conformer" + std::to_string(i) + ".xyz";
-            system(command.c_str());
-            command = "rm -r " + current_workdir;
-            system(command.c_str());
-        }
-    }*/
+    }
     Analyzer analyzer;
     analyzer.remove_doubles(this->output_foldername, this->struc_filename);
 
@@ -176,6 +153,7 @@ void ConformerGenerator::cycle_detection(int current, int last, char status[], i
 }
 
 
+
 void ConformerGenerator::find_peptidebonds(){
     int i, j, n;
     int peptide1, peptide2;
@@ -265,6 +243,7 @@ void ConformerGenerator::find_peptidebonds(){
 
     return;
 }
+
 
 
 void ConformerGenerator::selection_menu(){
@@ -396,6 +375,7 @@ void ConformerGenerator::selection_menu(){
 }
 
 
+
 void ConformerGenerator::generation_setup(){
     int 		i, j;
     int 		atom1, atom2;
@@ -417,7 +397,7 @@ void ConformerGenerator::generation_setup(){
         atom2 = torsion.atom_index2;
         left_atoms.clear();
         std::fill(status.begin(), status.end(), 0);
-            left_atoms = this->torsion_atom_counter(atom1, atom2, status, left_atoms);
+        left_atoms = this->torsion_atom_counter(atom1, atom2, status, left_atoms);
         //***1
         /*std::fill(status.begin(), status.end(), 0);
         torsion_group_left.clear();
@@ -481,6 +461,13 @@ void ConformerGenerator::generation_setup(){
         }
     }
 
+    return;
+}
+
+
+
+void ConformerGenerator::check_symmetry()
+{
     return;
 }
 
@@ -669,40 +656,6 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
 int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int counter){
     if (index == this->torsions.size()){
         if (!this->clashes(new_coords)){
-            // get necessary file paths for working directory of new conformer structure
-	        /*int fin;
-            std::string current_workdir = this->workdir_name + std::to_string(counter) + "/";
-            std::string coord_file = current_workdir + "coord";
-            std::string control_file = current_workdir + "control";
-            std::string new_struc = current_workdir + this->struc_filename;
-	        std::string opt_struc = current_workdir + this->opt_struc_filename;
-	        std::string command;
-            // create new working directory
-	        command = "mkdir " + current_workdir;
-	        system(command.c_str());
-            // write new conformer structure to be optimized
-            this->write_xyz(new_coords, new_struc);
-            // convert .xyz file of structure to be optimized to coord file
-	        command = "x2t " + new_struc + " > " + coord_file;
-            system(command.c_str());
-            // write control file for UFF optimization
-	        std::ofstream file;
-            file.open(control_file);
-            file << "$symmetry c1\n";
-            file << "$uff\n";
-            file << "      2500         1          0 ! maxcycle,modus,nqeq\n";
-            file << "    111111                      ! iterm\n";
-            file << "  0.10D-07  0.10D-04            ! econv,gconv\n";
-            file << "      0.00  1.10                ! qtot,dfac\n";
-            file << "  0.10D+03  0.10D-04       0.30 ! epssteep,epssearch,dqmax\n";
-            file << "        25      0.10       0.00 ! mxls,dhls,ahls\n";
-            file << "      1.00      0.00       0.00 ! alpha,beta,gamma\n";
-            file << "         F         F          F ! transform,lnumhess,lmd\n";
-            file << "$end\n";
-            file.close();
-            // perform UFF optimization
-	        command = "cd " + current_workdir + " ; uff > uff.out 2>&1 &";
-            fin = system(command.c_str());*/
             std::string new_struc = this->struc_filename + std::to_string(counter) + ".xyz";
             this->write_xyz(new_coords, new_struc);
             Optimizer optimizer;

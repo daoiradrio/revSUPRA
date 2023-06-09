@@ -17,6 +17,9 @@
 #define OptChangeThreshold  1e-10
 #define GradientStep        1e-7
 #define OptChangeHits       5
+#define BUFFER_SIZE         256
+#define SUCCESS_EXIT        1
+#define FAIL_EXIT           0
 
 
 

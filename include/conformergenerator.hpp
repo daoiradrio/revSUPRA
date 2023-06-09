@@ -6,6 +6,7 @@
 #include <analyzer.hpp>
 #include <rotationaxis.hpp>
 #include <symmetry.hpp>
+#include <optimizer.hpp>
 
 #include <vector>
 #include <memory>
@@ -14,6 +15,7 @@
 #include <fstream>
 #include <queue>
 #include <algorithm>
+#include <unistd.h>
 #include <Eigen/Dense>
 
 
@@ -40,11 +42,11 @@ class ConformerGenerator{
         std::vector<Eigen::Vector3d> input_coords;
         Eigen::MatrixX3d input_coords_mat;
 
+        std::string curr_work_dir;
         std::string workdir_name = "opt_dir";
-        std::string struc_filename = "struc.xyz";
+        std::string struc_filename = "conformer";
+        std::string output_foldername = "SUPRA_Output";
         std::string opt_struc_filename = "opt_struc.xyz";
-        //std::string coord_file;
-        //std::string control_file;
 
         void get_torsions();
 
@@ -56,10 +58,11 @@ class ConformerGenerator{
         void selection_menu();
         void generation_setup();
         std::vector<int> torsion_atom_counter(int start, int last, std::vector<int> status, std::vector<int> container);
-	std::vector<int> get_torsion_group(int start, int last, std::vector<int> status, std::vector<int> container);
+	    std::vector<int> get_torsion_group(int start, int last, std::vector<int> status, std::vector<int> container);
 
         int combinations(std::vector<Eigen::Vector3d> new_coords, int index, int counter);
         int combinations(Eigen::MatrixX3d new_coords, int index, int counter);
+        int old_combinations(Eigen::MatrixX3d new_coords, int index, int counter);
 
         bool clashes(std::vector<Eigen::Vector3d> coords);
         bool clashes(Eigen::MatrixX3d coords);

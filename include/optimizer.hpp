@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 #include <memory>
+#include <fstream>
 #include <Eigen/Dense>
 
 
@@ -13,9 +14,8 @@
 class Optimizer{
 
     public:
-        std::string workdir_name = "running_opt";
 
-        void uff_optimization(std::string workdir, std::string xyz_file);
+        int uff_optimization(std::string path, std::string xyz_file, int index = -1);
 
     private:
 

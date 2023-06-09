@@ -3,6 +3,9 @@
 
 
 ConformerGenerator::ConformerGenerator(Structure input_mol){
+    char buffer[BUFFER_SIZE];
+    this->curr_work_dir = getcwd(buffer, BUFFER_SIZE);
+    this->curr_work_dir = this->curr_work_dir + "/";
     this->mol = std::make_shared<Structure>(input_mol);
 };
 
@@ -33,32 +36,39 @@ void ConformerGenerator::generate_conformers(){
         }
 	    //n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
         n_generated_conformers = this->combinations(this->input_coords_mat, 0, n_generated_conformers);
+        //n_generated_conformers = this->old_combinations(this->input_coords_mat, 0, n_generated_conformers);
     }
     std::string command;
-    std::string current_workdir;
+    if (n_generated_conformers){
+        command = "mkdir " + this->output_foldername;
+        system(command.c_str());
+        for (i = 0; i < n_generated_conformers; i++){
+            command = "mv " + this->curr_work_dir + this->struc_filename + std::to_string(i) + ".xyz " + this->curr_work_dir + this->output_foldername;
+            system(command.c_str());
+        }
+    }
+    /*std::string current_workdir;
     std::string coord;
     std::string opt_struc;
     if (n_generated_conformers){
-	command = "mkdir SUPRA_Output";
-	system(command.c_str());
-   	for (i = 0; i < n_generated_conformers; i++){
-        // HIER BESSER BASH SCRIPT SCHREIBEN UND STARTEN?
-        // SCHEINT BISHER RECHT LANGSAM ZU SEIN, VLLT DA system CALLS INEFFIZIENT
-	    current_workdir = this->workdir_name + std::to_string(i) + "/";
-	    coord = current_workdir + "coord";
-	    opt_struc = current_workdir + this->opt_struc_filename;
-	    command = "t2x " + coord + " > " + opt_struc + " 2>/dev/null";
+        command = "mkdir " + this->output_foldername;
         system(command.c_str());
-	    command = "mv " + opt_struc + " SUPRA_Output/conformer" + std::to_string(i) + ".xyz";
-	    system(command.c_str());
-	    command = "rm -r " + current_workdir;
-	    system(command.c_str());
-    	}
-    	//std::cout << n_generated_conformers << " have been generated." << std::endl;
-    }
-
+        for (i = 0; i < n_generated_conformers; i++){
+            // HIER BESSER BASH SCRIPT SCHREIBEN UND STARTEN?
+            // SCHEINT BISHER RECHT LANGSAM ZU SEIN, VLLT DA system CALLS INEFFIZIENT
+            current_workdir = this->workdir_name + std::to_string(i) + "/";
+            coord = current_workdir + "coord";
+            opt_struc = current_workdir + this->opt_struc_filename;
+            command = "t2x " + coord + " > " + opt_struc + " 2>/dev/null";
+            system(command.c_str());
+            command = "mv " + opt_struc + " " + this->curr_work_dir + "SUPRA_Output/conformer" + std::to_string(i) + ".xyz";
+            system(command.c_str());
+            command = "rm -r " + current_workdir;
+            system(command.c_str());
+        }
+    }*/
     Analyzer analyzer;
-    analyzer.remove_doubles("SUPRA_Output", "conformer");
+    analyzer.remove_doubles(this->output_foldername, this->struc_filename);
 
     return;
 }
@@ -406,19 +416,19 @@ void ConformerGenerator::generation_setup(){
         atom1 = torsion.atom_index1;
         atom2 = torsion.atom_index2;
         left_atoms.clear();
-	std::fill(status.begin(), status.end(), 0);
-        left_atoms = this->torsion_atom_counter(atom1, atom2, status, left_atoms);
-	//***1
-	std::fill(status.begin(), status.end(), 0);
-	torsion_group_left.clear();
-	torsion_group_left = this->get_torsion_group(atom1, atom2, status, torsion_group_left);
-	std::cout << "Bond: " << atom1 << " " << atom2 << std::endl;
-	std::cout << atom1 << ":" << std::endl;
-	for (int x: torsion_group_left){
-	    std::cout << x << " ";
-	}
-	std::cout << std::endl;
-	for (int angle: this->angle_increments){
+        std::fill(status.begin(), status.end(), 0);
+            left_atoms = this->torsion_atom_counter(atom1, atom2, status, left_atoms);
+        //***1
+        /*std::fill(status.begin(), status.end(), 0);
+        torsion_group_left.clear();
+        torsion_group_left = this->get_torsion_group(atom1, atom2, status, torsion_group_left);
+        std::cout << "Bond: " << atom1 << " " << atom2 << std::endl;
+        std::cout << atom1 << ":" << std::endl;
+        for (int x: torsion_group_left){
+            std::cout << x << " ";
+        }
+        std::cout << std::endl;
+        for (int angle: this->angle_increments){
             if (sym.rot_sym_along_bond(
                 this->mol, torsion_group_left, atom1, atom2, 360/angle
                 )
@@ -428,13 +438,13 @@ void ConformerGenerator::generation_setup(){
             else{
                 std::cout << angle << ": Keine Symmetrie" << std::endl;
             }
-        }
-	//***2
+        }*/
+        //***2
         right_atoms.clear();
-	std::fill(status.begin(), status.end(), 0);
+        std::fill(status.begin(), status.end(), 0);
         right_atoms = this->torsion_atom_counter(atom2, atom1, status, right_atoms);
-	//***1
-	std::fill(status.begin(), status.end(), 0);
+        //***1
+        /*std::fill(status.begin(), status.end(), 0);
         torsion_group_right.clear();
         torsion_group_right = this->get_torsion_group(atom2, atom1, status, torsion_group_right);
         std::cout << atom2 << ":" << std::endl;
@@ -453,18 +463,18 @@ void ConformerGenerator::generation_setup(){
                 std::cout << angle << ": Keine Symmetrie" << std::endl;
             }
         }
-	std::cout << std::endl;
-	//***2
+        std::cout << std::endl;*/
+        //***2
         if (left_atoms.size() <= right_atoms.size()){
             this->torsion_atoms.push_back(std::vector<int>());
-	    i = this->torsion_atoms.size() - 1;
+            i = this->torsion_atoms.size() - 1;
             for (int j: left_atoms){
                 this->torsion_atoms[i].push_back(j);
             }
         }
         else{
             this->torsion_atoms.push_back(std::vector<int>());
-	    i = this->torsion_atoms.size() - 1;
+            i = this->torsion_atoms.size() - 1;
             for (int j: right_atoms){
                 this->torsion_atoms[i].push_back(j);
             }
@@ -515,6 +525,69 @@ std::vector<int> ConformerGenerator::get_torsion_group(int start, int last, std:
 	}
     }
     return container;
+}
+
+
+
+int ConformerGenerator::old_combinations(Eigen::MatrixX3d new_coords, int index, int counter){
+    if (index == this->torsions.size()){
+        if (!this->clashes(new_coords)){
+            // get necessary file paths for working directory of new conformer structure
+	        int fin;
+            std::string current_workdir = this->workdir_name + std::to_string(counter) + "/";
+            std::string coord_file = current_workdir + "coord";
+            std::string control_file = current_workdir + "control";
+            std::string new_struc = current_workdir + this->struc_filename;
+	        std::string opt_struc = current_workdir + this->opt_struc_filename;
+	        std::string command;
+            // create new working directory
+	        command = "mkdir " + current_workdir;
+	        system(command.c_str());
+            // write new conformer structure to be optimized
+            this->write_xyz(new_coords, new_struc);
+            // convert .xyz file of structure to be optimized to coord file
+	        command = "x2t " + new_struc + " > " + coord_file;
+            system(command.c_str());
+            // write control file for UFF optimization
+	        std::ofstream file;
+            file.open(control_file);
+            file << "$symmetry c1\n";
+            file << "$uff\n";
+            file << "      2500         1          0 ! maxcycle,modus,nqeq\n";
+            file << "    111111                      ! iterm\n";
+            file << "  0.10D-07  0.10D-04            ! econv,gconv\n";
+            file << "      0.00  1.10                ! qtot,dfac\n";
+            file << "  0.10D+03  0.10D-04       0.30 ! epssteep,epssearch,dqmax\n";
+            file << "        25      0.10       0.00 ! mxls,dhls,ahls\n";
+            file << "      1.00      0.00       0.00 ! alpha,beta,gamma\n";
+            file << "         F         F          F ! transform,lnumhess,lmd\n";
+            file << "$end\n";
+            file.close();
+            // perform UFF optimization
+	        command = "cd " + current_workdir + " ; uff > uff.out 2>&1 &";
+            fin = system(command.c_str());
+            return counter+1;
+        }
+        else{
+            return counter;
+        }
+        return counter;
+    }
+    else{
+        int atom1 = this->torsions[index].atom_index1;
+        int atom2 = this->torsions[index].atom_index2;
+        for (int angle: this->angles){
+	        RotationAxis rot_axis(new_coords.row(atom1), new_coords.row(atom2));
+            Eigen::MatrixX3d new_coords_copy = new_coords;
+            Eigen::Vector3d new_coord;
+            for (int torsion_atom: this->torsion_atoms[index]){
+                new_coord = rot_axis.rotate_atom(new_coords_copy.row(torsion_atom), angle);
+                new_coords_copy.row(torsion_atom) = new_coord;
+            }
+            counter = this->old_combinations(new_coords_copy, index+1, counter);
+        }
+        return counter;
+    }
 }
 
 
@@ -597,7 +670,7 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
     if (index == this->torsions.size()){
         if (!this->clashes(new_coords)){
             // get necessary file paths for working directory of new conformer structure
-	        int fin;
+	        /*int fin;
             std::string current_workdir = this->workdir_name + std::to_string(counter) + "/";
             std::string coord_file = current_workdir + "coord";
             std::string control_file = current_workdir + "control";
@@ -629,8 +702,11 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
             file.close();
             // perform UFF optimization
 	        command = "cd " + current_workdir + " ; uff > uff.out 2>&1 &";
-            fin = system(command.c_str());
-            // cout new conformer
+            fin = system(command.c_str());*/
+            std::string new_struc = this->struc_filename + std::to_string(counter) + ".xyz";
+            this->write_xyz(new_coords, new_struc);
+            Optimizer optimizer;
+            int fin = optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
             return counter+1;
         }
         else{

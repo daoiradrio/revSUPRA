@@ -42,17 +42,15 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename){
 
     std::cout << "Removing duplicate structures..." << std::endl;
 
-    int compares = 0;
-
     for (i = 0; i < files.size()-1; i++){
         file1 = filepath + files[i];
         struc1.read_xyz(file1);
-        compares = 0;
         for (j = i + 1; j < files.size(); j++){
-            compares++;
             file2 = filepath + files[j];
             struc2.read_xyz(file2);
             if (this->doubles(struc1, struc2)){
+                command = "rm " + file1;
+                system(command.c_str());
                 counter++;
                 break;
             }

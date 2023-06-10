@@ -26,7 +26,12 @@ class Analyzer{
 
         void    remove_doubles(std::string filepath, std::string filename, double rmsd_threshold = 0.1);
         //void    remove_doubles(std::string filepath, double rmsd_threshold = 0.1);
-        bool    doubles(Structure struc1, Structure struc2, double rmsd_threshold = 0.1, int ignore_methyl = 0);
+        bool    doubles(
+                    std::string file1,
+                    std::string file2,
+                    bool ignore_methyl = false,
+                    double rmsd_threshold = 0.1
+                );
         void    match_coords(
                     std::vector<std::shared_ptr<Atom>> atoms1,
                     std::vector<std::shared_ptr<Atom>> atoms2,
@@ -46,8 +51,13 @@ class Analyzer{
         //std::vector<double> energies;
 
     private:
-        //std::vector<std::pair<double, int>> container;
+        void remove_methly_atoms(
+                const Structure& mol,
+                Eigen::MatrixX3d& coords,
+                std::vector<std::shared_ptr<Atom>>& atoms
+             );
 
+        //std::vector<std::pair<double, int>> container;
         //static bool sort_func(std::pair<double, int> a, std::pair<double, int> b){return (a.first < b.first);};
 
 };

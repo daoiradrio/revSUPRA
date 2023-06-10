@@ -12,29 +12,29 @@ TEST(TestAnalyzer, DetectDoubles)
 {
     Analyzer analyzer;
 
-    Structure mol1;
-    Structure mol2;
-    Structure mol3;
-    Structure mol4;
-    Structure mol5;
-
     std::string home_path = getenv("HOME");
     std::string file1 = home_path + "/revSUPRA/tests/testcases/Tyrosin.xyz";
     std::string file2 = home_path + "/revSUPRA/tests/testcases/Tyrosin_double.xyz";
     std::string file3 = home_path + "/revSUPRA/tests/testcases/Tyrosin_phenyl_rotated_180_deg.xyz";
     std::string file4 = home_path + "/revSUPRA/tests/testcases/Alanin.xyz";
-    std::string file5 = home_path + "/revSUPRA/tests/testcases/D-Alanin.xyz";
+    std::string file5 = home_path + "/revSUPRA/tests/testcases/Alanin_methyl_rotated_60_deg.xyz";
 
-    mol1.read_xyz(file1);
-    mol2.read_xyz(file2);
-    mol3.read_xyz(file3);
-    mol4.read_xyz(file4);
-    mol5.read_xyz(file5);
+    EXPECT_EQ(analyzer.doubles(file1, file2), true);
+    EXPECT_EQ(analyzer.doubles(file2, file1), true);
+    EXPECT_EQ(analyzer.doubles(file1, file3), true);
+    EXPECT_EQ(analyzer.doubles(file2, file3), true);
+    EXPECT_EQ(analyzer.doubles(file4, file5), false);
+    EXPECT_EQ(analyzer.doubles(file5, file4), false);
+}
 
-    EXPECT_EQ(analyzer.doubles(mol1, mol2), true);
-    EXPECT_EQ(analyzer.doubles(mol2, mol1), true);
-    EXPECT_EQ(analyzer.doubles(mol1, mol3), true);
-    EXPECT_EQ(analyzer.doubles(mol2, mol3), true);
-    EXPECT_EQ(analyzer.doubles(mol4, mol5), false);
-    EXPECT_EQ(analyzer.doubles(mol5, mol4), false);
+
+TEST(TestAnalyzer, DetectDoublesWithoutMethyl)
+{
+    Analyzer analyzer;
+
+    std::string home_path = getenv("HOME");
+    std::string file1 = home_path + "/revSUPRA/tests/testcases/Alanin.xyz";
+    std::string file2 = home_path + "/revSUPRA/tests/testcases/Alanin_methyl_rotated_60_deg.xyz";
+
+    EXPECT_EQ(analyzer.doubles(file1, file2, true), true);
 }

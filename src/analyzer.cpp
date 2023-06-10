@@ -13,8 +13,6 @@ Analyzer::~Analyzer(){};
 void Analyzer::remove_doubles(std::string filepath, std::string filename, double rmsd_threshold){
     int                         i, j;
     int                         counter = 0;
-    Structure                   struc1;
-    Structure                   struc2;
     std::string                 file1;
     std::string                 file2;
     std::string                 command;
@@ -44,11 +42,9 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, double
 
     for (i = 0; i < files.size()-1; i++){
         file1 = filepath + files[i];
-        struc1.read_xyz(file1);
         for (j = i + 1; j < files.size(); j++){
             file2 = filepath + files[j];
-            struc2.read_xyz(file2);
-            if (this->doubles(struc1, struc2, rmsd_threshold)){
+            if (this->doubles(file1, file2, rmsd_threshold)){
                 command = "rm " + file1;
                 system(command.c_str());
                 counter++;
@@ -64,20 +60,31 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, double
 
 
 
-bool Analyzer::doubles(Structure struc1, Structure struc2, double rmsd_threshold, int ignore_methyl)
+bool Analyzer::doubles(std::string file1, std::string file2, bool ignore_methyl, double rmsd_threshold)
 {
+    int                                 i, j;
     bool                                doubles = false;
-    Eigen::MatrixX3d                    coords1 = struc1.coords;
-    Eigen::MatrixX3d                    coords2 = struc2.coords;
-    std::vector<std::shared_ptr<Atom>>  atoms1 = struc1.atoms;
-    std::vector<std::shared_ptr<Atom>>  atoms2 = struc2.atoms; 
+    Structure                           mol1;
+    Structure                           mol2;
+    Eigen::MatrixX3d                    coords1;
+    Eigen::MatrixX3d                    coords2;
+    std::vector<std::shared_ptr<Atom>>  atoms1;
+    std::vector<std::shared_ptr<Atom>>  atoms2;
 
-    //if (ignore_methyl){
-        //...
-    //}
-    //else{
-        //...
-    //}
+    if (ignore_methyl){
+        mol1.get_structure(file1);
+        mol2.get_structure(file2);
+        this->remove_methly_atoms(mol1, coords1, atoms1);
+        this->remove_methly_atoms(mol2, coords2, atoms2);
+    }
+    else{
+        mol1.read_xyz(file1);
+        mol2.read_xyz(file2);
+        coords1 = mol1.coords;
+        coords2 = mol2.coords;
+        atoms1 = mol1.atoms;
+        atoms2 = mol2.atoms;
+    }
 
     this->kabsch(coords1, coords2);
 
@@ -88,6 +95,49 @@ bool Analyzer::doubles(Structure struc1, Structure struc2, double rmsd_threshold
     }
 
     return doubles;
+}
+
+
+
+void Analyzer::remove_methly_atoms(
+        const Structure& mol,
+        Eigen::MatrixX3d& coords,
+        std::vector<std::shared_ptr<Atom>>& atoms
+    )
+{   
+    int                             i, j;
+    bool                            methyl_flag = false;
+    std::vector<Eigen::Vector3d>    tmp_coords;
+
+    for (i = 0; i < mol.atoms.size(); i++){
+        methyl_flag = false;
+        if (mol.atoms[i]->element == "C"){
+            if (mol.atoms[i]->core_of_terminal_group){
+                continue;
+            }
+        }
+        else if (is_terminal_atom(mol.atoms[i]->element)){
+            for (int j: mol.atoms[i]->bond_partners){
+                if (mol.atoms[j]->element == "C"){
+                    if (mol.atoms[j]->core_of_terminal_group){
+                        methyl_flag = true;
+                        break;
+                    }
+                }
+            }
+            if (methyl_flag){
+                continue;
+            }
+        }
+        atoms.push_back(mol.atoms[i]);
+        tmp_coords.push_back(mol.coords.row(i));
+    }
+    coords.resize(tmp_coords.size(), 3);
+    for (i = 0; i < tmp_coords.size(); i++){
+        coords.row(i) = tmp_coords[i];
+    }
+
+    return;
 }
 
 

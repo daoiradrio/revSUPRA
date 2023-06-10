@@ -18,15 +18,11 @@ int main(int argc, char **argv){
     }*/
     //std::string filepath = "inputfiles/" + filename;
 
-    std::string filepath1 = "inputfiles/Tyrosin.xyz";
-    //std::string filepath2 = "inputfiles/Alanin_rotated_methyl.xyz";
+    std::string filepath1 = "/home/dario/SUPRA/tests/testcases/Alanin.xyz";
+    std::string filepath2 = "/home/dario/SUPRA/tests/testcases/Alanin_methyl_rotated_60_deg.xyz";
 
-    Structure mol;
-    mol.get_structure(filepath1); 
-    //std::shared_ptr<Structure> mol_ptr = std::make_shared<Structure>(mol);
-
-    ConformerGenerator gen(mol);
-    gen.generate_conformers();
+    Analyzer analyzer;
+    std::cout << analyzer.doubles(filepath1, filepath2, 1) << std::endl;
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

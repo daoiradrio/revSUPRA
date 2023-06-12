@@ -377,12 +377,12 @@ void ConformerGenerator::selection_menu(){
 
 
 void ConformerGenerator::generation_setup(){
-    int 		i, j;
-    int 		atom1, atom2;
+    int 		        i, j;
+    int 		        atom1, atom2;
     std::vector<int>	left_atoms;
     std::vector<int>	right_atoms;
     std::vector<int>	status(this->mol->n_atoms, 0);
-    Symmetry 		sym;
+    Symmetry 		    sym;
     std::vector<int> 	torsion_group_left;
     std::vector<int> 	torsion_group_right;
 

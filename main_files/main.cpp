@@ -18,11 +18,69 @@ int main(int argc, char **argv){
     }*/
     //std::string filepath = "inputfiles/" + filename;
 
-    std::string filepath1 = "/home/dario/SUPRA/tests/testcases/Alanin.xyz";
-    std::string filepath2 = "/home/dario/SUPRA/tests/testcases/Alanin_methyl_rotated_60_deg.xyz";
+    std::string filepath1 = "/home/baum/revSUPRA/inputfiles/Tyrosin.xyz";
+    //std::string filepath2 = "/home/dario/SUPRA/tests/testcases/Alanin_methyl_rotated_60_deg.xyz";
 
-    Analyzer analyzer;
-    std::cout << analyzer.doubles(filepath1, filepath2, 1) << std::endl;
+    Structure mol;
+    mol.get_structure(filepath1);
+
+    ConformerGenerator confgen(mol);
+    confgen.get_torsions();
+    confgen.find_cycles();
+    confgen.find_peptidebonds();
+    confgen.selection_menu();
+
+    int 		        i, j;
+    int 		        atom1, atom2;
+    std::vector<int>	left_atoms;
+    std::vector<int>	right_atoms;
+    std::vector<int>	status(confgen.mol->n_atoms, 0);
+    Symmetry 		    sym;
+    std::vector<int> 	torsion_group_left;
+    std::vector<int> 	torsion_group_right;
+
+    confgen.input_coords_mat = confgen.mol->coords;
+
+    for (i = 0; i < confgen.mol->coords.rows(); i++){
+	    confgen.input_coords.push_back(confgen.mol->coords.row(i));
+    }
+
+    for (Bond torsion: confgen.torsions){
+        atom1 = torsion.atom_index1;
+        atom2 = torsion.atom_index2;
+        left_atoms.clear();
+        std::fill(status.begin(), status.end(), 0);
+        left_atoms = confgen.torsion_atom_counter(atom1, atom2, status, left_atoms);
+        right_atoms.clear();
+        std::fill(status.begin(), status.end(), 0);
+        right_atoms = confgen.torsion_atom_counter(atom2, atom1, status, right_atoms);
+        if (left_atoms.size() <= right_atoms.size()){
+            confgen.torsion_atoms.push_back(std::vector<int>());
+            i = confgen.torsion_atoms.size() - 1;
+            for (int j: left_atoms){
+                confgen.torsion_atoms[i].push_back(j);
+            }
+        }
+        else{
+            confgen.torsion_atoms.push_back(std::vector<int>());
+            i = confgen.torsion_atoms.size() - 1;
+            for (int j: right_atoms){
+                confgen.torsion_atoms[i].push_back(j);
+            }
+        }
+        //***1
+        std::cout << "Bond: " << atom1 << " " << atom2 << std::endl;
+        std::fill(status.begin(), status.end(), 0);
+        torsion_group_left.clear();
+        torsion_group_left = confgen.get_torsion_group(atom1, atom2, status, torsion_group_left);
+        std::cout << "Rotationsordnung links: " << sym.rot_sym_along_bond(confgen.mol, torsion_group_left, atom1, atom2) << std::endl;
+        std::fill(status.begin(), status.end(), 0);
+        torsion_group_right.clear();
+        torsion_group_right = confgen.get_torsion_group(atom2, atom1, status, torsion_group_right);
+        std::cout << "Rotationsordnung rechts: " << sym.rot_sym_along_bond(confgen.mol, torsion_group_right, atom1, atom2) << std::endl;
+        
+        //***2
+    }
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

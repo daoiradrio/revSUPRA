@@ -55,36 +55,20 @@ struct Atom{
 
 
 struct Bond{
-    int atom_index1;
-    int atom_index2;
-    int bond_order;
+    std::shared_ptr<Atom>   atom1;
+    std::shared_ptr<Atom>   atom2;
+    int                     bond_order = 0;
+    int                     rot_sym1   = 1;
+    int                     rot_sym2   = 1;
+    std::vector<int>        rot_sym_atoms1;
+    std::vector<int>        rot_sym_atoms2;
 };
 
 
-/*struct SymmetryElement{
-    std::vector<int>    transform;
-    int                 order;
-    int                 nparam; // NECESSARY??
-    double              maxdev;
-    double              distance;
-    std::vector<double> normal;
-    std::vector<double> direction;
-
-    SymmetryElement(): normal(DIMENSION, 0.0), direction(DIMENSION, 0.0) {}
-    ~SymmetryElement(){}
-
-    //std::function<void(
-    //    std::shared_ptr<SymmetryElement>,
-    //    std::shared_ptr<Atom>,
-    //    std::shared_ptr<Atom>
-    //)> transform_atom;
-
-    void(Symmetry::*transform_atom)(
-        std::shared_ptr<SymmetryElement>,
-        std::shared_ptr<Atom>,
-        std::shared_ptr<Atom>
-    );
-};*/
+struct Torsion{
+    std::shared_ptr<Bond>   bond;
+    std::vector<int>        rot_atoms;
+};
 
 
 

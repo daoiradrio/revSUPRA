@@ -52,39 +52,41 @@ void ConformerGenerator::generate_conformers(){
 
 
 
-void ConformerGenerator::get_torsions(){
-    int i, j;
-    std::string element_i, element_j;
+void ConformerGenerator::get_torsions()
+{
+    std::string                 element_1, element_2;
+    std::shared_ptr<Torsion>    new_torsion;
 
-    for (Bond bond: this->mol->bonds){
-        if (bond.bond_order != 1){
+    for (const std::shared_ptr<Bond>& bond: this->mol->bonds){
+        if (bond->bond_order != 1){
             continue;
         }
-        i = bond.atom_index1;
-        j = bond.atom_index2;
-        element_i = this->mol->atoms[i]->element;
-        element_j = this->mol->atoms[j]->element;
-        if (is_terminal_atom(element_i) || is_terminal_atom(element_j)){
+        element_1 = bond->atom1->element;
+        element_2 = bond->atom2->element;
+        if (is_terminal_atom(element_1) || is_terminal_atom(element_2)){
             continue;
         }
-        if (this->mol->atoms[i]->core_of_terminal_group){
-            if (element_i == "C"){
-                this->methylalike_torsions.push_back(bond);
+        new_torsion = std::make_shared<Torsion>();
+        //new_torsion->bond = std::move(bond); // AUSPROBIEREN
+        new_torsion->bond = bond;
+        if (bond->atom1->core_of_terminal_group){
+            if (element_1 == "C"){
+                this->methylalike_torsions.push_back(std::move(new_torsion));
             }
             else{
-                this->terminal_torsions.push_back(bond);
+                this->terminal_torsions.push_back(std::move(new_torsion));
             }
         }
-        else if (this->mol->atoms[j]->core_of_terminal_group){
-            if (element_j == "C"){
-                this->methylalike_torsions.push_back(bond);
+        else if (bond->atom2->core_of_terminal_group){
+            if (element_2 == "C"){
+                this->methylalike_torsions.push_back(std::move(new_torsion));
             }
             else{
-                this->terminal_torsions.push_back(bond);
+                this->terminal_torsions.push_back(std::move(new_torsion));
             }
         }
         else{
-            this->central_torsions.push_back(bond);
+            this->central_torsions.push_back(std::move(new_torsion));
         }
     }
     
@@ -116,8 +118,8 @@ void ConformerGenerator::cycle_detection(int current, int last, char status[], i
         int temp, before;
         int atom1, atom2;
         for (i = 0; i < this->central_torsions.size(); i++){
-            atom1 = this->central_torsions[i].atom_index1;
-            atom2 = this->central_torsions[i].atom_index2;
+            atom1 = this->central_torsions[i]->bond->atom1->index;
+            atom2 = this->central_torsions[i]->bond->atom2->index;
             if ((current == atom1 && last == atom2) || (last == atom1 && current == atom2)){
                 this->central_torsions.erase(this->central_torsions.begin() + i);
                 break;
@@ -128,8 +130,8 @@ void ConformerGenerator::cycle_detection(int current, int last, char status[], i
             before = temp;
             temp = ancestors[temp];
             for (i = 0; i < this->central_torsions.size(); i++){
-                atom1 = this->central_torsions[i].atom_index1;
-                atom2 = this->central_torsions[i].atom_index2;
+                atom1 = this->central_torsions[i]->bond->atom1->index;
+                atom2 = this->central_torsions[i]->bond->atom2->index;
                 if ((temp == atom1 && before == atom2) || (before == atom1 && temp == atom2)){
                     this->central_torsions.erase(this->central_torsions.begin() + i);
                     break;
@@ -169,8 +171,8 @@ void ConformerGenerator::find_peptidebonds(){
     std::vector<std::vector<int>> peptitebonds;
 
     for (i = 0; i < this->central_torsions.size(); i++){
-        atom1 = this->central_torsions[i].atom_index1;
-        atom2 = this->central_torsions[i].atom_index2;
+        atom1 = this->central_torsions[i]->bond->atom1->index;
+        atom2 = this->central_torsions[i]->bond->atom2->index;
         element1 = this->mol->atoms[atom1]->element;
         element2 = this->mol->atoms[atom2]->element;
         if (element1 == "C" && element2 == "N"){
@@ -223,8 +225,8 @@ void ConformerGenerator::find_peptidebonds(){
                     peptide2 = peptitebonds[i][1];
                     n = this->central_torsions.size();
                     for (j = 0; j < n; j++){
-                        atom1 = this->central_torsions[j].atom_index1;
-                        atom2 = this->central_torsions[j].atom_index2;
+                        atom1 = this->central_torsions[j]->bond->atom1->index;
+                        atom2 = this->central_torsions[j]->bond->atom2->index;
                         if ((peptide1 == atom1 && peptide2 == atom2) || (peptide1 == atom2 && peptide2 == atom1)){
                             this->central_torsions.erase(this->central_torsions.begin() + j);
                             break;
@@ -270,28 +272,28 @@ void ConformerGenerator::selection_menu(){
             std::cin >> mode_input;
             switch (mode_input){
                 case 1:
-                    for (Bond torsion: this->central_torsions){
+                    for (std::shared_ptr<Torsion>& torsion: this->central_torsions){
                         this->torsions.push_back(torsion);
                     }
-                    for (Bond torsion: this->terminal_torsions){
+                    for (std::shared_ptr<Torsion>& torsion: this->terminal_torsions){
                         this->torsions.push_back(torsion);
                     }
-                    for (Bond torsion: this->methylalike_torsions){
+                    for (std::shared_ptr<Torsion>& torsion: this->methylalike_torsions){
                         this->torsions.push_back(torsion);
                     }
                     valid_mode_input = true;
                     break;
                 case 2:
-                    for (Bond torsion: this->central_torsions){
+                    for (std::shared_ptr<Torsion>& torsion: this->central_torsions){
                         this->torsions.push_back(torsion);
                     }
                     valid_mode_input = true;
                     break;
                 case 3:
-                    for (Bond torsion: this->central_torsions){
+                    for (std::shared_ptr<Torsion>& torsion: this->central_torsions){
                         this->torsions.push_back(torsion);
                     }
-                    for (Bond torsion: this->terminal_torsions){
+                    for (std::shared_ptr<Torsion>& torsion: this->terminal_torsions){
                         this->torsions.push_back(torsion);
                     }
                     valid_mode_input = true;
@@ -304,7 +306,7 @@ void ConformerGenerator::selection_menu(){
         }
         confirm_increment = false;
         this->angle_increments.clear();
-	valid_increment = false;
+	    valid_increment = false;
         while (!confirm_increment){
             std::cout << "Type in an angle increment (30, 45, 60, 90, 120 or 180 in degrees): ";
             std::cin >> increment_input;
@@ -392,9 +394,9 @@ void ConformerGenerator::generation_setup(){
 	this->input_coords.push_back(this->mol->coords.row(i));
     }
 
-    for (Bond torsion: this->torsions){
-        atom1 = torsion.atom_index1;
-        atom2 = torsion.atom_index2;
+    for (std::shared_ptr<Torsion>& torsion: this->torsions){
+        atom1 = torsion->bond->atom1->index;
+        atom2 = torsion->bond->atom2->index;
         left_atoms.clear();
         std::fill(status.begin(), status.end(), 0);
         left_atoms = this->torsion_atom_counter(atom1, atom2, status, left_atoms);
@@ -446,28 +448,23 @@ void ConformerGenerator::generation_setup(){
         std::cout << std::endl;*/
         //***2
         if (left_atoms.size() <= right_atoms.size()){
-            this->torsion_atoms.push_back(std::vector<int>());
-            i = this->torsion_atoms.size() - 1;
-            for (int j: left_atoms){
-                this->torsion_atoms[i].push_back(j);
-            }
+            //this->torsion_atoms.push_back(std::vector<int>());
+            //i = this->torsion_atoms.size() - 1;
+            //for (int j: left_atoms){
+            //    this->torsion_atoms[i].push_back(j);
+            //}
+            torsion->rot_atoms = left_atoms;
         }
         else{
-            this->torsion_atoms.push_back(std::vector<int>());
-            i = this->torsion_atoms.size() - 1;
-            for (int j: right_atoms){
-                this->torsion_atoms[i].push_back(j);
-            }
+            //this->torsion_atoms.push_back(std::vector<int>());
+            //i = this->torsion_atoms.size() - 1;
+            //for (int j: right_atoms){
+            //    this->torsion_atoms[i].push_back(j);
+            //}
+            torsion->rot_atoms = right_atoms;
         }
     }
 
-    return;
-}
-
-
-
-void ConformerGenerator::check_symmetry()
-{
     return;
 }
 
@@ -493,24 +490,26 @@ std::vector<int> ConformerGenerator::torsion_atom_counter(int start, int last, s
 
 std::vector<int> ConformerGenerator::get_torsion_group(int start, int last, std::vector<int> status, std::vector<int> container){
     if (status[start] == 1){
+        std::sort(container.begin(), container.end());
         return container;
     }
     else{
         status[start] = 1;
-	for (int bond_partner: this->mol->atoms[start]->bond_partners){
-	    if (bond_partner != last){
-		if (std::find_if(
-		        this->torsions.begin(), this->torsions.end(),
-			[&](const Bond& torsion){
-			    return (torsion.atom_index1 == bond_partner || torsion.atom_index2 == bond_partner);
-			  }
-		    ) == this->torsions.end()){
-	            container.push_back(bond_partner);
-		    container = this->get_torsion_group(bond_partner, start, status, container);
+	    for (int bond_partner: this->mol->atoms[start]->bond_partners){
+	        if (bond_partner != last){
+		        if (std::find_if(
+		            this->torsions.begin(), this->torsions.end(),
+			        [&](const std::shared_ptr<Torsion>& torsion){
+			            return (torsion->bond->atom1->index == bond_partner || torsion->bond->atom2->index == bond_partner);
+			        }
+		        ) == this->torsions.end()){
+	                container.push_back(bond_partner);
+		            container = this->get_torsion_group(bond_partner, start, status, container);
+	            }
 	        }
 	    }
-	}
     }
+    std::sort(container.begin(), container.end());
     return container;
 }
 
@@ -561,13 +560,14 @@ int ConformerGenerator::old_combinations(Eigen::MatrixX3d new_coords, int index,
         return counter;
     }
     else{
-        int atom1 = this->torsions[index].atom_index1;
-        int atom2 = this->torsions[index].atom_index2;
+        int atom1 = this->torsions[index]->bond->atom1->index;
+        int atom2 = this->torsions[index]->bond->atom2->index;
         for (int angle: this->angles){
 	        RotationAxis rot_axis(new_coords.row(atom1), new_coords.row(atom2));
             Eigen::MatrixX3d new_coords_copy = new_coords;
             Eigen::Vector3d new_coord;
-            for (int torsion_atom: this->torsion_atoms[index]){
+            for (int torsion_atom: this->torsions[index]->rot_atoms){
+            //for (int torsion_atom: this->torsion_atoms[index]){
                 new_coord = rot_axis.rotate_atom(new_coords_copy.row(torsion_atom), angle);
                 new_coords_copy.row(torsion_atom) = new_coord;
             }
@@ -624,8 +624,8 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
         }
     }
     else{
-        int atom1 = this->torsions[index].atom_index1;
-        int atom2 = this->torsions[index].atom_index2;
+        int atom1 = this->torsions[index]->bond->atom1->index;
+        int atom2 = this->torsions[index]->bond->atom2->index;
         //Eigen::Vector3d axis_vec1(new_coords[atom1].data());
         //Eigen::Vector3d axis_vec2(new_coords[atom2].data());
 	    Eigen::Vector3d axis_vec1(new_coords[atom1]);
@@ -636,7 +636,8 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
         for (int deg: this->angles){
             double rad = 2*M_PI*(double)deg/360.0;
             std::vector<Eigen::Vector3d> new_coords_copy = new_coords;
-            for (int torsion_atom: this->torsion_atoms[index]){
+            for (int torsion_atom: this->torsions[index]->rot_atoms){
+            //for (int torsion_atom: this->torsion_atoms[index]){
                 new_coord = new_coords_copy[torsion_atom];
                 new_coord = new_coord - axis_vec1;
                 new_coord = axis.dot(new_coord) * axis
@@ -668,13 +669,14 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         return counter;
     }
     else{
-        int atom1 = this->torsions[index].atom_index1;
-        int atom2 = this->torsions[index].atom_index2;
+        int atom1 = this->torsions[index]->bond->atom1->index;
+        int atom2 = this->torsions[index]->bond->atom2->index;
         for (int angle: this->angles){
 	        RotationAxis rot_axis(new_coords.row(atom1), new_coords.row(atom2));
             Eigen::MatrixX3d new_coords_copy = new_coords;
             Eigen::Vector3d new_coord;
-            for (int torsion_atom: this->torsion_atoms[index]){
+            for (int torsion_atom: this->torsions[index]->rot_atoms){
+            //for (int torsion_atom: this->torsion_atoms[index]){
                 new_coord = rot_axis.rotate_atom(new_coords_copy.row(torsion_atom), angle);
                 new_coords_copy.row(torsion_atom) = new_coord;
             }

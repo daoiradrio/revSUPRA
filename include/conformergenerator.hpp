@@ -23,17 +23,23 @@
 class ConformerGenerator{
 
     public:
-        std::shared_ptr<Structure>      mol;
+        std::shared_ptr<Structure>          mol;
 
-        std::vector<Bond>               torsions;
-        std::vector<Bond>               central_torsions;
-        std::vector<Bond>               methylalike_torsions;
-        std::vector<Bond>               terminal_torsions;
+        //std::vector<Bond>               torsions;
+        //std::vector<Bond>               central_torsions;
+        //std::vector<Bond>               methylalike_torsions;
+        //std::vector<Bond>               terminal_torsions;
+
+        std::vector<std::shared_ptr<Torsion>>  torsions;
+        std::vector<std::shared_ptr<Torsion>>  central_torsions;
+        std::vector<std::shared_ptr<Torsion>>  methylalike_torsions;
+        std::vector<std::shared_ptr<Torsion>>  terminal_torsions;
 
         std::vector<std::vector<int>>   torsion_atoms;
 
         std::vector<int>                angle_increments;
         std::vector<int>                angles;
+        std::vector<std::vector<int>>   bond_angles;
 
         std::vector<Eigen::Vector3d>    input_coords;
         Eigen::MatrixX3d                input_coords_mat;
@@ -54,9 +60,8 @@ class ConformerGenerator{
         void                find_peptidebonds();
         void                selection_menu();
         void                generation_setup();
-        void                check_symmetry();
         std::vector<int>    torsion_atom_counter(int start, int last, std::vector<int> status, std::vector<int> container);
-	    std::vector<int>    get_torsion_group(int start, int last, std::vector<int> status, std::vector<int> container);
+	    std::vector<int>    get_torsion_group(int start, int last, std::vector<int> status, std::vector<int> container = {});
         int                 combinations(std::vector<Eigen::Vector3d> new_coords, int index, int counter);
         int                 combinations(Eigen::MatrixX3d new_coords, int index, int counter);
         int                 old_combinations(Eigen::MatrixX3d new_coords, int index, int counter);

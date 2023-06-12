@@ -20,7 +20,8 @@ class Structure{
 
         int                                 n_atoms;
         std::vector<std::shared_ptr<Atom>>  atoms;
-        std::vector<Bond>  bonds;
+        //std::vector<Bond>                   bonds;
+        std::vector<std::shared_ptr<Bond>>  bonds;
         Eigen::MatrixX3d                    coords;
 
         void    get_structure(std::string filepath);

@@ -14,7 +14,8 @@ void Structure::get_structure(std::string filepath){
 }
 
 
-int Structure::read_xyz(std::string filepath){
+int Structure::read_xyz(std::string filepath)
+{
     std::shared_ptr<Atom> new_atom;
     std::string element;
     std::string new_label;
@@ -68,14 +69,15 @@ int Structure::read_xyz(std::string filepath){
 
 
 void Structure::get_connectivity(){
-    int i, j;
-    int valence, max_valence;
-    int bond_order;
-    int atom_i;
-    int atom_j;
-    Bond new_bond;
-    std::string element1, element2;
-    int terminal_counter;
+    int                     i, j;
+    int                     valence, max_valence;
+    int                     bond_order;
+    int                     atom_i;
+    int                     atom_j;
+    //Bond new_bond;
+    std::shared_ptr<Bond>   new_bond;
+    std::string             element1, element2;
+    int                     terminal_counter;
 
     this->bonds.clear();
     
@@ -91,10 +93,15 @@ void Structure::get_connectivity(){
             if (bond_order){
                 this->atoms[i]->bond_partners.push_back(j);
                 this->atoms[j]->bond_partners.push_back(i);
-                new_bond.atom_index1 = i;
-                new_bond.atom_index2 = j;
-                new_bond.bond_order = bond_order;
-                this->bonds.push_back(new_bond);
+                //new_bond.atom_index1 = i;
+                //new_bond.atom_index2 = j;
+                //new_bond.bond_order = bond_order;
+                new_bond = std::make_shared<Bond>();
+                new_bond->atom1 = this->atoms[i];
+                new_bond->atom2 = this->atoms[j];
+                new_bond->bond_order = bond_order;
+                //this->bonds.push_back(new_bond);
+                this->bonds.push_back(std::move(new_bond));
                 if (is_terminal_atom(this->atoms[j]->element)){
                     terminal_counter++;
                 }

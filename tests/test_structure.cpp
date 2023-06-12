@@ -40,6 +40,6 @@ TEST(TestStructure, GetConnectivity)
     mol.get_structure(file);
 
     EXPECT_EQ(mol.bonds.size(), 12);
-    EXPECT_EQ(mol.bonds[4].bond_order, 2);
+    EXPECT_EQ(mol.bonds[4]->bond_order, 2);
     EXPECT_EQ(mol.atoms[2]->core_of_terminal_group, true);
 }

@@ -5,30 +5,34 @@
 
 #include <iostream>
 
+#include <algorithm> // sort for torsion groups
+
 
 
 int main(int argc, char **argv){
-    /*std::string filename;
+    std::string filename;
     if (argc == 2){
         filename = argv[1];
     }
     else{
         std::cout << "Type in .xyz file name: ";
         std::cin >> filename;
-    }*/
-    //std::string filepath = "inputfiles/" + filename;
-
-    std::string filepath1 = "/home/baum/revSUPRA/inputfiles/Tyrosin.xyz";
-    //std::string filepath2 = "/home/dario/SUPRA/tests/testcases/Alanin_methyl_rotated_60_deg.xyz";
+    }
+    std::string filepath = "inputfiles/" + filename;
 
     Structure mol;
-    mol.get_structure(filepath1);
+    mol.get_structure(filepath);
 
     ConformerGenerator confgen(mol);
-    confgen.get_torsions();
+    confgen.generate_conformers();
+    /*confgen.get_torsions();
     confgen.find_cycles();
     confgen.find_peptidebonds();
     confgen.selection_menu();
+
+    for (Bond torsion: confgen.torsions){
+        confgen.bond_angles.push_back({});
+    }
 
     int 		        i, j;
     int 		        atom1, atom2;
@@ -36,8 +40,7 @@ int main(int argc, char **argv){
     std::vector<int>	right_atoms;
     std::vector<int>	status(confgen.mol->n_atoms, 0);
     Symmetry 		    sym;
-    std::vector<int> 	torsion_group_left;
-    std::vector<int> 	torsion_group_right;
+    std::vector<int>    rot_atoms;
 
     confgen.input_coords_mat = confgen.mol->coords;
 
@@ -45,7 +48,7 @@ int main(int argc, char **argv){
 	    confgen.input_coords.push_back(confgen.mol->coords.row(i));
     }
 
-    for (Bond torsion: confgen.torsions){
+    for (Bond& torsion: confgen.torsions){
         atom1 = torsion.atom_index1;
         atom2 = torsion.atom_index2;
         left_atoms.clear();
@@ -71,16 +74,59 @@ int main(int argc, char **argv){
         //***1
         std::cout << "Bond: " << atom1 << " " << atom2 << std::endl;
         std::fill(status.begin(), status.end(), 0);
-        torsion_group_left.clear();
-        torsion_group_left = confgen.get_torsion_group(atom1, atom2, status, torsion_group_left);
-        std::cout << "Rotationsordnung links: " << sym.rot_sym_along_bond(confgen.mol, torsion_group_left, atom1, atom2) << std::endl;
+        rot_atoms = confgen.get_torsion_group(atom1, atom2, status);
+        torsion.rot_sym1 = sym.rot_sym_along_bond(confgen.mol, rot_atoms, atom1, atom2);
+        if (torsion.rot_sym1 > 1){
+            torsion.rot_sym_atoms1 = rot_atoms;
+        }
+        std::cout << "Rotationsordnung links: " << torsion.rot_sym1 << std::endl;
         std::fill(status.begin(), status.end(), 0);
-        torsion_group_right.clear();
-        torsion_group_right = confgen.get_torsion_group(atom2, atom1, status, torsion_group_right);
-        std::cout << "Rotationsordnung rechts: " << sym.rot_sym_along_bond(confgen.mol, torsion_group_right, atom1, atom2) << std::endl;
-        
+        rot_atoms = confgen.get_torsion_group(atom2, atom1, status);
+        torsion.rot_sym2 = sym.rot_sym_along_bond(confgen.mol, rot_atoms, atom1, atom2);
+        if (torsion.rot_sym2 > 1){
+            torsion.rot_sym_atoms2 = rot_atoms;
+        }
+        std::cout << "Rotationsordnung rechts: " << torsion.rot_sym2 << std::endl;
+        std::cout << std::endl;
         //***2
     }
+
+    std::vector<int> container;
+    for (Bond& torsion1: confgen.torsions){
+        std::cout << std::endl;
+        container.clear();
+        if (torsion1.rot_sym1 == 1 && torsion1.rot_sym2 == 1){
+            for (int increment: confgen.angle_increments){
+                for (i = 0; i < 360/increment; i++){
+                    container.push_back(i*increment);
+                }
+            }
+            confgen.bond_angles.push_back(container);
+        }
+        else{
+            for (Bond& torsion2: confgen.torsions){
+                if (torsion1.atom_index1 == torsion2.atom_index1 && torsion1.atom_index2 == torsion2.atom_index2){
+                    continue;
+                }
+                if (torsion1.rot_sym_atoms1.size() != 0){
+                    if (torsion1.rot_sym_atoms1 == torsion2.rot_sym_atoms1){
+                        std::cout << torsion1.atom_index1 << " " << torsion1.atom_index2 << " und " << torsion2.atom_index1 << " " << torsion2.atom_index2 << std::endl;
+                    }
+                    if (torsion1.rot_sym_atoms1 == torsion2.rot_sym_atoms2){
+                        std::cout << torsion1.atom_index1 << " " << torsion1.atom_index2 << " und " << torsion2.atom_index1 << " " << torsion2.atom_index2 << std::endl;
+                    }
+                }
+                if (torsion1.rot_sym_atoms2.size() != 0){
+                    if (torsion1.rot_sym_atoms2 == torsion2.rot_sym_atoms1){
+                        std::cout << torsion1.atom_index1 << " " << torsion1.atom_index2 << " und " << torsion2.atom_index1 << " " << torsion2.atom_index2 << std::endl;
+                    }
+                    if (torsion1.rot_sym_atoms2 == torsion2.rot_sym_atoms2){
+                        std::cout << torsion1.atom_index1 << " " << torsion1.atom_index2 << " und " << torsion2.atom_index1 << " " << torsion2.atom_index2 << std::endl;
+                    }
+                }
+            }
+        }
+    }*/
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

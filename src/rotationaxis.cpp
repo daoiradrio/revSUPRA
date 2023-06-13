@@ -48,6 +48,29 @@ Eigen::Vector3d RotationAxis::rotate_atom(Eigen::Vector3d coords, double deg)
 
 
 
+Eigen::Vector3d RotationAxis::rotate_atom(
+    const Eigen::Vector3d from_coords,
+    const Eigen::Vector3d to_coords,
+    const Eigen::Vector3d coords,
+    double deg
+){
+    Eigen::Vector3d     axis;
+    Eigen::Vector3d     new_coords;
+    double              angle = (2.0 * M_PI) * (deg / 360.0);
+
+    axis = to_coords - from_coords;
+    
+    new_coords = coords - from_coords;
+    new_coords = axis.dot(new_coords) * axis
+                + cos(angle) * axis.cross(new_coords).cross(axis)
+                + sin(angle) * axis.cross(new_coords);
+    new_coords = new_coords + from_coords;
+
+    return new_coords;
+}
+
+
+
 std::vector<double> RotationAxis::rotate_atom(std::vector<double> coords, double deg)
 {
     std::vector<double>     new_coords(DIMENSION, 0.0);

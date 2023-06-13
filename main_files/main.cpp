@@ -24,74 +24,110 @@ int main(int argc, char **argv){
     mol.get_structure(filepath);
 
     ConformerGenerator confgen(mol);
-    confgen.generate_conformers();
-    /*confgen.get_torsions();
+    //confgen.generate_conformers();
+    confgen.get_torsions();
     confgen.find_cycles();
     confgen.find_peptidebonds();
     confgen.selection_menu();
+    confgen.generation_setup();
 
-    for (Bond torsion: confgen.torsions){
+    for (const std::shared_ptr<Torsion>& torsion: confgen.torsions){
         confgen.bond_angles.push_back({});
     }
 
-    int 		        i, j;
-    int 		        atom1, atom2;
-    std::vector<int>	left_atoms;
-    std::vector<int>	right_atoms;
+    Symmetry            sym;
+    int                 order_left;
+    int                 order_right;
     std::vector<int>	status(confgen.mol->n_atoms, 0);
-    Symmetry 		    sym;
-    std::vector<int>    rot_atoms;
+    std::vector<int>    torsion_done(confgen.torsions.size(), 0);
 
-    confgen.input_coords_mat = confgen.mol->coords;
-
-    for (i = 0; i < confgen.mol->coords.rows(); i++){
-	    confgen.input_coords.push_back(confgen.mol->coords.row(i));
+    for (std::shared_ptr<Torsion>& torsion: confgen.torsions){
+        std::fill(status.begin(), status.end(), 0);
+        torsion->bond->rot_sym_atoms1 = confgen.get_torsion_group(
+            torsion->bond->atom1->index,
+            torsion->bond->atom2->index,
+            status
+        );
+        torsion->bond->rot_sym1 = sym.rot_sym_along_bond(
+            confgen.mol,
+            torsion->bond->rot_sym_atoms1,
+            torsion->bond->atom1->index,
+            torsion->bond->atom2->index
+        );
+        std::fill(status.begin(), status.end(), 0);
+        torsion->bond->rot_sym_atoms2 = confgen.get_torsion_group(
+            torsion->bond->atom2->index,
+            torsion->bond->atom1->index,
+            status
+        );
+        torsion->bond->rot_sym2 = sym.rot_sym_along_bond(
+            confgen.mol,
+            torsion->bond->rot_sym_atoms2,
+            torsion->bond->atom2->index,
+            torsion->bond->atom1->index
+        );
     }
 
-    for (Bond& torsion: confgen.torsions){
-        atom1 = torsion.atom_index1;
-        atom2 = torsion.atom_index2;
-        left_atoms.clear();
-        std::fill(status.begin(), status.end(), 0);
-        left_atoms = confgen.torsion_atom_counter(atom1, atom2, status, left_atoms);
-        right_atoms.clear();
-        std::fill(status.begin(), status.end(), 0);
-        right_atoms = confgen.torsion_atom_counter(atom2, atom1, status, right_atoms);
-        if (left_atoms.size() <= right_atoms.size()){
-            confgen.torsion_atoms.push_back(std::vector<int>());
-            i = confgen.torsion_atoms.size() - 1;
-            for (int j: left_atoms){
-                confgen.torsion_atoms[i].push_back(j);
+    for (std::shared_ptr<Torsion>& torsion1: confgen.torsions){
+        order_left = sym.rot_sym_along_bond(
+                        confgen.mol,
+                        torsion1->left_atoms,
+                        torsion1->bond->atom1->index,
+                        torsion1->bond->atom2->index
+                     );
+        if (order_left > 1){
+            torsion1->bond->rot_sym1 = order_left;
+            torsion1->bond->rot_sym_atoms1 = torsion1->left_atoms;
+            std::cout << "C" << order_left << "-Symmetrie auf Seite von " 
+                      << torsion1->bond->atom1->element << torsion1->bond->atom1->index << std::endl;
+            continue;
+        }
+        order_right = sym.rot_sym_along_bond(
+                        confgen.mol,
+                        torsion1->right_atoms,
+                        torsion1->bond->atom1->index,
+                        torsion1->bond->atom2->index
+                     );
+        if (order_right > 1){
+            torsion1->bond->rot_sym2 = order_right;
+            torsion1->bond->rot_sym_atoms2 = torsion1->right_atoms;
+            std::cout << "C" << order_right << "-Symmetrie auf Seite von " 
+                      << torsion1->bond->atom2->element << torsion1->bond->atom2->index << std::endl;
+            continue;
+        }
+        for (std::shared_ptr<Torsion>& torsion2: confgen.torsions){
+            if ((torsion1->bond->atom1->index == torsion2->bond->atom1->index  &&
+                 torsion1->bond->atom2->index == torsion2->bond->atom2->index) ||
+                (torsion1->bond->atom1->index == torsion2->bond->atom2->index  &&
+                 torsion1->bond->atom2->index == torsion2->bond->atom1->index)
+            ){
+                continue;
+            }
+            if (torsion1->bond->rot_sym_atoms1.size() != 0){
+                if(torsion1->bond->rot_sym_atoms1 == torsion2->bond->rot_sym_atoms1){
+                    std::cout << torsion1->bond->atom1->index << " " << torsion1->bond->atom2->index << " und " 
+                              << torsion2->bond->atom1->index << " " << torsion2->bond->atom2->index << std::endl;
+                }
+                if(torsion1->bond->rot_sym_atoms1 == torsion2->bond->rot_sym_atoms2){
+                    std::cout << torsion1->bond->atom1->index << " " << torsion1->bond->atom2->index << " und " 
+                              << torsion2->bond->atom1->index << " " << torsion2->bond->atom2->index << std::endl;
+                }
+            }
+            if (torsion1->bond->rot_sym_atoms2.size() != 0){
+                if(torsion1->bond->rot_sym_atoms2 == torsion2->bond->rot_sym_atoms1){
+                    std::cout << torsion1->bond->atom1->index << " " << torsion1->bond->atom2->index << " und " 
+                              << torsion2->bond->atom1->index << " " << torsion2->bond->atom2->index << std::endl;
+                }
+                if(torsion1->bond->rot_sym_atoms2 == torsion2->bond->rot_sym_atoms2){
+                    std::cout << torsion1->bond->atom1->index << " " << torsion1->bond->atom2->index << " und " 
+                              << torsion2->bond->atom1->index << " " << torsion2->bond->atom2->index << std::endl;
+                }
             }
         }
-        else{
-            confgen.torsion_atoms.push_back(std::vector<int>());
-            i = confgen.torsion_atoms.size() - 1;
-            for (int j: right_atoms){
-                confgen.torsion_atoms[i].push_back(j);
-            }
-        }
-        //***1
-        std::cout << "Bond: " << atom1 << " " << atom2 << std::endl;
-        std::fill(status.begin(), status.end(), 0);
-        rot_atoms = confgen.get_torsion_group(atom1, atom2, status);
-        torsion.rot_sym1 = sym.rot_sym_along_bond(confgen.mol, rot_atoms, atom1, atom2);
-        if (torsion.rot_sym1 > 1){
-            torsion.rot_sym_atoms1 = rot_atoms;
-        }
-        std::cout << "Rotationsordnung links: " << torsion.rot_sym1 << std::endl;
-        std::fill(status.begin(), status.end(), 0);
-        rot_atoms = confgen.get_torsion_group(atom2, atom1, status);
-        torsion.rot_sym2 = sym.rot_sym_along_bond(confgen.mol, rot_atoms, atom1, atom2);
-        if (torsion.rot_sym2 > 1){
-            torsion.rot_sym_atoms2 = rot_atoms;
-        }
-        std::cout << "Rotationsordnung rechts: " << torsion.rot_sym2 << std::endl;
         std::cout << std::endl;
-        //***2
     }
 
-    std::vector<int> container;
+    /*std::vector<int> container;
     for (Bond& torsion1: confgen.torsions){
         std::cout << std::endl;
         container.clear();

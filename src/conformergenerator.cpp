@@ -403,67 +403,15 @@ void ConformerGenerator::generation_setup(){
         left_atoms.clear();
         std::fill(status.begin(), status.end(), 0);
         left_atoms = this->torsion_atom_counter(atom1, atom2, status, left_atoms);
-        //***1
-        /*std::fill(status.begin(), status.end(), 0);
-        torsion_group_left.clear();
-        torsion_group_left = this->get_torsion_group(atom1, atom2, status, torsion_group_left);
-        std::cout << "Bond: " << atom1 << " " << atom2 << std::endl;
-        std::cout << atom1 << ":" << std::endl;
-        for (int x: torsion_group_left){
-            std::cout << x << " ";
-        }
-        std::cout << std::endl;
-        for (int angle: this->angle_increments){
-            if (sym.rot_sym_along_bond(
-                this->mol, torsion_group_left, atom1, atom2, 360/angle
-                )
-            ){
-                std::cout << angle << ": Symmetrie" << std::endl;
-            }
-            else{
-                std::cout << angle << ": Keine Symmetrie" << std::endl;
-            }
-        }*/
-        //***2
+        torsion->left_atoms = left_atoms;
         right_atoms.clear();
         std::fill(status.begin(), status.end(), 0);
         right_atoms = this->torsion_atom_counter(atom2, atom1, status, right_atoms);
-        //***1
-        /*std::fill(status.begin(), status.end(), 0);
-        torsion_group_right.clear();
-        torsion_group_right = this->get_torsion_group(atom2, atom1, status, torsion_group_right);
-        std::cout << atom2 << ":" << std::endl;
-        for (int x: torsion_group_right){
-            std::cout << x << " ";
-        }
-        std::cout << std::endl;
-        for (int angle: this->angle_increments){
-            if (sym.rot_sym_along_bond(
-                this->mol, torsion_group_right, atom1, atom2, 360/angle
-                )
-            ){
-                std::cout << angle << ": Symmetrie" << std::endl;
-            }
-            else{
-                std::cout << angle << ": Keine Symmetrie" << std::endl;
-            }
-        }
-        std::cout << std::endl;*/
-        //***2
+        torsion->right_atoms = right_atoms;
         if (left_atoms.size() <= right_atoms.size()){
-            //this->torsion_atoms.push_back(std::vector<int>());
-            //i = this->torsion_atoms.size() - 1;
-            //for (int j: left_atoms){
-            //    this->torsion_atoms[i].push_back(j);
-            //}
             torsion->rot_atoms = left_atoms;
         }
         else{
-            //this->torsion_atoms.push_back(std::vector<int>());
-            //i = this->torsion_atoms.size() - 1;
-            //for (int j: right_atoms){
-            //    this->torsion_atoms[i].push_back(j);
-            //}
             torsion->rot_atoms = right_atoms;
         }
     }

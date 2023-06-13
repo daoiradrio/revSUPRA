@@ -521,7 +521,11 @@ void Symmetry::find_geometric_center()
 
 
 bool Symmetry::rot_sym_along_bond(
-    std::shared_ptr<Structure> mol, std::vector<int> rot_atoms, int axis_from, int axis_to, int order
+    const std::shared_ptr<Structure>&   mol,
+    const std::vector<int>&             rot_atoms,
+    const int&                          axis_from,
+    const int&                          axis_to,
+    const int&                          order
 ){   
     int                                 i, j, k;
     int                                 best_j;
@@ -578,8 +582,12 @@ bool Symmetry::rot_sym_along_bond(
 
 
 
-int Symmetry::rot_sym_along_bond(std::shared_ptr<Structure> mol, std::vector<int> rot_atoms, int from, int to)
-{
+int Symmetry::rot_sym_along_bond(
+    const std::shared_ptr<Structure>&   mol,
+    const std::vector<int>&             rot_atoms, 
+    const int&                          from,
+    const int&                          to
+){
     for (int order: this->possible_orders){
         if (this->rot_sym_along_bond(mol, rot_atoms, from, to, order)){
             return order;

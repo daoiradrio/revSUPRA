@@ -32,18 +32,6 @@ RotationAxis::RotationAxis(Eigen::Vector3d from_coords, Eigen::Vector3d to_coord
 
 
 
-RotationAxis::RotationAxis(std::shared_ptr<Torsion> torsion)
-{
-    std::vector<double> from_coords = torsion->bond->atom1->coords;
-    std::vector<double> to_coords = torsion->bond->atom2->coords;
-    this->from << from_coords[0], from_coords[1], from_coords[2];
-    this->to << to_coords[0], to_coords[1], to_coords[2];
-    this->axis = this->to - this->from;
-    this->axis.normalize();
-}
-
-
-
 Eigen::Vector3d RotationAxis::rotate_atom(Eigen::Vector3d coords, double deg)
 {
     Eigen::Vector3d     new_coords;
@@ -89,3 +77,6 @@ std::shared_ptr<Atom> RotationAxis::rotate_atom(std::shared_ptr<Atom> atom, doub
 
     return new_atom;
 }
+
+
+

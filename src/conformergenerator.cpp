@@ -44,8 +44,7 @@ void ConformerGenerator::generate_conformers(){
         command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
         system(command.c_str());
     }
-    Analyzer analyzer;
-    analyzer.remove_doubles(this->output_foldername, this->struc_filename);
+    this->analyzer.remove_doubles(this->output_foldername, this->struc_filename);
 
     return;
 }
@@ -388,6 +387,9 @@ void ConformerGenerator::generation_setup(){
     std::vector<int> 	torsion_group_left;
     std::vector<int> 	torsion_group_right;
 
+    this->optimizer = Optimizer();
+    this->analyzer  = Analyzer();
+
     this->input_coords_mat = this->mol->coords;
 
     for (i = 0; i < this->mol->coords.rows(); i++){
@@ -659,8 +661,7 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         if (!this->clashes(new_coords)){
             std::string new_struc = this->struc_filename + std::to_string(counter) + ".xyz";
             this->write_xyz(new_coords, new_struc);
-            Optimizer optimizer;
-            int fin = optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
+            int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
             return counter+1;
         }
         else{
@@ -669,11 +670,11 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         return counter;
     }
     else{
-        //int atom1 = this->torsions[index]->bond->atom1->index;
-        //int atom2 = this->torsions[index]->bond->atom2->index;
+        int atom1 = this->torsions[index]->bond->atom1->index;
+        int atom2 = this->torsions[index]->bond->atom2->index;
         for (int angle: this->angles){
-	        //RotationAxis rot_axis(new_coords.row(atom1), new_coords.row(atom2));
-            RotationAxis rot_axis(this->torsions[index]);
+	        RotationAxis rot_axis(new_coords.row(atom1), new_coords.row(atom2));
+            //RotationAxis rot_axis(this->torsions[index]);
             Eigen::MatrixX3d new_coords_copy = new_coords;
             Eigen::Vector3d new_coord;
             for (int torsion_atom: this->torsions[index]->rot_atoms){

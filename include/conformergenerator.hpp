@@ -24,6 +24,8 @@ class ConformerGenerator{
 
     public:
         std::shared_ptr<Structure>          mol;
+        Optimizer                           optimizer;
+        Analyzer                            analyzer;
 
         //std::vector<Bond>               torsions;
         //std::vector<Bond>               central_torsions;

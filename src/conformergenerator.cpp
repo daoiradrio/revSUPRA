@@ -525,7 +525,7 @@ int ConformerGenerator::old_combinations(Eigen::MatrixX3d new_coords, int index,
             std::string current_workdir = this->workdir_name + std::to_string(counter) + "/";
             std::string coord_file = current_workdir + "coord";
             std::string control_file = current_workdir + "control";
-            std::string new_struc = current_workdir + this->struc_filename;
+            std::string new_struc = current_workdir + this->struc_filename + std::to_string(counter);
 	        std::string opt_struc = current_workdir + this->opt_struc_filename;
 	        std::string command;
             // create new working directory
@@ -553,6 +553,12 @@ int ConformerGenerator::old_combinations(Eigen::MatrixX3d new_coords, int index,
             file.close();
             // perform UFF optimization
 	        command = "cd " + current_workdir + " ; uff > uff.out 2>&1 &";
+            fin = system(command.c_str());
+            command = "t2x " + coord_file + " > " + new_struc + " 2>/dev/null";
+            fin = system(command.c_str());
+            command = "mv ~/revSUPRA/" + new_struc + " ~/revSUPRA/conformer" + std::to_string(counter) + ".xyz";
+            fin = system(command.c_str());
+            command = "rm -rf " + current_workdir;
             fin = system(command.c_str());
             return counter+1;
         }
@@ -617,6 +623,12 @@ int ConformerGenerator::combinations(std::vector<Eigen::Vector3d> new_coords, in
             file.close();
             // perform UFF optimization
 	        command = "cd " + current_workdir + " ; uff > uff.out 2>&1 &";
+            fin = system(command.c_str());
+            command = "t2x " + coord_file + " > " + new_struc + " 2>/dev/null";
+            fin = system(command.c_str());
+            command = "mv ~/revSUPRA/" + new_struc + " ~/revSUPRA/conformer" + std::to_string(counter) + ".xyz";
+            fin = system(command.c_str());
+            command = "rm -rf " + current_workdir;
             fin = system(command.c_str());
             // cout new conformer
             return counter+1;

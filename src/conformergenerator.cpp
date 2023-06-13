@@ -34,8 +34,8 @@ void ConformerGenerator::generate_conformers(){
         for (i = 0; i < 360/increment; i++){
             this->angles.push_back(i*increment);
         }
-	    //n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
-        n_generated_conformers = this->combinations(this->input_coords_mat, 0, n_generated_conformers);
+	    n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
+        //n_generated_conformers = this->combinations(this->input_coords_mat, 0, n_generated_conformers);
     }
     std::string command;
     if (n_generated_conformers){

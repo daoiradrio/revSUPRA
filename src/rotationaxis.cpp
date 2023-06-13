@@ -59,6 +59,7 @@ Eigen::Vector3d RotationAxis::rotate_atom(
     double              angle = (2.0 * M_PI) * (deg / 360.0);
 
     axis = to_coords - from_coords;
+    axis.normalize();
     
     new_coords = coords - from_coords;
     new_coords = axis.dot(new_coords) * axis

@@ -80,7 +80,7 @@ void Structure::get_connectivity(){
     int                     terminal_counter;
 
     this->bonds.clear();
-    
+
     for (i = 0; i < this->n_atoms-1; i++){
         valence = 0;
         terminal_counter = 0;

@@ -49,10 +49,10 @@ Eigen::Vector3d RotationAxis::rotate_atom(Eigen::Vector3d coords, double deg)
 
 
 Eigen::Vector3d RotationAxis::rotate_atom(
-    const Eigen::Vector3d from_coords,
-    const Eigen::Vector3d to_coords,
-    const Eigen::Vector3d coords,
-    const double deg
+    Eigen::Vector3d from_coords,
+    Eigen::Vector3d to_coords,
+    Eigen::Vector3d coords,
+    double deg
 ){
     Eigen::Vector3d     axis;
     Eigen::Vector3d     new_coords;

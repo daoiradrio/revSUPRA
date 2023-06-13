@@ -669,10 +669,11 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         return counter;
     }
     else{
-        int atom1 = this->torsions[index]->bond->atom1->index;
-        int atom2 = this->torsions[index]->bond->atom2->index;
+        //int atom1 = this->torsions[index]->bond->atom1->index;
+        //int atom2 = this->torsions[index]->bond->atom2->index;
         for (int angle: this->angles){
-	        RotationAxis rot_axis(new_coords.row(atom1), new_coords.row(atom2));
+	        //RotationAxis rot_axis(new_coords.row(atom1), new_coords.row(atom2));
+            RotationAxis rot_axis(this->torsions[index]);
             Eigen::MatrixX3d new_coords_copy = new_coords;
             Eigen::Vector3d new_coord;
             for (int torsion_atom: this->torsions[index]->rot_atoms){

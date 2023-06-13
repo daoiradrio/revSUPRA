@@ -66,6 +66,7 @@ struct Bond{
 
 
 struct Torsion{
+    
     std::shared_ptr<Bond>   bond;
     std::vector<int>        rot_atoms;
 };

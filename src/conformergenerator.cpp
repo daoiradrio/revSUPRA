@@ -403,11 +403,11 @@ void ConformerGenerator::generation_setup(){
         left_atoms.clear();
         std::fill(status.begin(), status.end(), 0);
         left_atoms = this->torsion_atom_counter(atom1, atom2, status, left_atoms);
-        torsion->left_atoms = left_atoms;
+        torsion->rot_atoms1 = left_atoms;
         right_atoms.clear();
         std::fill(status.begin(), status.end(), 0);
         right_atoms = this->torsion_atom_counter(atom2, atom1, status, right_atoms);
-        torsion->right_atoms = right_atoms;
+        torsion->rot_atoms2 = right_atoms;
         if (left_atoms.size() <= right_atoms.size()){
             torsion->rot_atoms = left_atoms;
         }
@@ -423,17 +423,19 @@ void ConformerGenerator::generation_setup(){
 
 std::vector<int> ConformerGenerator::torsion_atom_counter(int start, int last, std::vector<int> status, std::vector<int> container){
     if (status[start] == 1){
+        std::sort(container.begin(), container.end());
         return container;
     }
     else{
         status[start] = 1;
-        container.push_back(start);
         for (int bond_partner: this->mol->atoms[start]->bond_partners){
             if (bond_partner != last){
+                container.push_back(bond_partner);
                 container = this->torsion_atom_counter(bond_partner, start, status, container);
             }
         }
     }
+    std::sort(container.begin(), container.end());
     return container;
 }
 

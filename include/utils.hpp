@@ -58,18 +58,18 @@ struct Bond{
     std::shared_ptr<Atom>   atom1;
     std::shared_ptr<Atom>   atom2;
     int                     bond_order = 0;
-    int                     rot_sym1   = 1;
-    int                     rot_sym2   = 1;
-    std::vector<int>        rot_sym_atoms1;
-    std::vector<int>        rot_sym_atoms2;
 };
 
 
 struct Torsion{   
     std::shared_ptr<Bond>   bond;
     std::vector<int>        rot_atoms;
-    std::vector<int>        left_atoms;
-    std::vector<int>        right_atoms;
+    int                     rot_sym1;
+    int                     rot_sym2;
+    std::vector<int>        rot_sym_atoms1;
+    std::vector<int>        rot_sym_atoms2;
+    std::vector<int>        rot_atoms1;
+    std::vector<int>        rot_atoms2;
 };
 
 

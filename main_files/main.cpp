@@ -5,8 +5,6 @@
 
 #include <iostream>
 
-#include <algorithm> // min, max
-
 
 
 int main(int argc, char **argv){
@@ -39,6 +37,8 @@ int main(int argc, char **argv){
     std::vector<int>            torsion_done(confgen.torsions.size(), 0);
     std::shared_ptr<Torsion>    torsion1;
     std::shared_ptr<Torsion>    torsion2;
+
+    // NECESSARY: algorithm HEADER FOR min, max
 
     for (std::shared_ptr<Torsion>& torsion: confgen.torsions){
         std::fill(status.begin(), status.end(), 0);

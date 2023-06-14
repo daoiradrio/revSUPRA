@@ -41,7 +41,7 @@ class ConformerGenerator{
 
         std::vector<int>                angle_increments;
         std::vector<int>                angles;
-        std::vector<std::vector<int>>   bond_angles;
+        std::vector<std::vector<std::vector<int>>>   bond_angles;
 
         std::vector<Eigen::Vector3d>    input_coords;
         Eigen::MatrixX3d                input_coords_mat;

@@ -30,10 +30,10 @@ void ConformerGenerator::generate_conformers(){
     int i;
     int n_generated_conformers = 0;
     for (int increment: this->angle_increments){
-        //this->angles.clear();
-        //for (i = 0; i < 360/increment; i++){
-        //    this->angles.push_back(i*increment);
-        //}
+        this->angles.clear();
+        for (i = 0; i < 360/increment; i++){
+            this->angles.push_back(i*increment);
+        }
         this->check_rot_sym(increment);
 	    //n_generated_conformers = this->combinations(this->input_coords, 0, n_generated_conformers);
 	    //n_generated_conformers = this->old_combinations(this->input_coords_mat, 0, n_generated_conformers);

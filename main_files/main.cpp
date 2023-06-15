@@ -22,8 +22,8 @@ int main(int argc, char **argv){
     mol.get_structure(filepath);
 
     ConformerGenerator confgen(mol);
-    //confgen.generate_conformers();
-    confgen.get_torsions();
+    confgen.generate_conformers();
+    /*confgen.get_torsions();
     confgen.find_cycles();
     confgen.find_peptidebonds();
     confgen.selection_menu();
@@ -165,7 +165,7 @@ int main(int argc, char **argv){
             std::cout << "\n\n";
             i++;
         }
-    }
+    }*/
 
     /*
     vector< vector<double> > costMatrix = {{ 50, 1, 51, 52},

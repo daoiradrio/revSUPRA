@@ -46,7 +46,7 @@ void Analyzer::remove_doubles(std::string filepath, std::string filename, double
             file2 = filepath + files[j];
             if (this->doubles(file1, file2, rmsd_threshold)){
                 command = "rm " + file1;
-                system(command.c_str());
+                //system(command.c_str());
                 counter++;
                 break;
             }

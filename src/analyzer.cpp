@@ -10,7 +10,9 @@ Analyzer::~Analyzer(){};
 
 
 
-void Analyzer::remove_doubles(std::string filepath, std::string filename, double rmsd_threshold){
+void Analyzer::remove_doubles(
+    std::string filepath, std::string filename, bool ignore_methyl, double rmsd_threshold
+){
     int                         i, j;
     int                         counter = 0;
     std::string                 file1;

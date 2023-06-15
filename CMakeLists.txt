@@ -13,6 +13,7 @@ file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 add_executable(supra main_files/main.cpp ${SRC_FILES})
 #add_executable(sym main_files/revsymmetry.cpp ${SRC_FILES})
+add_executable(supra-doubles main_files/supra-doubles.cpp ${SRC_FILES})
 # add more executables?
 
 include(FetchContent)

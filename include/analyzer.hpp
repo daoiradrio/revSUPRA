@@ -24,7 +24,11 @@ class Analyzer{
         Analyzer();
         ~Analyzer();
 
-        void    remove_doubles(std::string filepath, std::string filename, double rmsd_threshold = 0.1);
+        void    remove_doubles(
+                    std::string filepath,
+                    std::string filename,
+                    bool ignore_methyl = false,
+                    double rmsd_threshold = 0.1);
         //void    remove_doubles(std::string filepath, double rmsd_threshold = 0.1);
         bool    doubles(
                     std::string file1,

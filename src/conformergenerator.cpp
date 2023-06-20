@@ -40,7 +40,7 @@ void ConformerGenerator::generate_conformers(){
         n_generated_conformers = this->combinations(this->input_coords_mat, 0, n_generated_conformers);
     }
     std::string command;
-    for (i = 0; i < n_generated_conformers; i++){
+    /*for (i = 0; i < n_generated_conformers; i++){
         command = "t2x " + this->workdir_name + std::to_string(i) +
                   "/coord > " + this->struc_filename + std::to_string(i) + ".xyz 2>/dev/null";
         system(command.c_str());
@@ -52,13 +52,13 @@ void ConformerGenerator::generate_conformers(){
     command = "mkdir " + this->output_foldername;
     system(command.c_str());
     command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
-    system(command.c_str());
-    /*if (n_generated_conformers){
+    system(command.c_str());*/
+    if (n_generated_conformers){
         command = "mkdir " + this->output_foldername;
         system(command.c_str());
         command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
         system(command.c_str());
-    }*/
+    }
     this->analyzer.remove_doubles(this->output_foldername, this->struc_filename);
 
     return;
@@ -781,8 +781,8 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         if (!this->clashes(new_coords)){
             std::string new_struc = this->struc_filename + std::to_string(counter) + ".xyz";
             this->write_xyz(new_coords, new_struc);
-            //int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
-            int fin;
+            int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
+            /*int fin;
             std::string current_workdir = this->workdir_name + std::to_string(counter) + "/";
             std::string coord_file = current_workdir + "coord";
             std::string control_file = current_workdir + "control";
@@ -830,12 +830,12 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
     else{
         int atom1 = this->torsions[index]->bond->atom1->index;
         int atom2 = this->torsions[index]->bond->atom2->index;
-        for (int angle: this->angles){
+        //for (int angle: this->angles){
         //    if (index == 3 && (angle == 120 || angle == 240)){ Alanin.xyz
         //    if (index == 3 && (angle == 180)){ // Tyrosin.xyz
         //        continue;
         //    }
-        //for (int angle: this->rot_angles[index]){
+        for (int angle: this->rot_angles[index]){
             Eigen::MatrixX3d new_coords_copy = new_coords;
             Eigen::Vector3d new_coord;
             for (int torsion_atom: this->torsions[index]->rot_atoms){

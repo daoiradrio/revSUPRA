@@ -43,6 +43,7 @@ void Analyzer::remove_doubles(
     system(command.c_str());
 
     std::cout << "Removing duplicate structures..." << std::endl;
+    std::cout << "Hallo??" << std::endl;
 
     for (i = 0; i < files.size()-1; i++){
         file1 = filepath + files[i];
@@ -61,7 +62,6 @@ void Analyzer::remove_doubles(
                 mol2.read_xyz(file2);
             }
             if (this->doubles(mol1, mol2, rmsd_threshold, ignore_methyl)){
-                std::cout << "Hallo??" << std::endl;
                 if (mol1.energy && mol2.energy){
                     if (mol1.energy < mol2.energy){
                         std::cout << "Lösche mol2" << std::endl;

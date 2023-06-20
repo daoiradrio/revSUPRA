@@ -66,15 +66,14 @@ void Analyzer::remove_doubles(
                 counter++;
                 break;*/
             if (this->doubles(mol1, mol2)){
+                std::cout << mol1.energy << " " << mol2.energy << std::endl;
                 if (mol1.energy && mol2.energy){
                     if (mol1.energy < mol2.energy){
-                        std::cout << "Lösche mol2" << std::endl;
                         command = "rm " + file2;
                         system(command.c_str());
                         counter++;
                     }
                     else{
-                        std::cout << "Lösche mol1" << std::endl;
                         command = "rm " + file1;
                         system(command.c_str());
                         counter++;
@@ -82,7 +81,6 @@ void Analyzer::remove_doubles(
                     }
                 }
                 else{
-                    std::cout << "hier" << std::endl;
                     command = "rm " + file1;
                     system(command.c_str());
                     counter++;

@@ -773,14 +773,14 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
             std::string current_workdir = this->curr_work_dir + std::to_string(counter) + "/";
             std::string coord_file = current_workdir + "coord";
             std::string control_file = current_workdir + "control";
-            std::string new_struc = current_workdir + this->struc_filename + std::to_string(counter);
+            //std::string new_struc = current_workdir + this->struc_filename + std::to_string(counter);
 	        std::string opt_struc = current_workdir + this->opt_struc_filename;
 	        std::string command;
             // create new working directory
 	        command = "mkdir " + current_workdir;
 	        system(command.c_str());
             // write new conformer structure to be optimized
-            this->write_xyz(new_coords, new_struc);
+            //this->write_xyz(new_coords, new_struc);
             // convert .xyz file of structure to be optimized to coord file
 	        command = "x2t " + new_struc + " > " + coord_file;
             system(command.c_str());

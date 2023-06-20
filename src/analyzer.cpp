@@ -60,12 +60,12 @@ void Analyzer::remove_doubles(
             else{
                 mol2.read_xyz(file2);
             }
-            if (this->doubles(file1, file2)){
+            //if (this->doubles(file1, file2)){
             /*    command = "rm " + file1;
                 system(command.c_str());
                 counter++;
                 break;*/
-            //if (this->doubles(mol1, mol2)){
+            if (this->doubles(mol1, mol2)){
                 if (mol1.energy && mol2.energy){
                     if (mol1.energy < mol2.energy){
                         std::cout << "Lösche mol2" << std::endl;

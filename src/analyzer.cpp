@@ -84,9 +84,11 @@ void Analyzer::remove_doubles(
                     }
                 }
                 else{
-                    command = "rm " + file1;
-                    system(command.c_str());
-                    counter++;
+                    //command = "rm " + file1;
+                    //system(command.c_str());
+                    //counter++;
+                    //break;
+                    delete_files.push_back(file1);
                     break;
                 }
             }

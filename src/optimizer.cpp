@@ -126,9 +126,9 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
 
     // remove working directory
     command = "rm -f " + opt_dir + "*";
-    system(command.c_str());
+    //system(command.c_str());
     command = "rm -rf " + opt_dir;
-    system(command.c_str());
+    //system(command.c_str());
 
     if (fin < 0){
         return FAIL_EXIT;

@@ -46,27 +46,27 @@ void Analyzer::remove_doubles(
 
     for (i = 0; i < files.size()-1; i++){
         file1 = filepath + files[i];
-        /*if (ignore_methyl){
+        if (ignore_methyl){
             mol1.get_structure(file1);
         }
         else{
             mol1.read_xyz(file1);
-        }*/
+        }
         for (j = i + 1; j < files.size(); j++){
             file2 = filepath + files[j];
-            /*if (ignore_methyl){
+            if (ignore_methyl){
                 mol2.get_structure(file2);
             }
             else{
                 mol2.read_xyz(file2);
-            }*/
-            if (this->doubles(file1, file2, false, 0.1)){
+            }
+            /*if (this->doubles(file1, file2, false, 0.1)){
                 command = "rm " + file1;
                 system(command.c_str());
                 counter++;
-                break;
-            //if (this->doubles(mol1, mol2, rmsd_threshold, ignore_methyl)){
-                /*if (mol1.energy && mol2.energy){
+                break;*/
+            if (this->doubles(mol1, mol2, rmsd_threshold, ignore_methyl)){
+                if (mol1.energy && mol2.energy){
                     if (mol1.energy < mol2.energy){
                         std::cout << "Lösche mol2" << std::endl;
                         command = "rm " + file2;
@@ -87,7 +87,7 @@ void Analyzer::remove_doubles(
                     system(command.c_str());
                     counter++;
                     break;
-                }*/
+                }
             }
         }
     }

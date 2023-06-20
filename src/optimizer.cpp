@@ -79,8 +79,8 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
     }
 
     // convert optimized coordinates back to .xyz format and move file to inital directory
-    //command = "t2x " + coord_file + " > " + path + xyz_file + " 2>/dev/null";
-    command = "t2x " + coord_file + " > " + opt_dir + xyz_file + " 2>/dev/null";
+    command = "t2x " + coord_file + " > " + path + xyz_file + " 2>/dev/null";
+    /*command = "t2x " + coord_file + " > " + opt_dir + xyz_file + " 2>/dev/null";
     fin = system(command.c_str());
 
     infile.open(opt_dir + "uffenergy");
@@ -117,7 +117,7 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
         return FAIL_EXIT;
     }
     infile.close();
-    outfile.close();
+    outfile.close();*/
 
     if (fin < 0){
         return FAIL_EXIT;

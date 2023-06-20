@@ -42,11 +42,15 @@ void ConformerGenerator::generate_conformers(){
     std::string command;
     for (i = 0; i < n_generated_conformers; i++){
         command = "t2x " + this->workdir_name + std::to_string(i) +
-                  "/coord > conformer" + std::to_string(i) + ".xyz 2>/dev/null";
+                  "/coord > " + this->struc_filename + std::to_string(i) + ".xyz 2>/dev/null";
         system(command.c_str());
         command = "rm -rf " + this->workdir_name + std::to_string(i) + "/*";
         system(command.c_str());
         command = "rm -rf " + this->workdir_name + std::to_string(i);
+        system(command.c_str());
+        command = "mkdir " + this->output_foldername;
+        system(command.c_str());
+        command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
         system(command.c_str());
     }
     /*if (n_generated_conformers){

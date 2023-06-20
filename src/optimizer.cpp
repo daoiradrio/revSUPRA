@@ -95,15 +95,15 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
     }
     infile.close();
 
-    std::cout << energy << std::endl;
-
     outfile.open(path + xyz_file);
     infile.open(opt_dir + xyz_file);
     if (infile.is_open() && outfile.is_open()){
         while (getline(infile, line)){
             std::stringstream linestream(line);
             if (line_index == 1){
-                outfile << "Energy = " << energy << "\n";
+                outfile << "Energy = ";
+                outfile << energy;
+                outfile << "\n";
             }
             else{
                 outfile << line;

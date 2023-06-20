@@ -768,7 +768,46 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         if (!this->clashes(new_coords)){
             std::string new_struc = this->struc_filename + std::to_string(counter) + ".xyz";
             this->write_xyz(new_coords, new_struc);
-            int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
+            //int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
+            int fin;
+            std::string current_workdir = this->curr_work_dir + std::to_string(counter) + "/";
+            std::string coord_file = current_workdir + "coord";
+            std::string control_file = current_workdir + "control";
+            std::string new_struc = current_workdir + this->struc_filename + std::to_string(counter);
+	        std::string opt_struc = current_workdir + this->opt_struc_filename;
+	        std::string command;
+            // create new working directory
+	        command = "mkdir " + current_workdir;
+	        system(command.c_str());
+            // write new conformer structure to be optimized
+            this->write_xyz(new_coords, new_struc);
+            // convert .xyz file of structure to be optimized to coord file
+	        command = "x2t " + new_struc + " > " + coord_file;
+            system(command.c_str());
+            // write control file for UFF optimization
+	        std::ofstream file;
+            file.open(control_file);
+            file << "$symmetry c1\n";
+            file << "$uff\n";
+            file << "      2500         1          0 ! maxcycle,modus,nqeq\n";
+            file << "    111111                      ! iterm\n";
+            file << "  0.10D-07  0.10D-04            ! econv,gconv\n";
+            file << "      0.00  1.10                ! qtot,dfac\n";
+            file << "  0.10D+03  0.10D-04       0.30 ! epssteep,epssearch,dqmax\n";
+            file << "        25      0.10       0.00 ! mxls,dhls,ahls\n";
+            file << "      1.00      0.00       0.00 ! alpha,beta,gamma\n";
+            file << "         F         F          F ! transform,lnumhess,lmd\n";
+            file << "$end\n";
+            file.close();
+            // perform UFF optimization
+	        command = "cd " + current_workdir + " ; uff > uff.out 2>&1 &";
+            fin = system(command.c_str());
+            command = "t2x " + coord_file + " > " + new_struc + " 2>/dev/null";
+            fin = system(command.c_str());
+            //command = "mv ~/revSUPRA/" + new_struc + " ~/revSUPRA/conformer" + std::to_string(counter) + ".xyz";
+            //fin = system(command.c_str());
+            command = "rm -rf " + current_workdir;
+            fin = system(command.c_str());
             return counter+1;
         }
         else{

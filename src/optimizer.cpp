@@ -68,12 +68,6 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
 	command = "cd " + opt_dir + " ; uff > uff.out 2>&1";
     fin = system(command.c_str());
 
-    /*output_file.open(opt_dir + "uff.out");
-    while (!output_file.is_open()){
-        continue;
-    }
-    output_file.close();*/
-
     if (fin < 0){
         return FAIL_EXIT;
     }
@@ -126,9 +120,9 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
 
     // remove working directory
     command = "rm -f " + opt_dir + "*";
-    //system(command.c_str());
+    system(command.c_str());
     command = "rm -rf " + opt_dir;
-    //system(command.c_str());
+    system(command.c_str());
 
     if (fin < 0){
         return FAIL_EXIT;

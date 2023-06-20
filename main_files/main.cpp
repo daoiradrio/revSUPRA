@@ -22,15 +22,15 @@ int main(int argc, char **argv){
     mol.get_structure(filepath);
 
     ConformerGenerator confgen(mol);
-    //confgen.generate_conformers();
-    confgen.get_torsions();
+    confgen.generate_conformers();
+    /*confgen.get_torsions();
     confgen.find_cycles();
     confgen.find_peptidebonds();
     confgen.selection_menu();
-    confgen.generation_setup();
+    confgen.generation_setup();*/
 
     // PRINT CONNECTIVITY
-    for (auto atom1: mol.atoms){
+    /*for (auto atom1: mol.atoms){
         std::cout << atom1->element << atom1->index << ": ";
         for (int atom2: atom1->bond_partners){
             std::cout << mol.atoms[atom2]->element << mol.atoms[atom2]->index << " ";
@@ -42,7 +42,7 @@ int main(int argc, char **argv){
 
     for (auto torsion: confgen.torsions){
         std::cout << torsion->bond->atom1->index << " " << torsion->bond->atom2->index << std::endl;
-    }
+    }*/
 
     /*Symmetry                    sym;
     int                         i, j, k;

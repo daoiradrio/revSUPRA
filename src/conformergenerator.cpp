@@ -48,11 +48,11 @@ void ConformerGenerator::generate_conformers(){
         system(command.c_str());
         command = "rm -rf " + this->workdir_name + std::to_string(i);
         system(command.c_str());
-        command = "mkdir " + this->output_foldername;
-        system(command.c_str());
-        command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
-        system(command.c_str());
     }
+    command = "mkdir " + this->output_foldername;
+    system(command.c_str());
+    command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
+    system(command.c_str());
     /*if (n_generated_conformers){
         command = "mkdir " + this->output_foldername;
         system(command.c_str());

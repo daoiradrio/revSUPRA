@@ -107,6 +107,7 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
             }
             else{
                 outfile << line;
+                outfile << "\n";
             }
         }
     }

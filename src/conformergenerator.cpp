@@ -768,7 +768,7 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         if (!this->clashes(new_coords)){
             std::string new_struc = this->struc_filename + std::to_string(counter) + ".xyz";
             this->write_xyz(new_coords, new_struc);
-            //int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
+            int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
             return counter+1;
         }
         else{

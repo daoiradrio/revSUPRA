@@ -40,12 +40,21 @@ void ConformerGenerator::generate_conformers(){
         n_generated_conformers = this->combinations(this->input_coords_mat, 0, n_generated_conformers);
     }
     std::string command;
-    if (n_generated_conformers){
+    for (i = 0; i < n_generated_conformers; i++){
+        command = "t2x " + this->workdir_name + std::to_string(i) +
+                  "/coord > conformer" + std::to_string(i) + ".xyz 2>/dev/null";
+        system(command.c_str());
+        command = "rm -rf " + this->workdir_name + std::to_string(i) + "/*";
+        system(command.c_str());
+        command = "rm -rf " + this->workdir_name + std::to_string(i);
+        system(command.c_str());
+    }
+    /*if (n_generated_conformers){
         command = "mkdir " + this->output_foldername;
         system(command.c_str());
         command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
         system(command.c_str());
-    }
+    }*/
     this->analyzer.remove_doubles(this->output_foldername, this->struc_filename);
 
     return;
@@ -802,12 +811,12 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
             // perform UFF optimization
 	        command = "cd " + current_workdir + " ; uff > uff.out 2>&1 &";
             fin = system(command.c_str());
-            command = "t2x " + coord_file + " > " + new_struc + " 2>/dev/null";
+            /*command = "t2x " + coord_file + " > " + new_struc + " 2>/dev/null";
             fin = system(command.c_str());
             //command = "mv ~/revSUPRA/" + new_struc + " ~/revSUPRA/conformer" + std::to_string(counter) + ".xyz";
             //fin = system(command.c_str());
             command = "rm -rf " + current_workdir;
-            fin = system(command.c_str());
+            fin = system(command.c_str());*/
             return counter+1;
         }
         else{

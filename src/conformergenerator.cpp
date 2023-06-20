@@ -46,7 +46,7 @@ void ConformerGenerator::generate_conformers(){
         command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
         system(command.c_str());
     }
-    //this->analyzer.remove_doubles(this->output_foldername, this->struc_filename);
+    this->analyzer.remove_doubles(this->output_foldername, this->struc_filename);
 
     return;
 }
@@ -770,7 +770,7 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
             this->write_xyz(new_coords, new_struc);
             //int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
             int fin;
-            std::string current_workdir = this->curr_work_dir + std::to_string(counter) + "/";
+            std::string current_workdir = this->workdir_name + std::to_string(counter) + "/";
             std::string coord_file = current_workdir + "coord";
             std::string control_file = current_workdir + "control";
             //std::string new_struc = current_workdir + this->struc_filename + std::to_string(counter);

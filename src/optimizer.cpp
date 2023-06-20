@@ -102,6 +102,7 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
             std::stringstream linestream(line);
             if (line_index == 1){
                 outfile << "Energy = ";
+                std::cout << energy << std::endl;
                 outfile << energy;
                 outfile << "\n";
             }

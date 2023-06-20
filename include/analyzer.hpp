@@ -36,6 +36,12 @@ class Analyzer{
                     bool ignore_methyl = false,
                     double rmsd_threshold = 0.1
                 );
+        bool    doubles(
+                    const Structure& mol1,
+                    const Structure& mol2,
+                    bool ignore_methyl = false,
+                    double rmsd_threshold = 0.1
+                );
         void    match_coords(
                     std::vector<std::shared_ptr<Atom>> atoms1,
                     std::vector<std::shared_ptr<Atom>> atoms2,

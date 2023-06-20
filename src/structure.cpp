@@ -14,13 +14,16 @@ void Structure::get_structure(std::string filepath){
 }
 
 
-int Structure::read_xyz(std::string filepath)
+int Structure::read_xyz(std::string filepath, bool read_energy)
 {
     std::shared_ptr<Atom> new_atom;
     std::string element;
     std::string new_label;
     std::string line;
+    std::string dummy1;
+    std::string dummy2;
     std::ifstream file;
+    double energy;
     double xcoord, ycoord, zcoord;
     int atom_index;
     int line_index;
@@ -39,6 +42,10 @@ int Structure::read_xyz(std::string filepath)
             if (line_index == 0){
                 linestream >> this->n_atoms;
                 this->coords.resize(this->n_atoms, 3);
+            }
+            else if (line_index == 1 && read_energy){
+                linestream >> dummy1 >> dummy2 >> energy;
+                this->energy = energy;
             }
             else if (line_index >= 2){
                 linestream >> element >> xcoord >> ycoord >> zcoord;  

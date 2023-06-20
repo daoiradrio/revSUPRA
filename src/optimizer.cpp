@@ -102,7 +102,7 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
         while (getline(infile, line)){
             std::stringstream linestream(line);
             if (line_index == 1){
-                outfile << "Energy = ";
+                outfile << "UFF-Energy = ";
                 outfile << energy;
                 outfile << "\n";
             }

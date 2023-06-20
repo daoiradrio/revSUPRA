@@ -19,6 +19,7 @@ class Structure{
         ~Structure();
 
         int                                 n_atoms;
+        double                              energy = 0;
         std::vector<std::shared_ptr<Atom>>  atoms;
         //std::vector<Bond>                   bonds;
         std::vector<std::shared_ptr<Bond>>  bonds;
@@ -26,7 +27,7 @@ class Structure{
 
         void    get_structure(std::string filepath);
         //void read_xyz(std::string filepath);
-        int     read_xyz(std::string filepath);
+        int     read_xyz(std::string filepath, bool read_energy = true);
         //void read_xyz(std::string filepath);
         //void get_bonds();
     

@@ -20,6 +20,8 @@ void Analyzer::remove_doubles(
     std::string                 command;
     std::vector<std::string>    files;
     std::ifstream               filestream;
+    Structure                   mol1;
+    Structure                   mol2;
 
     if (filepath.back() != '/'){
         filepath = filepath + "/";
@@ -44,13 +46,40 @@ void Analyzer::remove_doubles(
 
     for (i = 0; i < files.size()-1; i++){
         file1 = filepath + files[i];
+        if (ignore_methyl){
+            mol1.get_structure(file1);
+        }
+        else{
+            mol1.read_xyz(file1);
+        }
         for (j = i + 1; j < files.size(); j++){
             file2 = filepath + files[j];
-            if (this->doubles(file1, file2, rmsd_threshold)){
-                command = "rm " + file1;
-                system(command.c_str());
-                counter++;
-                break;
+            if (ignore_methyl){
+                mol2.get_structure(file2);
+            }
+            else{
+                mol2.read_xyz(file2);
+            }
+            if (this->doubles(mol1, mol2, rmsd_threshold, ignore_methyl)){
+                if (mol1.energy && mol2.energy){
+                    if (mol1.energy < mol2.energy){
+                        command = "rm " + file2;
+                        system(command.c_str());
+                        counter++;
+                    }
+                    else{
+                        command = "rm " + file1;
+                        system(command.c_str());
+                        counter++;
+                        break;
+                    }
+                }
+                else{
+                    command = "rm " + file1;
+                    system(command.c_str());
+                    counter++;
+                    break;
+                }
             }
         }
     }
@@ -58,6 +87,40 @@ void Analyzer::remove_doubles(
     std::cout << "Individual conformers: " << files.size()-counter << std::endl;
 
     return;
+}
+
+
+
+bool Analyzer::doubles(
+    const Structure& mol1, const Structure& mol2, bool ignore_methyl, double rmsd_threshold
+){
+    int                                 i, j;
+    bool                                doubles = false;
+    Eigen::MatrixX3d                    coords1;
+    Eigen::MatrixX3d                    coords2;
+    std::vector<std::shared_ptr<Atom>>  atoms1;
+    std::vector<std::shared_ptr<Atom>>  atoms2;
+
+    if (ignore_methyl){
+        this->remove_methly_atoms(mol1, coords1, atoms1);
+        this->remove_methly_atoms(mol2, coords2, atoms2);
+    }
+    else{
+        coords1 = mol1.coords;
+        coords2 = mol2.coords;
+        atoms1 = mol1.atoms;
+        atoms2 = mol2.atoms;
+    }
+
+    this->kabsch(coords1, coords2);
+
+    this->match_coords(atoms1, atoms2, coords1, coords2);
+
+    if (this->rmsd(coords1, coords2) <= rmsd_threshold){
+        doubles = true;
+    }
+
+    return doubles;
 }
 
 

@@ -60,7 +60,7 @@ void Analyzer::remove_doubles(
             else{
                 mol2.read_xyz(file2);
             }*/
-            if (this->doubles(file1, file2)){
+            if (this->doubles(file1, file2, false, 0.1)){
                 command = "rm " + file1;
                 system(command.c_str());
                 counter++;

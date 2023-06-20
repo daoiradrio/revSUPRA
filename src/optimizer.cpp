@@ -12,9 +12,9 @@ int Optimizer::uff_optimization(std::string path, std::string xyz_file, int inde
     std::string     opt_dir;
     std::string     coord_file;
     std::string     control_file;
-    std::ifstream   infile;
+    //std::ifstream   infile;
     std::ofstream   outfile;
-    std::string     line;
+    //std::string     line;
 
     if (path.back() != '/'){
         path = path + "/";

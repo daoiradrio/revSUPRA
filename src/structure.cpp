@@ -14,7 +14,7 @@ void Structure::get_structure(std::string filepath){
 }
 
 
-int Structure::read_xyz(std::string filepath, bool read_energy)
+int Structure::read_xyz(std::string filepath)
 {
     std::shared_ptr<Atom> new_atom;
     std::string element;

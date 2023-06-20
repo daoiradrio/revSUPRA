@@ -27,7 +27,7 @@ class Structure{
 
         void    get_structure(std::string filepath);
         //void read_xyz(std::string filepath);
-        int     read_xyz(std::string filepath, bool read_energy = false);
+        int     read_xyz(std::string filepath);
         //void read_xyz(std::string filepath);
         //void get_bonds();
     

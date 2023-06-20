@@ -768,7 +768,7 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         if (!this->clashes(new_coords)){
             std::string new_struc = this->struc_filename + std::to_string(counter) + ".xyz";
             this->write_xyz(new_coords, new_struc);
-            int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
+            //int fin = this->optimizer.uff_optimization(this->curr_work_dir, new_struc, counter);
             return counter+1;
         }
         else{
@@ -779,6 +779,7 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         int atom1 = this->torsions[index]->bond->atom1->index;
         int atom2 = this->torsions[index]->bond->atom2->index;
         //for (int angle: this->angles){
+        //    if (index == 3 && (angle == 120 || angle == 240)){ Alanin.xyz
         //    if (index == 3 && (angle == 180)){ // Tyrosin.xyz
         //        continue;
         //    }

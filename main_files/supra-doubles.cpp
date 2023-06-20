@@ -124,7 +124,7 @@ int main(int argc, char** argv)
         }
     }
     else if (mode == "structure_set"){
-        std::cout << "PLACEHOLDER" << std::endl;
+        analyzer.remove_doubles(path1, "conformer", ignore_methyl, rmsd_threshold);
     }
     else{
         print_usage();

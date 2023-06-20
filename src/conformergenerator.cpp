@@ -594,7 +594,7 @@ void ConformerGenerator::check_rot_sym(int angle_increment)
             }
         }
     }
-    std::cout << "Inkrement " << angle_increment << std::endl;
+    /*std::cout << "Inkrement " << angle_increment << std::endl;
     std::cout << std::endl;
     i = 0;
     for (std::shared_ptr<Torsion> torsion: this->torsions){
@@ -605,7 +605,7 @@ void ConformerGenerator::check_rot_sym(int angle_increment)
         }
         std::cout << "\n\n";
         i++;
-    }
+    }*/
 
     return;
 }
@@ -778,11 +778,11 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
     else{
         int atom1 = this->torsions[index]->bond->atom1->index;
         int atom2 = this->torsions[index]->bond->atom2->index;
-        for (int angle: this->angles){
-            if (index == 3 && (angle == 180)){
-                continue;
-            }
-        //for (int angle: this->rot_angles[index]){
+        //for (int angle: this->angles){
+        //    if (index == 3 && (angle == 180)){ // Tyrosin.xyz
+        //        continue;
+        //    }
+        for (int angle: this->rot_angles[index]){
             Eigen::MatrixX3d new_coords_copy = new_coords;
             Eigen::Vector3d new_coord;
             for (int torsion_atom: this->torsions[index]->rot_atoms){

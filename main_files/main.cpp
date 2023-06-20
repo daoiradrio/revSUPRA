@@ -22,12 +22,12 @@ int main(int argc, char **argv){
     mol.get_structure(filepath);
 
     ConformerGenerator confgen(mol);
-    //confgen.generate_conformers();
-    confgen.get_torsions();
+    confgen.generate_conformers();
+    /*confgen.get_torsions();
     confgen.find_cycles();
     confgen.find_peptidebonds();
     confgen.selection_menu();
-    confgen.generation_setup();
+    confgen.generation_setup();*/
 
     // PRINT CONNECTIVITY
     /*for (auto atom1: mol.atoms){

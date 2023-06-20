@@ -779,6 +779,9 @@ int ConformerGenerator::combinations(Eigen::MatrixX3d new_coords, int index, int
         int atom1 = this->torsions[index]->bond->atom1->index;
         int atom2 = this->torsions[index]->bond->atom2->index;
         for (int angle: this->angles){
+            if (index == 3 && angle == 120){
+                continue;
+            }
         //for (int angle: this->rot_angles[index]){
             Eigen::MatrixX3d new_coords_copy = new_coords;
             Eigen::Vector3d new_coord;

@@ -46,20 +46,20 @@ void Analyzer::remove_doubles(
 
     for (i = 0; i < files.size()-1; i++){
         file1 = filepath + files[i];
-        if (ignore_methyl){
+        /*if (ignore_methyl){
             mol1.get_structure(file1);
         }
         else{
             mol1.read_xyz(file1);
-        }
+        }*/
         for (j = i + 1; j < files.size(); j++){
             file2 = filepath + files[j];
-            if (ignore_methyl){
+            /*if (ignore_methyl){
                 mol2.get_structure(file2);
             }
             else{
                 mol2.read_xyz(file2);
-            }
+            }*/
             if (this->doubles(file1, file2)){
                 command = "rm " + file1;
                 system(command.c_str());

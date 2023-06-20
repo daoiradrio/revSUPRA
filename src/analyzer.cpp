@@ -63,11 +63,13 @@ void Analyzer::remove_doubles(
             if (this->doubles(mol1, mol2, rmsd_threshold, ignore_methyl)){
                 if (mol1.energy && mol2.energy){
                     if (mol1.energy < mol2.energy){
+                        std::cout << "Lösche mol2" << std::endl;
                         command = "rm " + file2;
                         system(command.c_str());
                         counter++;
                     }
                     else{
+                        std::cout << "Lösche mol1" << std::endl;
                         command = "rm " + file1;
                         system(command.c_str());
                         counter++;

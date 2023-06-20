@@ -77,6 +77,7 @@ void Analyzer::remove_doubles(
                     }
                 }
                 else{
+                    std::cout << "hier" << std::endl;
                     command = "rm " + file1;
                     system(command.c_str());
                     counter++;

@@ -19,6 +19,7 @@ void Analyzer::remove_doubles(
     std::string                 file2;
     std::string                 command;
     std::vector<std::string>    files;
+    std::vector<std::string>    delete_files;
     std::ifstream               filestream;
     Structure                   mol1;
     Structure                   mol2;
@@ -69,14 +70,17 @@ void Analyzer::remove_doubles(
                 std::cout << file1 << " " << file2 << std::endl;
                 if (mol1.energy && mol2.energy){
                     if (mol1.energy < mol2.energy){
-                        command = "rm " + file2;
-                        system(command.c_str());
-                        counter++;
+                        //command = "rm " + file2;
+                        //system(command.c_str());
+                        //counter++;
+                        delete_files.push_back(file2);
                     }
                     else{
-                        command = "rm " + file1;
-                        system(command.c_str());
-                        counter++;
+                        //command = "rm " + file1;
+                        //system(command.c_str());
+                        //counter++;
+                        //break;
+                        delete_files.push_back(file1);
                         break;
                     }
                 }
@@ -90,7 +94,13 @@ void Analyzer::remove_doubles(
         }
     }
 
-    std::cout << "Individual conformers: " << files.size()-counter << std::endl;
+    for (std::string file: delete_files){
+        command = "rm " + file;
+        system(command.c_str());
+    }
+
+    //std::cout << "Individual conformers: " << files.size()-counter << std::endl;
+    std::cout << "Individual conformers: " << files.size()-delete_files.size() << std::endl;
 
     return;
 }

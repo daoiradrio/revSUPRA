@@ -19,7 +19,7 @@ void Analyzer::remove_doubles(
     std::string                 file2;
     std::string                 command;
     std::vector<std::string>    files;
-    std::vector<std::string>    delete_files;
+    std::vector<int>            delete_files;
     std::ifstream               filestream;
     Structure                   mol1;
     Structure                   mol2;
@@ -42,6 +42,9 @@ void Analyzer::remove_doubles(
     filestream.close();
     command = "rm -f " + filepath + "files.tmp";
     system(command.c_str());
+
+    delete_files.resize(files.size());
+    std::fill(delete_files.begin(), delete_files.end(), 0);
 
     std::cout << "Removing duplicate structures..." << std::endl;
 
@@ -72,15 +75,14 @@ void Analyzer::remove_doubles(
                         //command = "rm " + file2;
                         //system(command.c_str());
                         //counter++;
-                        delete_files.push_back(file2);
+                        delete_files[j] = 1;
                     }
                     else{
                         //command = "rm " + file1;
                         //system(command.c_str());
                         //counter++;
                         //break;
-                        delete_files.push_back(file1);
-                        break;
+                        delete_files[i] = 1;
                     }
                 }
                 else{
@@ -88,16 +90,17 @@ void Analyzer::remove_doubles(
                     //system(command.c_str());
                     //counter++;
                     //break;
-                    delete_files.push_back(file1);
-                    break;
+                    delete_files[i] = 1;
                 }
             }
         }
     }
 
-    for (std::string file: delete_files){
-        command = "rm " + file;
-        system(command.c_str());
+    for (i = 0; i < delete_files.size(); i++){
+        if (delete_files[i]){
+            command = "rm " + filepath + files[i];
+            system(command.c_str());
+        }
     }
 
     //std::cout << "Individual conformers: " << files.size()-counter << std::endl;

@@ -98,13 +98,14 @@ void Analyzer::remove_doubles(
 
     for (i = 0; i < delete_files.size(); i++){
         if (delete_files[i]){
+            counter++;
             command = "rm " + filepath + files[i];
             system(command.c_str());
         }
     }
 
     //std::cout << "Individual conformers: " << files.size()-counter << std::endl;
-    std::cout << "Individual conformers: " << files.size()-delete_files.size() << std::endl;
+    std::cout << "Individual conformers: " << files.size()-counter << std::endl;
 
     return;
 }

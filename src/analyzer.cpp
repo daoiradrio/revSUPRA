@@ -28,6 +28,8 @@ void Analyzer::remove_doubles(
         filepath = filepath + "/";
     }
 
+    std::cout << "Removing duplicate structures..." << std::endl;
+
     command = "ls " + filepath + " | grep " + filename + " > " + filepath + "files.tmp";
     system(command.c_str());
     filestream.open(filepath + "files.tmp");
@@ -46,9 +48,7 @@ void Analyzer::remove_doubles(
     delete_files.resize(files.size());
     std::fill(delete_files.begin(), delete_files.end(), 0);
 
-    std::cout << "Removing duplicate structures..." << std::endl;
-
-    for (i = 0; i < files.size()-1; i++){
+    for (i = 0; i < files.size(); i++){
         file1 = filepath + files[i];
         if (ignore_methyl){
             mol1.get_structure(file1);
@@ -64,33 +64,17 @@ void Analyzer::remove_doubles(
             else{
                 mol2.read_xyz(file2);
             }
-            //if (this->doubles(file1, file2)){
-            /*    command = "rm " + file1;
-                system(command.c_str());
-                counter++;
-                break;*/
             if (this->doubles(mol1, mol2)){
                 if (mol1.energy && mol2.energy){
                     if (mol1.energy < mol2.energy){
-                        //command = "rm " + file2;
-                        //system(command.c_str());
-                        //counter++;
                         delete_files[j] = 1;
                     }
                     else{
-                        //command = "rm " + file1;
-                        //system(command.c_str());
-                        //counter++;
-                        //break;
                         delete_files[i] = 1;
                     }
                 }
                 else{
-                    //command = "rm " + file1;
-                    //system(command.c_str());
-                    //counter++;
-                    //break;
-                    delete_files[i] = 1;
+                    delete_files[j] = 1;
                 }
             }
         }
@@ -104,7 +88,6 @@ void Analyzer::remove_doubles(
         }
     }
 
-    //std::cout << "Individual conformers: " << files.size()-counter << std::endl;
     std::cout << "Individual conformers: " << files.size()-counter << std::endl;
 
     return;

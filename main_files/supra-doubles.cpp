@@ -112,15 +112,11 @@ int main(int argc, char** argv)
     }
 
     if (mode == "structure_pair"){
-        if (ignore_methyl){
-            if (analyzer.doubles(path1, path2, true, rmsd_threshold)){
-                std::cout << "Doubles" << std::endl;
-            }
+        if (analyzer.doubles(path1, path2, ignore_methyl, rmsd_threshold)){
+            std::cout << "Doubles" << std::endl;
         }
         else{
-            if (analyzer.doubles(path1, path2, rmsd_threshold)){
-                std::cout << "No doubles" << std::endl;
-            }
+            std::cout << "No doubles" << std::endl;
         }
     }
     else if (mode == "structure_set"){

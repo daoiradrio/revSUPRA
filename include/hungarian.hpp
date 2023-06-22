@@ -10,6 +10,8 @@
 #include <type_traits>
 #include <vector>
 
+#include <iostream>
+
     
 
 void step1(std::vector<std::vector<double>>& matrix, int& step);

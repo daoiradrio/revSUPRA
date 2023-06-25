@@ -59,7 +59,7 @@ void ConformerGenerator::generate_conformers(){
         command = "mv " + this->curr_work_dir + this->struc_filename + "* " + this->curr_work_dir + this->output_foldername;
         system(command.c_str());
     }
-    this->analyzer.remove_doubles(this->output_foldername, this->struc_filename);
+    //this->analyzer.remove_doubles(this->output_foldername, this->struc_filename);
 
     return;
 }
